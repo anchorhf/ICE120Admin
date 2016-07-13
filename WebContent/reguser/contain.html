@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui">
+<title>注册会员</title>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/color.css">
+<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../css/app.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<style type="text/css">
+       
+        .mc{
+            height:6%;
+            width:7%;
+            float:left;
+            margin-left:2%;
+            margin-top:2%;
+        }
+       .mcf{
+            height:6%;
+            width:11%;
+            float:left;
+            margin-left:6%;
+            margin-top:2%;
+            
+        }
+        
+         .mcs{
+            height:6%;
+            width:9%;
+            float:left;
+            margin-left:2%;
+            margin-top:2%;
+            
+        }
+        
+         .mct{
+            height:6%;
+            width:13%;
+            float:left;
+            margin-left:2%;
+            margin-top:2%;
+            
+        }
+        .jg{
+            height: 6%;
+            width:33%;
+            float:left;
+            margin-right:1%;
+            margin-top:2%;
+        }
+        
+          .jgt{
+            height: 6%;
+            width:33%;
+            float:left;
+            margin-right:1%;
+            margin-top:2%;
+        }
+           .jgf{
+            height: 6%;
+            width:70%;
+            float:left;
+            margin-right:1%;
+            margin-top:2%;
+        }
+    </style>
+       
+</head> 
+<body onload="init()">
+<div id="edit" closed="true" style="height:60%;width:100%">
+	
+		<form id="edit-form" method="post" style="width:100%">
+		<div style="float:left"><img id="imgface" src="" style="height:100px;width:80px;"/></div>
+		
+			<div class="container line" style="font-size:80%;">
+			
+			    <div class="mc">姓名</div>
+				<div class="jg">
+					<input class="easyui-textbox" type="text" name="name" />
+				</div>
+				<div class="mc">昵称</div>
+				<div class="jg">
+					<input class="easyui-textbox" type="text" name="nickname" />
+				</div>
+				<div class="mc">血型</div>
+				<div class="jg">
+					<input class="easyui-textbox" type="text" name="blood" />
+				</div>
+				<div class="mc">体重</div>
+				<div class="jg">
+					<input class="easyui-textbox" type="text" name="weight" />
+		        </div>
+				<div class="mc">生日</div>
+				<div class="jg">
+					<input class="easyui-textbox" type="text" name="birthday" />
+				</div>
+			    <div class="mc">电话</div>
+				<div class="jg">
+					<input class="easyui-textbox" type="text" name="telphone" />
+				</div>
+				<div class="mcs">病史</div>
+				<div class="jg">
+					<input class="easyui-textbox" type="text" name="medicalhistory" />
+				</div>
+		
+				<div class="mcf">其他病史</div>
+				<div class="jg">
+					<input class="easyui-textbox" type="text" name="othermedicalhistory" />
+				</div>
+				<div class="mcs">过敏史</div>
+				<div class="jg">
+					<input class="easyui-textbox" type="text" name="allergy" />
+				</div>
+		
+				<div class="mcqt">其他过敏史</div>
+				<div class="jgt">
+					<input class="easyui-textbox" type="text" name="otherallergy" />
+				</div>
+				<div class="mct">常住地址</div>
+				<div class="jgf">
+					<input class="easyui-textbox" type="text" name="permanentaddress" />
+				</div>
+				<div class="mct">备注</div>
+				<div class="jgf">
+					<input class="easyui-textbox" type="text" name="remark" />
+				</div>
+			</div>
+<!-- 			<div><input id="pic" type="text" name="pic"/></div> -->
+	</form>
+<div>
+	<table id="dg" title="紧急联系人" class="easyui-datagrid">
+		<thead>
+			<tr>
+				<th field="cnickname">姓名</th>
+				<th field="ctelphone">电话</th>
+			</tr>
+		</thead>
+	</table>
+	</div>
+
+</div>
+
+
+	<script type="text/javascript">
+	var LocString;
+	function init() {
+		LocString = String(window.document.location.href);
+// 		var fid = request.QueryString("fid");
+// 		var sid = request.QueryString("sid").toString();
+
+		var fid=getQueryStr("fid");
+		var sid=getQueryStr("sid");
+		
+//  	    alert(sid);
+ 		$("#edit-form").form("load", "/api/sysmanage/regetc?fid="+fid+"&sid="+sid);
+		
+// 		$("#edit").dialog("open");　
+//  		alert($("#pic").val());
+//  		document.getElementById("imgface").src=document.getElementById("pic").value;
+		
+		$("#dg").datagrid({
+			method : 'GET',
+		    url:'/api/sysmanage/regetem?fid='+fid+'&sid='+sid
+		});
+	
+	}
+	
+	function getQueryStr(str) {
+	var rs = new RegExp("(^|)" + str + "=([^&]*)(&|$)", "gi").exec(LocString), tmp;
+	if (tmp = rs) {
+	return tmp[2];
+	}
+	// parameter cannot be found
+	return "";
+	} 
+		
+	</script>
+</body>
+</html>

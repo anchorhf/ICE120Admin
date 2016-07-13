@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>接入点管理</title>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/color.css">
+<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../css/app.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+
+
+</head>
+<body>
+	<table id="list" title="接入点列表" class="easyui-datagrid">
+		<thead>
+			<tr>
+				<th field="centerid" sortable="false">接入点编码</th>
+				<th field="name">接入点名称</th>
+				<th field="ipport">IP地址：端口号</th>
+				<th field="account">登录名</th>
+				<th field="password">密码</th>
+				<th field="maxmemory">最大内存</th>
+				<th field="totalmemory">已用内存</th>
+				<th field="freememory">剩余内存</th>
+				<th field="cpu">CPU</th>
+				<th field="machinestatus">接入点状态</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar">
+		<input id="ss" class="easyui-searchbox" prompt="请输入关键字"
+			searcher="search" style="width: 130px; vertical-align: middle;" /> <a
+			href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-add" plain="true" onclick="addCenter()">新增接入点</a> <a
+			href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-edit" plain="true" onclick="editCenter()">修改接入点</a> <a
+			href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-remove" plain="true" onclick="deleteCenter()">删除接入点</a>
+	</div>
+	<div id="edit" closed="true">
+		<!-- <div id="edit"> -->
+		<form id="edit-form" method="post">
+			<input id="centerid" type="hidden" name="centerid" value="-1" />
+			<h3 class="title">编辑接入点信息</h3>
+			<div class="container line">
+				<div class="col-xs-2 field">接入点名称</div>
+				<div class="col-xs-4">
+					<input class="easyui-textbox" data-options="required:true"
+						tipBottom="true" type="text" name="name" />
+				</div>
+				<div class="col-xs-2 field">行政区划</div>
+				<div class="col-xs-4">
+					<input class="easyui-textbox" data-options="required:true"
+						type="text" name="area" />
+				</div>
+			</div>
+			<div class="container line">
+				<div class="col-xs-2 field">工作电话</div>
+				<div class="col-xs-4">
+					<input class="easyui-textbox" type="text" name="workphone" />
+				</div>
+				<div class="col-xs-2 field">是否接入急救中心</div>
+				<div class="col-xs-4">
+					<input type="radio" name="isonline" value="1" checked="checked" />是<input
+						type="radio" name="isonline" value="0" />否
+				</div>
+			</div>
+			<div class="container line">
+				<div class="col-xs-2 field">IP地址</div>
+				<div class="col-xs-4">
+					<input class="easyui-textbox" type="text" name="ip" />
+				</div>
+				<div class="col-xs-2 field">端口号</div>
+				<div class="col-xs-4">
+					<input class="easyui-textbox" type="text" name="port" />
+				</div>
+			</div>
+			<div class="container line">
+				<div class="col-xs-2 field">接入点登录名</div>
+				<div class="col-xs-4">
+					<input class="easyui-textbox" type="text" name="account" />
+				</div>
+				<div class="col-xs-2 field">接入点登录密码</div>
+				<div class="col-xs-4">
+					<input class="easyui-textbox" type="text" name="password" />
+				</div>
+			</div>
+			<div class="container line">
+				<div class="col-xs-2 field">联系人</div>
+				<div class="col-xs-4">
+					<input class="easyui-textbox" type="text" name="contact" />
+				</div>
+				<div class="col-xs-2 field">联系人手机号码</div>
+				<div class="col-xs-4">
+					<input class="easyui-textbox" type="text" name="mobilephone" />
+				</div>
+			</div>
+			<div class="container line">
+				<div class="col-xs-2 field">联系人传真电话号码</div>
+				<div class="col-xs-4">
+					<input class="easyui-textbox" type="text" name="fixedtelephone" />
+				</div>
+				<div class="col-xs-2 field">工作电话区号</div>
+				<div class="col-xs-4">
+					<input class="easyui-textbox" type="text" name="telareano" />
+				</div>
+			</div>
+			<div class="container line">
+				<!-- 
+				<div class="col-xs-2 field">选择相邻接入点</div>
+				<div class="col-xs-4">
+					<input class="easyui-textbox" type="text" name="center.center" />
+				</div>
+				 -->
+				<div class="col-xs-2 field">是否提供预约功能</div>
+				<div class="col-xs-4">
+					<input type="radio" name="orderambulance" value="1"
+						checked="checked" />是<input type="radio" name="orderambulance"
+						value="0" />否
+				</div>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript">
+	var search = function() {
+		$("#list").datagrid({
+			url : '/api/center/list?keyword=' + $("#ss").val()
+		});
+	};
+		var deleteCenter = function() {
+			// 判断是否选中一项
+			var row = $("#list").datagrid("getSelected");
+			if (row == null) {
+				$.messager.alert("警告", "请先选中一条记录进行删除！", "error");
+				return;
+			}
+			$.messager.confirm("提示", "您确定要删除" + row.name + "接入点吗？", function(data) {
+				if (data) {
+					$.post("/api/center/delete?id=" + row.centerid, function(data) {
+						if (data == "1") {
+							$('#list').datagrid('reload');
+						} else
+							$.messager.alert("错误", "接入点信息删除失败！", "error");
+					});
+				}
+			});
+		};
+		var editCenter = function() {
+			$("#edit-form").form("clear");
+			// 判断是否选中一项
+			var row = $("#list").datagrid("getSelected");
+			if (row == null) {
+				$.messager.alert("警告", "请先选中一条记录进行编辑！", "error");
+				return;
+			}
+			// 获取信息
+			$("#edit-form").form("load", "/api/center/get?id=" + row.centerid);
+			$("#edit").dialog("open");
+		};
+		var addCenter = function() {
+			$("#edit-form").form("clear");
+			$("#edit").dialog("open");
+		};
+		$(document).ready(function() {
+			$("#list").datagrid({
+				url : '/api/center/list',
+				method : 'GET',
+				pageSize : 20,
+				pagination : true,
+				fit : true,//自动大小
+				toolbar : "#toolbar",
+				rownumbers : true,//行号
+				singleSelect : true,
+				rowStyler : function(index, row) {
+					if (row.machinestatus == "正常")
+						return 'color:blue;';
+					if (row.machinestatus == "故障")
+						return 'color:red;';
+					return '';
+				},
+				onDblClickRow : function(rowIndex, rowData) {
+					alert(rowData.name);
+				}
+			});
+			//设置分页控件 
+			var p = $('#list').datagrid('getPager');
+			$(p).pagination({
+				pageSize : 20,//每页显示的记录条数，默认为10 
+				pageList : [ 10, 20, 50, 100 ],//可以设置每页记录条数的列表 
+				beforePageText : '第',//页数文本框前显示的汉字 
+				afterPageText : '页    共 {pages} 页',
+				displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+			});
+
+			$("#edit").dialog({
+				title : "编辑接入点信息",
+				iconCls : "icon-edit",
+				maximizable : true,
+				width : 900,
+				modal : true,
+				buttons : [ {
+					text : "保存",
+					handler : function() {
+						$("#edit-form").submit();
+					}
+				}, {
+					text : "关闭",
+					handler : function() {
+						$("#edit").dialog("close");
+					}
+				} ]
+			});
+
+			$("#edit-form").form({
+				url : "/api/center/modify",
+				onSubmit : function() {
+					return $("#edit-form").form("validate");
+				},
+				success : function(data) {
+					if (data == "true") {
+						$('#list').datagrid('reload');
+						$("#edit").dialog("close");
+					} else
+						$.messager.alert("错误", "接入点信息保存失败！", "error");
+				}
+			});
+		});
+	</script>
+</body>
+</html>

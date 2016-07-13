@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>APP后台管理系统</title>
+<link rel="stylesheet" href="/css/login.css">
+<link rel="stylesheet" type="text/css" href="./css/easyui.css">
+<link rel="stylesheet" type="text/css" href="./css/icon.css">
+
+<script type="text/javascript" src="./js/jquery.js"></script>
+<script type="text/javascript" src="./js/jquery.easyui.js"></script>
+<!--为了让IE支持HTML5元素，做如下操作：-->
+<!--[if IE]> 
+<script type="text/javascript"> 
+document.createElement("section"); 
+document.createElement("header"); 
+document.createElement("footer"); 
+</script> 
+<![endif]-->
+</head>
+<body>
+	<div class="wrap">
+		<form id="edit-form"  method="post">
+			<section class="loginForm">
+				<header>
+					<h1>APP后台管理系统</h1>
+				</header>
+				<div class="loginForm_content">
+					<fieldset>
+						<div class="inputWrap">
+							<input type="text" name="userName" placeholder="账号" autofocus
+								required>
+						</div>
+						<div class="inputWrap">
+							<input type="password" name="password" placeholder="请输入密码"
+								required>
+						</div>
+					</fieldset>
+					<fieldset>
+						<input id="dl" type="submit" value="登录" onclick="EnterPages()">
+					</fieldset>
+				</div>
+			</section>
+		</form>
+	</div>
+<script type="text/javascript">
+	function EnterPages(){
+		var userName =$("input[name='userName']").val();
+		var password =$("input[name='password']").val();
+		$("#edit-form").form({
+			url :"/api/loginfi/loginse",
+			onSubmit : function() {
+				return $("#edit-form").form("validate");
+			},
+			success : function(data) {
+  				if (data==0||data==1)
+  				{   
+    			   window.location.href="./main/main.html";
+    				   document.cookie="uName="+userName+"";
+    				   document.cookie="pWord="+password+"";
+    				   document.cookie="id="+data+"";
+                }  
+  				else if(data==2)
+  				{$.messager.alert("错误", "用户名或密码不正确！", "error");
+  				$('#edit-form').form('clear');	}
+				else if(data==3)
+  				{$.messager.alert("错误", "用户登录查询失败！", "error");
+  				$('#edit-form').form('clear');
+  				}
+	       }
+	     })
+	}
+
+</script>
+</body>
+</html>

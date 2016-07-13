@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" name="viewport"
+	content="initial-scale=1, user-scalable=0, minimal-ui">
+<title>注册会员</title>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/color.css">
+<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../css/app.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+
+
+</head>
+<body>
+	<table id="list" title="会员列表" class="easyui-datagrid">
+		<thead>
+			<tr>
+				<th field="userid" style="width: 9%">用户编码</th>
+				<th field="telphone" style="width: 15%">绑定电话</th>
+				<th field="email" style="width: 18%">绑定邮箱</th>
+				<th field="registrationaddress" style="width: 30%">注册地址</th>
+				<th field="regtime" style="width: 25%">注册时间</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar">
+		<div>
+			<table>
+				<tr style="height: 30px; padding: 2px 0px 2px 0px">
+					<td style="padding: 0px 0px 0px 6px;">绑定电话：</td>
+					<td><input id="telphone" class="easyui-textbox" /> <input
+						id="htelphone" type="hidden" /></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+
+					<td>绑定邮箱：</td>
+					<td style="margin-right: 10px"><input id="email"
+						class="easyui-textbox" /> <input id="hemail" type="hidden" /></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+
+					<td>注册地址：</td>
+					<td><input id="registrationaddress" class="easyui-textbox" />
+						<input id="haddress" type="hidden" /></td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td rowspan="2"><a href="javascript:void(0)" id="btnsearch"
+						class="easyui-linkbutton" data-options="iconCls:'icon-search'"
+						onclick="reSearch()">查询</a></td>
+				</tr>
+			</table>
+		</div>
+
+		<div>
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				iconCls="icon-add" plain="true" onclick="addmenber()">新增会员</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton"
+				iconCls="icon-edit" plain="true" onclick="editmenber()">修改会员</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton"
+				iconCls="icon-remove" plain="true" onclick="deletemenber()">删除会员</a><a
+				href="javascript:void(0)" class="easyui-linkbutton"
+				iconCls="icon-remove" plain="true" onclick="serchmenber()">查询会员</a>
+		</div>
+	</div>
+	<div id="edit" closed="true">
+		<!-- <div id="edit"> -->
+		<form id="edit-form" method="post">
+			<input id="userid" type="hidden" name="userid" value="-1" />
+			<h3 id=htitle class="title">会员信息</h3>
+			<p style="font-weight:bold">账户信息</p>
+			<div class="container line">
+				<div class="col-xs-2 field">用户编号</div>
+				<div class="col-xs-3">
+					<input class="easyui-textbox" data-options="required:true"
+						type="text" name="userid" />
+				</div>
+				<div class="col-xs-2 field">绑定电话</div>
+				<div class="col-xs-3">
+					<input class="easyui-textbox" data-options="required:true"
+						type="text" name="ltelphone" />
+				</div>
+			</div>
+			<div class="container line">
+				<div class="col-xs-2 field">邮箱地址</div>
+				<div class="col-xs-3">
+					<input class="easyui-textbox" data-options="required:true"
+						type="text" name="email" />
+				</div>
+				<div class="col-xs-2 field">注册地址</div>
+				<div class="col-xs-3">
+					<input class="easyui-textbox" data-options="required:true"
+						type="text" name="registrationaddress" />
+				</div>
+			</div>
+						<div class="container line">
+							<div class="col-xs-2 field">详细地址</div>
+							<div class="col-xs-3">
+								<input class="easyui-textbox" data-options="required:true"
+									 type="text" name="address" />
+							</div>
+							<div class="col-xs-2 field">最后定位</div>
+							<div class="col-xs-3">
+								<input class="easyui-textbox" data-options="required:true"
+									type="text" name="describe" />
+							</div>
+						</div>
+			<!-- 				<p>档案信息</p> -->
+			<div id="tt" class="easyui-tabs" data-options="tools:'#tab-tools'" style="width:100%; height:65%">
+
+			</div>
+			<div id="tab-tools">
+				<a href="javascript:void(0)" class="easyui-linkbutton"
+					data-options="plain:true,iconCls:'icon-add'" onclick="addPanel()"></a>
+				<a href="javascript:void(0)" class="easyui-linkbutton"
+					data-options="plain:true,iconCls:'icon-remove'"
+					onclick="removePanel()"></a>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript">
+// 	var index = 0;
+// 	function addPanel(){
+// 		index++;
+// 		$('#tt').tabs('add',{
+// 			title: 'Tab'+index,
+// 			content: '<div style="padding:10px">Content'+index+'</div>',
+// 			content: document.getElementById("daxx").innerHTML,
+//             content:$('#daxx').html(),
+// 			closable: true
+// 		});
+// 	}
+// 	function removePanel(){
+// 		var tab = $('#tt').tabs('getSelected');
+// 		if (tab){
+// 			var index = $('#tt').tabs('getTabIndex', tab);
+// 			$('#tt').tabs('close', index);
+// 		}
+// 	}
+	    function reSearch(){
+	    	var telphone=$("#telphone").val()
+	    	var email=$("#email").val()
+	    	var address=$("#registrationaddress").val();
+			$("#list").datagrid({
+				url : '/api/sysmanage/menberlist?telphone='+telphone+'&email='+email+'&address='+address
+			});
+		}
+// 		var deleteCenter = function() {
+// 			// 判断是否选中一项
+// 			var row = $("#list").datagrid("getSelected");
+// 			if (row == null) {
+// 				$.messager.alert("警告", "请先选中一条记录进行删除！", "error");
+// 				return;
+// 			}
+// 			$.messager.confirm("提示", "您确定要删除" + row.name + "接入点吗？", function(data) {
+// 				if (data) {
+// 					$.post("/api/center/delete?id=" + row.centerid, function(data) {
+// 						if (data == "1") {
+// 							$('#list').datagrid('reload');
+// 						} else
+// 							$.messager.alert("错误", "接入点信息删除失败！", "error");
+// 					});
+// 				}
+// 			});
+// 		};
+    
+		var serchmenber = function() {
+			// 判断是否选中一项
+			$("#edit-form").form("clear");
+			var row = $("#list").datagrid("getSelected");
+			if (row == null) {
+				$.messager.alert("警告", "请先选中一条记录进行编辑！", "error");
+				return;
+			}
+			//获取信息
+			$("#edit-form").form("load", "/api/sysmanage/reget?id=" + row.userid);
+			$("#edit").dialog("open");
+            closeAllTabs("tt");
+			$.post("/api/sysmanage/regettab?id=" + row.userid, function(data) {
+				var arrtab=data.split(",");
+				var arrlen=arrtab.length-1;
+
+               if(arrlen>0)
+               { 
+            	   for (var i = 0; i < arrlen; i++) {
+//             		   if(i<1){
+//             			     $('#tt').tabs('add',{
+//             			    	    id:arrtab[i],
+//             						title: "档案"+i,
+//             		                content:'<iframe id="'+i+'"   src="../reguser/contain.html?fid='+row.userid+'&sid='+arrtab[i]+'" frameborder="0" style="height:100%;width:100%;"></iframe>',
+//             		                closable: false
+//             		 			});
+//             		   }
+//             		   else 
+//             			   {
+//             			   addPanel(i,arrtab[i]);
+//             			  }
+            		   addPanel(i,arrtab[i]);
+            		 }
+			   }
+              },
+			"text");
+			$('#tt').tabs({
+	            onSelect: function (title, index) {  //当更改选项时，获取选择面板更新子内容加载
+	                var selecttab = $('#tt').tabs('getSelected');  // 获取选择的面板
+	                var selectindex = $('#tt').tabs('getTabIndex', selecttab);
+	                var selectid = selecttab.panel('options').id;
+	                var i = selectindex;
+	                var ifrid = i + 1;
+	                $('#tt').tabs('update', {
+	                    tab: selecttab,
+	                    options: {
+// 	                    	cache:false,
+// 	                    	title:selectindex,
+	                    	content:'<iframe id="'+ifrid+'"  src="../reguser/contain.html?fid='+row.userid+'&sid='+selectid+'" frameborder="0" style="height:95%;width:100%;"></iframe>',
+	                    }
+	                });
+	            }
+	        });
+		       
+}   
+		//清空所有的Tab  
+	     function closeAllTabs(id){  
+	         var id = "#"+id  
+	         var tabs = $(id).tabs("tabs");
+	         if(tabs.length>0){  
+	         for(var i=0;i<tabs.length;i++){ 
+    	     $(id).tabs('remove',tabs[i].panel('options').title);  
+	         }  
+	       }  
+	     }   
+ 		function addPanel(i,tabsec){
+	     $('#tt').tabs('add',{
+	    	    id:tabsec,
+	    	    title: '档案'+i,
+//              content:'<iframe id="'+i+'"   src="../reguser/contain.html?fid='+tabf+'&sid='+tabs+'" frameborder="0" style="height:100%;width:100%;"></iframe>',
+//              cache:false,
+                closable: false
+ 			});
+           }
+ 		
+ 		
+// 		var editmenber = function() {
+// 			$("#edit-form").form("clear");
+// 			// 判断是否选中一项
+// 			var row = $("#list").datagrid("getSelected");
+// 			if (row == null) {
+// 				$.messager.alert("警告", "请先选中一条记录进行编辑！", "error");
+// 				return;
+// 			}
+// 			// 获取信息
+// 			$("#edit-form").form("load", "/api/sysmanage/reget?id=" + row.USERID);
+// 			$("#edit").dialog("open");
+// 		};
+// 		var addmenber = function() {
+// 			$("#edit-form").form("clear");
+// 			$("#edit").dialog("open");
+// 		};
+    var uName;
+	var pWord;
+	var id;
+function ReadCookie(){
+	var strCookie=document.cookie;
+	//将多cookie切割为多个名/值对
+	var arrCookie=strCookie.split(";");
+
+	//遍历cookie数组，处理每个cookie对
+	for(var i=0;i<arrCookie.length;i++){
+ 	var arr=arrCookie[i].split("=");
+    //对arr[0]格式化
+ 	mes = arr[0].replace( /^\s+|\s+$/g, "" );
+    //找到名称为uName、pWord、id的cookie，并返回它的值
+ 	if ("uName"==mes){
+ 		uName=arr[1];
+ 		continue;
+ 	}
+  	if("pWord"==mes){
+  		pWord=arr[1];
+  		continue;
+  	}
+  	if("id"==mes){
+  		id=arr[1];
+  		continue;
+  	}
+}
+	}
+		$(document).ready(function() {
+			ReadCookie();
+			var telphone;
+			var email="";
+			var address="";
+			if(id==0)
+				{telphone="";}
+			else
+				{telphone=uName;
+				}
+			$("#list").datagrid({
+				url:'/api/sysmanage/menberlist?telphone='+telphone+'&email='+email+'&address='+address,
+				method : 'GET',
+				pageSize : 20,
+				pagination : true,
+				fit : true,//自动大小
+				toolbar : "#toolbar",
+				rownumbers : true,//行号
+				singleSelect : true,
+// 				rowStyler : function(index, row) {
+// 					if (row.machinestatus == "正常")
+// 						return 'color:blue;';
+// 					if (row.machinestatus == "故障")
+// 						return 'color:red;';
+// 					return '';
+// 				},
+// 				onDblClickRow : function(rowIndex, rowData) {
+// 					alert(rowData.name);
+// 				}
+			});
+			//设置分页控件 
+			var p = $('#list').datagrid('getPager');
+			$(p).pagination({
+				pageSize : 20,//每页显示的记录条数，默认为10 
+				pageList : [ 10, 20, 50, 100 ],//可以设置每页记录条数的列表 
+				beforePageText : '第',//页数文本框前显示的汉字 
+				afterPageText : '页    共 {pages} 页',
+				displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+			});
+
+			$("#edit").dialog({
+				title : "编辑会员信息",
+				iconCls : "icon-edit",
+				maximizable : true,
+				width : "50%",
+				height : "70%",
+				modal : true,
+				buttons : [ {
+					text : "保存",
+					handler : function() {
+						$("#edit-form").submit();
+					}
+				}, {
+					text : "关闭",
+					handler : function() {
+						$("#edit").dialog("close");
+					}
+				} ]
+			});
+
+			$("#edit-form").form({
+				url : "/api/sysmanage/regmodify",
+				onSubmit : function() {
+					return $("#edit-form").form("validate");
+				},
+				success : function(data) {
+					if (data == "true") {
+						$('#list').datagrid('reload');
+						$("#edit").dialog("close");
+					} else
+						$.messager.alert("错误", "会员信息保存失败！", "error");
+				}
+			});
+		});
+		
+	</script>
+</body>
+</html>

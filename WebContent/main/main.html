@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html style="height:100%">
+<head>
+<meta charset="UTF-8">
+<title>安克后台管理首页</title>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.js"></script>
+	<style type="text/css">
+        .tabs-panels
+        {
+            height: 96%;
+            background-color:rgb(228,242,251);
+        }
+    </style>
+</head>
+<body style="height:96%"  onload="init()">
+	<div id="divIndex" class="easyui-layout" style="width: 100%;height:100%; margin-left: auto; margin-right: auto;">
+	<div id="divIndexTop" data-options="region:'north',split:false" style="height: 75px; background-color: #3477E2; overflow: hidden; ">
+        <img src="../css/images/head_bgx.png" style="height:75px" />
+        <div style="position: absolute; right: 80px; bottom: 0px; width: 200px; height: 35px; vertical-align:auto">
+            <span id="loginN" style="font-size:120%;margin:0px 0px 16px 0px;width:90px;height:35px">当前登录人：</span>&nbsp;&nbsp;
+        </div>
+        <div style="position: absolute; right: 5px; bottom: 1px; width: 70px; height: 35px; vertical-align:auto">
+                     <img src='../css/icons/outLogin.png' style="height:20px; width:20px; cursor:pointer" onclick="goLogin()" />
+        </div>
+    </div>
+		<div data-options="region:'west',title:'菜单导航',split:false" style="width: 180px; height:100%;border-width:0px 1px 0px 1px;">
+			<ul id="menuTree"></ul>
+		</div>
+		<div id="divIndexMain" data-options="region:'center'" style="background: #E4F2FB; height:100%;border:none">
+			<div id="tbs" class="easyui-tabs" style="height:100%;border:0px solid red" >
+				<div title="安克AMS" style="padding:0px;border:0px solid red;height:600px">
+				  <iframe src='../index.html' style='width:100%;height:99.5%;border:0px solid blue'></iframe>
+				 </div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	var uName;
+	var pWord;
+	var id;
+	function init() {
+		ReadCookie();
+		var mySpan = document.getElementById("loginN");
+		mySpan.innerHTML +=uName;
+		$("#menuTree").tree({
+			url : '/api/serchleft/selectleft?id='+id,
+			method : 'GET',
+			onClick : function(node) {
+				var urlen = parseInt(node.url.length);
+				if (urlen > 0) {
+					 newTab(node);
+				}
+			},
+
+			animate : true
+		});
+	
+	}
+	function ReadCookie(){
+	var strCookie=document.cookie;
+	//将多cookie切割为多个名/值对
+	var arrCookie=strCookie.split(";");
+
+	//遍历cookie数组，处理每个cookie对
+	for(var i=0;i<arrCookie.length;i++){
+ 	var arr=arrCookie[i].split("=");
+    //对arr[0]格式化
+ 	mes = arr[0].replace( /^\s+|\s+$/g, "" );
+    //找到名称为uName、pWord、id的cookie，并返回它的值
+ 	if ("uName"==mes){
+ 		uName=arr[1];
+ 		continue;
+ 	}
+  	if("pWord"==mes){
+  		pWord=arr[1];
+  		continue;
+  	}
+  	if("id"==mes){
+  		id=arr[1];
+  		continue;
+  	}
+}
+	}
+	
+// 	$(document).ready(function() {
+// 		$("#menuTree").tree({
+// 				url : '/api/serchleft/selectleft?='+id,
+// 				method : 'GET',
+// 				onClick : function(node) {
+// 					var urlen = parseInt(node.url.length);
+// 					if (urlen > 0) {
+// 						 newTab(node);
+// 					}
+// 				},
+
+// 				animate : true
+// 			});
+// 		});
+		//追加一个新的 Tab
+		 function newTab(treeNode) {
+		 var $tbs = $("#tbs");//获取tab容器
+		 
+		if ($tbs.tabs("exists", treeNode.text)) {
+		     //判断正在看的选项卡,是否和点击的树节点相同
+		     //获取 当前选项卡
+		     var currTab = $tbs.tabs('getSelected');
+		     //var currTab = $tbs.tabs('select', treeNode.text);
+		     //获取当前选项卡的标题
+		     var currTitle = currTab.panel('options').title;
+		     //拿当前标题 和 被点击的 树节点标题比较，如果相等，则要刷新
+		     if (currTitle == treeNode.text) { 
+		         $tbs.tabs('update', {
+		             tab: currTab,//要更新的标签
+		             options: {//设置更新标签要修改的属性
+		             content: newIframe(treeNode.url)//重新加载iframe
+		            }
+		         });
+		       
+		     }
+
+		     $tbs.tabs('select', treeNode.text);
+		  } else {
+		     $tbs.tabs('add', {
+		         title: treeNode.text,
+		         content: newIframe(treeNode.url),
+		         closable: true,
+		         fit: true
+		          });
+		    
+		      }
+		 } 
+		 function newIframe(url) {
+		   var arr=url.replace("admin/","");
+		   url ="../"+arr+".html";
+		   var ifrStr = "<iframe src='" + url + "' style='width:100%;height:99.5%;border:0px solid #000;'></iframe>";
+		   return ifrStr;
+		  	   }
+		 function goLogin() {
+	            $.messager.confirm('关闭管理系统', '是否确定要关闭管理系统？"', function (r) {
+	                if (r) {
+// 	                    window.opener = null;
+// 	                    window.open('../login.html');
+ 	                    window.location.href="../login.html";
+// 	                    window.close();
+	                }
+	            });
+	        }
+	</script>
+
+
+</body>
+</html>

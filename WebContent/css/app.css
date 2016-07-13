@@ -1,0 +1,19 @@
+.title {
+	text-align: center;
+	padding: 15px 0 15px 0;
+}
+
+.line {
+	padding: 5px 0 5px 0;
+}
+
+.hide {
+	display: none;
+}
+
+.field {
+	display: table-cell;
+	vertical-align: middle;
+	height: 22px;
+	text-align: right;
+}
