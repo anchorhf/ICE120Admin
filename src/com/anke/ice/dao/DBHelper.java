@@ -22,6 +22,7 @@ import com.anke.ice.dao.impl.oracle.CenterDaoImpl;
 import com.anke.ice.dao.impl.oracle.LeftDaoImpl;
 import com.anke.ice.dao.impl.oracle.LoginDaoImpl;
 import com.anke.ice.dao.impl.oracle.MenberDaoImpl;
+import com.anke.ice.dao.impl.oracle.VolunteerApplyImpl;
 import com.anke.ice.inject.Id;
 import com.anke.ice.inject.NotColumn;
 import com.anke.ice.inject.Table;
@@ -71,6 +72,15 @@ public class DBHelper {
 	public void setleftDao(LeftDao leftDao) {
 		this.leftDao = leftDao;
 	}
+	
+	//志愿者申请列表
+	private VolunteerApplyDao volunteerApplyDao;
+	public VolunteerApplyDao getVolunteerApplyDao() {
+		return volunteerApplyDao;
+	}
+	public void setVolunteerApplyDao(VolunteerApplyDao volunteerApplyDao) {
+		this.volunteerApplyDao = volunteerApplyDao;
+	}
 
 	private static DBHelper instance;
 
@@ -95,6 +105,10 @@ public class DBHelper {
 		}
 		if (instance.getMenberDao() == null) {
 			instance.setMenberDao(new MenberDaoImpl());
+			
+		}
+		if (instance.getVolunteerApplyDao() == null) {
+			instance.setVolunteerApplyDao(new VolunteerApplyImpl());
 			
 		}
 		return instance;
