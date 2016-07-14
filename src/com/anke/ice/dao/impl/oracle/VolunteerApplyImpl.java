@@ -51,8 +51,6 @@ public class VolunteerApplyImpl extends BaseDaoImpl implements VolunteerApplyDao
             
             sbSQL.append(" )t where t.rn>" + ((pageNum - 1) * pageSize) + " and t.rn<=" + pageNum * pageSize);
 			
-            //sbSQL.append(" select count(*) from #tempX t ");
-            //sbSQL.append(" drop table #tempX ");
             
             String sql = sbSQL.toString();
 			/*String countSql = "select count(*) from #temp t ";
