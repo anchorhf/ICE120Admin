@@ -41,13 +41,14 @@
 	<script type="text/javascript">
 	var uName;
 	var pWord;
-	var id;
+	var roleid;
+	var instituid;
 	function init() {
 		ReadCookie();
 		var mySpan = document.getElementById("loginN");
 		mySpan.innerHTML +=uName;
 		$("#menuTree").tree({
-			url : '/api/serchleft/selectleft?id='+id,
+			url : '/api/serchleft/selectleft?roleid='+roleid+'&instituid='+instituid,
 			method : 'GET',
 			onClick : function(node) {
 				var urlen = parseInt(node.url.length);
@@ -79,8 +80,12 @@
   		pWord=arr[1];
   		continue;
   	}
-  	if("id"==mes){
-  		id=arr[1];
+  	if("roleid"==mes){
+  		roleid=arr[1];
+  		continue;
+  	}
+	if("instituid"==mes){
+		instituid=arr[1];
   		continue;
   	}
 }

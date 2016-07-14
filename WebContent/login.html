@@ -53,20 +53,19 @@ document.createElement("footer");
 				return $("#edit-form").form("validate");
 			},
 			success : function(data) {
-  				if (data==0||data==1)
-  				{   
-    			   window.location.href="./main/main.html";
+				 alert(data);
+  				if (data!=null)
+  				{      var arrdata=data.split("/");
+  				       alert(arrdata);
     				   document.cookie="uName="+userName+"";
     				   document.cookie="pWord="+password+"";
-    				   document.cookie="id="+data+"";
+    				   document.cookie="roleid="+arrdata[0]+"";
+    				   document.cookie="instituid="+arrdata[1]+"";
+//     			       window.location.href="./main/main.html";
                 }  
-  				else if(data==2)
+  				else 
   				{$.messager.alert("错误", "用户名或密码不正确！", "error");
   				$('#edit-form').form('clear');	}
-				else if(data==3)
-  				{$.messager.alert("错误", "用户登录查询失败！", "error");
-  				$('#edit-form').form('clear');
-  				}
 	       }
 	     })
 	}
