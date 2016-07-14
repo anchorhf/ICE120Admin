@@ -53,6 +53,7 @@ public class VolunteerApplyImpl extends BaseDaoImpl implements VolunteerApplyDao
 			
             
             String sql = sbSQL.toString();
+            
 			/*String countSql = "select count(*) from #temp t ";
 			int total = runner.query(conn, countSql, new ResultSetHandler<Integer>() {
 
