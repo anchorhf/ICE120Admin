@@ -14,6 +14,6 @@ public interface LeftDao extends BaseDao {
 	 * @param id
 	 * @return
 	 */
-	public List<MYTreeNode> select(int id);
+	public List<MYTreeNode> select(String roleid,int instituid);
 
 }

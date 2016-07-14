@@ -22,8 +22,8 @@ public class SerchLeft {
 	 */
 	@GET
 	@Path("/selectleft")
-	public List<MYTreeNode> selectleft(@QueryParam("id") int id) {
-		return DBHelper.getInstance().getleftDao().select(id);
+	public List<MYTreeNode> selectleft(@QueryParam("roleid") int roleid,@QueryParam("instituid") String instituid) {
+		return DBHelper.getInstance().getleftDao().select(roleid,instituid);
 	}
 
 }	

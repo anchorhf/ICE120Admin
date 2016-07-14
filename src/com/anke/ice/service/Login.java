@@ -16,7 +16,7 @@ import com.anke.ice.model.CheckLogin;
 public class Login {
 	@POST
 	@Path("/loginse")
-	public int judgelogin(@BeanParam CheckLogin bean) {
+	public String judgelogin(@BeanParam CheckLogin bean) {
 		return DBHelper.getInstance().getLoginDao().judgelogin(bean);
 
 		}

@@ -7,6 +7,6 @@ public interface LoginDao extends BaseDao{
 	 * @param bean
 	 * @return
 	 */
-	public int judgelogin(CheckLogin bean);
+	public String judgelogin(CheckLogin bean);
 
 }

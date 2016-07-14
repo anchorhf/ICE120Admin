@@ -15,15 +15,10 @@ public class LeftDaoImpl extends BaseDaoImpl implements LeftDao {
 	private static final Logger logger = LoggerUtil.getInstance(LeftDaoImpl.class);
 	
 	@Override
-	public List<MYTreeNode> select(int id) {
+	public List<MYTreeNode> select(String roleid,int instituid) {
 		try {
-			String rec=null;
-			if(id==0)
-			{rec="ROLE_ADMIN";}
-		    else
-		    {rec="ROLE_USER";
-		    }
-			 List<serchleft> rows =runner.query(conn, "select * from T_MENU where ROLE LIKE '%"+rec+"%'", new BeanListHandler<serchleft>(serchleft.class));
+			 String[] sourceStrArray = roleid.split(",");
+			 List<serchleft> rows =runner.query(conn, "select * from T_MENU where ROLE LIKE '%"+sourceStrArray+"%'", new BeanListHandler<serchleft>(serchleft.class));
 			return ToTreeNodes(rows);
 		} catch (SQLException e) {
 			logger.error("查询左侧列表失败", e.getCause());
