@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 
 import com.anke.ice.IDConstant;
 import com.anke.ice.dao.impl.oracle.CenterDaoImpl;
+import com.anke.ice.dao.impl.oracle.DictionaryImpl;
 import com.anke.ice.dao.impl.oracle.LeftDaoImpl;
 import com.anke.ice.dao.impl.oracle.LoginDaoImpl;
 import com.anke.ice.dao.impl.oracle.MenberDaoImpl;
@@ -81,6 +82,15 @@ public class DBHelper {
 	public void setVolunteerApplyDao(VolunteerApplyDao volunteerApplyDao) {
 		this.volunteerApplyDao = volunteerApplyDao;
 	}
+	
+	//公用字典数据
+	private DictionaryDao dictionaryDao;
+	public DictionaryDao getDictionaryDao() {
+		return dictionaryDao;
+	}
+	public void setDictionaryDao(DictionaryDao dictionaryDao) {
+		this.dictionaryDao = dictionaryDao;
+	}
 
 	private static DBHelper instance;
 
@@ -109,6 +119,10 @@ public class DBHelper {
 		}
 		if (instance.getVolunteerApplyDao() == null) {
 			instance.setVolunteerApplyDao(new VolunteerApplyImpl());
+			
+		}
+		if (instance.getDictionaryDao() == null) {
+			instance.setDictionaryDao(new DictionaryImpl());
 			
 		}
 		return instance;

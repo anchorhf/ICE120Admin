@@ -110,7 +110,7 @@ public class WhereClauseUtility {
     /// <param name="sbWhereClause"></param>
     public static void AddIntEqual(String columnName, int valueStr, StringBuilder sbWhereClause)
     {
-        if (valueStr > 0)
+        if (valueStr >= 0)
         {
             if (sbWhereClause.length() > 0)
                 sbWhereClause.append(" AND ").append(columnName).append(" = ").append(String.valueOf(valueStr)).append(" ");

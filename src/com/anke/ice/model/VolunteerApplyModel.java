@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.ws.rs.FormParam;
 
-import com.anke.ice.inject.Id;
 import com.anke.ice.inject.Table;
 
 @Table(tableName = "T_VOLUNTEER_APPLY")
@@ -43,6 +42,8 @@ public class VolunteerApplyModel {
 	private String CHECKTIME;
 	@FormParam("CHECKPERSON")
 	private String CHECKPERSON;
+	@FormParam("AUDITRESULT")
+	private String AUDITRESULT;
 	
 
 	public int getID() {
@@ -176,5 +177,77 @@ public class VolunteerApplyModel {
 	}
 	public void setCHECKPERSON(String CHECKPERSON) {
 		this.CHECKPERSON = CHECKPERSON;
+	}
+	
+	public String getAUDITRESULT() {
+		return AUDITRESULT;
+	}
+	public void setAUDITRESULT(String AUDITRESULT) {
+		this.AUDITRESULT = AUDITRESULT;
+	}
+	
+	
+	//拓展志愿者表
+	@FormParam("NAME")
+	private String NAME;
+	public String getNAME() {
+		return NAME;
+	}
+	public void setNAME(String NAME) {
+		this.NAME = NAME;
+	}
+
+	@FormParam("SEX")
+	private String SEX;
+	public String getSEX() {
+		return SEX;
+	}
+	public void setSEX(String SEX) {
+		this.SEX = SEX;
+	}
+
+	@FormParam("BIRTHDAY")
+	private String BIRTHDAY;
+	public String getBIRTHDAY() {
+		return BIRTHDAY;
+	}
+	public void setBIRTHDAY(String BIRTHDAY) {
+		this.BIRTHDAY = BIRTHDAY;
+	}
+	
+	@FormParam("IDCARDNO")
+	private String IDCARDNO;
+	public String getIDCARDNO() {
+		return IDCARDNO;
+	}
+	public void setIDCARDNO(String IDCARDNO) {
+		this.IDCARDNO = IDCARDNO;
+	}
+	
+	@FormParam("SPECIALITY")
+	private String SPECIALITY;
+	public String getSPECIALITY() {
+		return SPECIALITY;
+	}
+	public void setSPECIALITY(String SPECIALITY) {
+		this.SPECIALITY = SPECIALITY;
+	}
+	
+	@FormParam("ISVALID")
+	private String ISVALID;
+	public String getISVALID() {
+		return ISVALID;
+	}
+	public void setISVALID(String ISVALID) {
+		this.ISVALID = ISVALID;
+	}
+	
+	@FormParam("CONTENT")
+	private String CONTENT;//申请附近内容
+	public String getCONTENT() {
+		return CONTENT;
+	}
+	public void setCONTENT(String CONTENT) {
+		this.CONTENT = CONTENT;
 	}
 }
