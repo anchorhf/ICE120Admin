@@ -10,15 +10,48 @@ import com.anke.ice.dao.LeftDao;
 import com.anke.ice.model.serchleft;
 import com.anke.ice.model.MYTreeNode;
 import com.anke.ice.util.LoggerUtil;
+import com.anke.ice.util.WhereClauseUtility;
 
 public class LeftDaoImpl extends BaseDaoImpl implements LeftDao {
 	private static final Logger logger = LoggerUtil.getInstance(LeftDaoImpl.class);
 	
 	@Override
-	public List<MYTreeNode> select(String roleid,int instituid) {
-		try {
-			 String[] sourceStrArray = roleid.split(",");
-			 List<serchleft> rows =runner.query(conn, "select * from T_MENU where ROLE LIKE '%"+sourceStrArray+"%'", new BeanListHandler<serchleft>(serchleft.class));
+	public List<MYTreeNode> select(String roleid) {
+		try { 
+			  String[] sourceStrArray=roleid.split(",");
+			  List<serchleft> rows=null;
+			 switch(sourceStrArray.length)
+			 {
+			 case 1:{ StringBuilder sbSQL= new StringBuilder();
+			          sbSQL.append(" select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[0]+"");
+				      String sql = sbSQL.toString();
+//						System.out.println(sql);
+			          rows =runner.query(conn,sql, new BeanListHandler<serchleft>(serchleft.class));
+			   break; }
+			 
+			 case 2:{ StringBuilder sbSQL= new StringBuilder();
+			  sbSQL.append(" select menuid,label,parentmenuid,url,role from (");
+			  sbSQL.append(" (select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[0]+" )");
+			  sbSQL.append(" union ");
+			  sbSQL.append(" (select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[1]+" ))");
+			  String sql = sbSQL.toString();
+//				System.out.println(sql);
+	          rows =runner.query(conn,sql, new BeanListHandler<serchleft>(serchleft.class));
+			   break; }
+			 
+			 case 3:{ StringBuilder sbSQL= new StringBuilder();
+			  sbSQL.append(" select menuid,label,parentmenuid,url,role from (");
+			  sbSQL.append(" (select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[0]+" )");
+			  sbSQL.append(" union ");
+			  sbSQL.append(" (select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[1]+" )");
+			  sbSQL.append(" union ");
+			  sbSQL.append(" (select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[2]+" ))");
+			  String sql = sbSQL.toString();
+//				System.out.println(sql);
+	          rows =runner.query(conn,sql, new BeanListHandler<serchleft>(serchleft.class));
+			   break; }
+			 }   
+	//		 List<serchleft> rows =runner.query(conn, "select * from T_MENU where ROLE LIKE '%"+sourceStrArray+"%'", new BeanListHandler<serchleft>(serchleft.class));
 			return ToTreeNodes(rows);
 		} catch (SQLException e) {
 			logger.error("查询左侧列表失败", e.getCause());

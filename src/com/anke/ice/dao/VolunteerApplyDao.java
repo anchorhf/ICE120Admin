@@ -18,7 +18,7 @@ public interface VolunteerApplyDao extends BaseDao {
 	 */
 	public Map<String, Object> findVolunteerApply(int pageNum, int pageSize, String volunteer, String are
 			,String institution,int volunteertype,int applystate,String applybegintime
-			,String applyendtime,String skill);
+			,String applyendtime,String skill,int institutionid);
 
 	public int updateApplyState(int id,int applyState,int volunteerid,String uname,String auditresult);
 	public VolunteerApplyModel getVolunteerAndApply(int id);

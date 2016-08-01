@@ -23,6 +23,7 @@ import com.anke.ice.dao.impl.oracle.DictionaryImpl;
 import com.anke.ice.dao.impl.oracle.LeftDaoImpl;
 import com.anke.ice.dao.impl.oracle.LoginDaoImpl;
 import com.anke.ice.dao.impl.oracle.MenberDaoImpl;
+import com.anke.ice.dao.impl.oracle.InstitutionImpl;
 import com.anke.ice.dao.impl.oracle.VolunteerApplyImpl;
 import com.anke.ice.inject.Id;
 import com.anke.ice.inject.NotColumn;
@@ -83,6 +84,15 @@ public class DBHelper {
 		this.volunteerApplyDao = volunteerApplyDao;
 	}
 	
+
+	private InstitutionDao institutionDao;
+	public InstitutionDao getInstitutionDao() {
+		return institutionDao;
+	}
+	public void setInstitutionDao(InstitutionDao institutionDao) {
+		this.institutionDao = institutionDao;
+	}
+	
 	//公用字典数据
 	private DictionaryDao dictionaryDao;
 	public DictionaryDao getDictionaryDao() {
@@ -120,6 +130,10 @@ public class DBHelper {
 		if (instance.getVolunteerApplyDao() == null) {
 			instance.setVolunteerApplyDao(new VolunteerApplyImpl());
 			
+		}
+
+		if (instance.getInstitutionDao() == null) {
+			instance.setInstitutionDao(new InstitutionImpl());
 		}
 		if (instance.getDictionaryDao() == null) {
 			instance.setDictionaryDao(new DictionaryImpl());

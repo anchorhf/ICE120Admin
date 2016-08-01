@@ -35,9 +35,10 @@ public class VolunteerApplyService {
 			 , @FormParam("volunteer") String volunteer, @FormParam("are") String are,@FormParam("institution") String institution
 			 ,@FormParam("volunteertype") int volunteertype,@FormParam("applystate") int applystate
 			 ,@FormParam("applybegintime") String applybegintime,@FormParam("applyendtime") String applyendtime
-			 ,@FormParam("skill") String skill) {
+			 ,@FormParam("skill") String skill,@DefaultValue("-1") @FormParam("institutionid") int institutionid) {
 		return DBHelper.getInstance().getVolunteerApplyDao().findVolunteerApply(pageNum, pageSize, volunteer, are
-				, institution, volunteertype, applystate, applybegintime, applyendtime,skill);
+				, institution, volunteertype, applystate, applybegintime
+				, applyendtime,skill,institutionid);
 	}
 	
 	/**

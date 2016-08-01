@@ -30,8 +30,8 @@
 				<th data-options="field:'applystatename' ,width: '6%'">申请状态</th>
 				<th data-options="field:'auditresult' ,width: '11%'">审核描述</th>
 				<th data-options="field:'applytime' ,width: '11%'">申请时刻</th>
-				<th data-options="field:'validperiod' ,width: '11%'">有效期限</th>
 				<th data-options="field:'checktime' ,width: '11%'">审核时刻</th>
+				<th data-options="field:'validperiod' ,width: '11%'">有效期限</th>
 				<th data-options="field:'checkperson' ,width: '5%'">审核人</th>
 			</tr>
 		</thead>
@@ -51,10 +51,12 @@
 					<td style="width: 12%"><input class="easyui-textbox"
 						type="text" style="width: 130px" id="area"></td>
 
-					<td align="right" style="width: 8%">申请机构：</td>
-					<td style="width: 12%"><input class="easyui-textbox"
-						type="text" style="width: 120px" id="institution"></td>
-					<td><lable id="uName" type="hidden"></lable></td>
+					<td align="right" style="width: 7%">申请机构：</td>
+					<td style="width: 12%"><select class="easyui-combobox" style="width: 140px"
+						id="institution" data-options="">
+					</select></td>
+					<td ><lable id="uName" style="visibility:hidden;" /></td>
+					<td><lable id="roleid" style="visibility:hidden;" /></td>
 				</tr>
 				<tr>
 					<td align="right">志愿者类型：</td>
@@ -75,18 +77,12 @@
 					</select></td>
 					<td align="right">技能：</td>
 					<td><input class="easyui-textbox" type="text"
-						style="width: 120px" id="skill"></td>
-					<td>&nbsp;</td>
-
-					<td><a href="javascript:void(0)" id="btnSearch"
-						class="easyui-linkbutton" onclick="reSearch()"
+						style="width: 140px" id="skill"></td>
+					<td>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" id="btnSearch" class="easyui-linkbutton" onclick="reSearch()"
 						data-options="iconCls:'icon-search'">查询</a></td>
+					<td><lable id="institutionid" style="visibility:hidden;" /></td>
+					
 				</tr>
-				<!-- <tr>
-                <td colspan=8>
-                                               注：<span style="color:darkgreen">审核通过</span>&nbsp;|&nbsp;<span style="color:red">已拒绝的申领单</span>&nbsp;|&nbsp;<span style="color:gray">审核不通过</span>
-                </td>
-                </tr> -->
 			</table>
 		</div>
 		<div>
@@ -97,12 +93,13 @@
 				plain="true" onclick="colunteercheck(2)">审核不通过</a> |  -->
 			<a href="javascript:void(0)" class="easyui-linkbutton" id="btnLook"
 				iconCls="icon-search" plain="true" onclick="editVolunteer()">查看&审核</a>
+				<lable id="ifCheck" style="visibility:hidden;" />
 		</div>
 	</div>
 
 	<div id="edit" class="easyui-dialog" title="查看&审核志愿者信息"
 		data-options="modal:true,collapsible:false,minimizable:false,maximizable:false,closed:true,resizable:false,iconCls:'icon-search'"
-		style="width: 40%; height: 480px; padding: 10px;">
+		style="width: 42%; height: 480px; padding: 10px;">
 		<form id="edit-form" method="post">
 			<table id="edit-table" border="0" cellpadding="0" cellspacing="0"
 				style="width: 100%;">
@@ -188,9 +185,9 @@
 				</tr>
 				<tr>
 					<td align="right">审核描述：</td>
-					<td colspan="3" style="height: 25px;"><input
-						class="easyui-textbox" type="text" id="txtauditresult"
-						name="auditresult" data-options="width: '88%',validType:'length[0,200]'" /></td>
+					<td colspan="3" style="height: 25px;">
+					<input class="easyui-textbox" type="text" id="txtauditresult"
+						name="auditresult" data-options="width: '92%',validType:'length[0,200]'" /></td>
 				</tr>
 				<tr>
 					<td align="right">相关材料：</td>
@@ -234,49 +231,40 @@
 	</div>
 
 	<script type="text/javascript">
-		//#region 为Combobox增加--请选择--
-		function EUIcombobox(jqS, o) {
-			$.ajax({
-				type : "POST",
-				async : false,
-				url : o.url,
-				dataType : "JSON",
-				success : function(data1, textStatus, jqXHR) {
-					o.data = o.OneOption.concat(data1);
-					delete o.url;
-					delete o.OneOption;
-					$(jqS).combobox(o);
-				},
-				error : function(XMLHttpRequest, textStatus, errorThrown) {
-					alert("获取字典数据失败！可能是已经超时，请重新登录！");
-				}
-			});
-		}
-		//#endregion
-
-		//点击图片打开新窗口显示原始图片
-		var openBigImg = function(value) {
-			window.open(value);
-		}
-
-
-		//查询
+		//点击查询按钮
 		var reSearch = function() {
+			//alert("volunteertype"+$('#volunteertype').combobox('getValue'));
+			//alert("applystate"+$('#applystate').combobox('getValue'));
+			//alert("institutionid"+$('#institutionid').html());
 			$("#volunteerlist").datagrid({
 				pageNumber : 1,
 				queryParams : {
 					applybegintime : $("#startTime").datetimebox('getValue'),
 					applyendtime : $('#endTime').datetimebox('getValue'),
 					area : $('#area').val(),
-					institution : $('#institution').val(),
+					institution :  $('#institution').combobox('getValue'),
 					volunteertype : $('#volunteertype').combobox('getValue'),
 					volunteer : $('#volunteer').val(),
 					applystate : $('#applystate').combobox('getValue'),
-					skill:$('#skill').val()
+					skill : $('#skill').val(),
+					institutionid : $('#institutionid').html()
 				}
 			});
+			setdatagridPager();
 		};
 
+		//设置分页控件 
+		var setdatagridPager= function(){
+
+			var p = $('#volunteerlist').datagrid('getPager');
+			$(p).pagination(
+					{
+						beforePageText : '第',//页数文本框前显示的汉字 
+						afterPageText : '页    共 {pages} 页',
+						displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+					});
+		}
+		
 		//点击志愿者审核按钮
 		var editVolunteer = function() {
 			$("#edit-form").form("clear");
@@ -303,7 +291,7 @@
 			cyclicLoadImg(row.id);
 
 		};
-		
+
 		//动态加载图片
 		var cyclicLoadImg = function(id) {
 
@@ -330,95 +318,96 @@
 			img9.src = "";
 
 			$.ajax({
-				url : '/api/VolunteerApply/getAttachment?applyid=' + id,
-				type : "GET",
-				success : function(imglist) {
-					if (imglist != null) {
-						for (var i = 0; i < imglist.length; i++) {
-							var img = document.getElementById("img" + i);
-							/* var img0 = document.getElementById("img0");
-							var img1 = document.getElementById("img1");
-							var img2 = document.getElementById("img2");
-							var img3 = document.getElementById("img3");
-							var img4 = document.getElementById("img4");
-							var img5 = document.getElementById("img5"); */
-							var link = imglist[i].attachmenturl;//获取志愿者附件URL地址
+						url : '/api/VolunteerApply/getAttachment?applyid=' + id,
+						type : "GET",
+						success : function(imglist) {
+							if (imglist != null) {
+								for (var i = 0; i < imglist.length; i++) {
+									var img = document
+											.getElementById("img" + i);
+									/* var img0 = document.getElementById("img0");
+									var img1 = document.getElementById("img1");
+									var img2 = document.getElementById("img2");
+									var img3 = document.getElementById("img3");
+									var img4 = document.getElementById("img4");
+									var img5 = document.getElementById("img5"); */
+									var link = imglist[i].attachmenturl;//获取志愿者附件URL地址
 
-							var link0, link1, link2, link3, link4, link5,link6,link7,link8,link9;
+									var link0, link1, link2, link3, link4, link5, link6, link7, link8, link9;
 
-							if (i == 0) {
-								link0 = link;
-							}
-							if (i == 1) {
-								link1 = link;
-							}
-							if (i == 2) {
-								link2 = link;
-							}
-							if (i == 3) {
-								link3 = link;
-							}
-							if (i == 4) {
-								link4 = link;
-							}
-							if (i == 5) {
-								link5 = link;
-							}
-							if (i == 6) {
-								link6 = link;
-							}
-							if (i == 7) {
-								link7 = link;
-							}
-							if (i == 8) {
-								link8 = link;
-							}
-							if (i == 9) {
-								link9 = link;
-							}
+									if (i == 0) {
+										link0 = link;
+									}
+									if (i == 1) {
+										link1 = link;
+									}
+									if (i == 2) {
+										link2 = link;
+									}
+									if (i == 3) {
+										link3 = link;
+									}
+									if (i == 4) {
+										link4 = link;
+									}
+									if (i == 5) {
+										link5 = link;
+									}
+									if (i == 6) {
+										link6 = link;
+									}
+									if (i == 7) {
+										link7 = link;
+									}
+									if (i == 8) {
+										link8 = link;
+									}
+									if (i == 9) {
+										link9 = link;
+									}
 
-							img.src = link;
-							img0.onclick = function() {
-								openBigImg(link0);
+									img.src = link;
+									img0.onclick = function() {
+										openBigImg(link0);
+									}
+									img1.onclick = function() {
+										openBigImg(link1);
+									}
+									img2.onclick = function() {
+										openBigImg(link2);
+									}
+									img3.onclick = function() {
+										openBigImg(link3);
+									}
+									img4.onclick = function() {
+										openBigImg(link4);
+									}
+									img5.onclick = function() {
+										openBigImg(link5);
+									}
+									img6.onclick = function() {
+										openBigImg(link6);
+									}
+									img7.onclick = function() {
+										openBigImg(link7);
+									}
+									img8.onclick = function() {
+										openBigImg(link8);
+									}
+									img9.onclick = function() {
+										openBigImg(link9);
+									}
+
+								}
+							} else {
+								$.messager.alert("错误", "志愿者相关资料获取失败！", "error");
+
 							}
-							img1.onclick = function() {
-								openBigImg(link1);
-							}
-							img2.onclick = function() {
-								openBigImg(link2);
-							}
-							img3.onclick = function() {
-								openBigImg(link3);
-							}
-							img4.onclick = function() {
-								openBigImg(link4);
-							}
-							img5.onclick = function() {
-								openBigImg(link5);
-							}
-							img6.onclick = function() {
-								openBigImg(link6);
-							}
-							img7.onclick = function() {
-								openBigImg(link7);
-							}
-							img8.onclick = function() {
-								openBigImg(link8);
-							}
-							img9.onclick = function() {
-								openBigImg(link9);
-							}
+						},
+						error : function() {
 
 						}
-					} else {
-						$.messager.alert("错误", "志愿者相关资料获取失败！", "error");
-
-					}
-				},
-				error : function() {
-
-				}
-			});
+					});
 			/* var img5=document.getElementById("img5");
 			var link="http://app.anke.net.cn:8080/120/file/image/user_face/201512290855120248b.jpg";
 			img5.src="http://app.anke.net.cn:8080/120/file/image/user_face/201512290855120248b.jpg";
@@ -427,7 +416,11 @@
 				openBigImg(link);
 			} */
 		}
-
+		//点击图片打开新窗口显示原始图片
+		var openBigImg = function(value) {
+			window.open(value);
+		}
+		
 		//志愿者审核
 		var colunteercheck = function(state) {
 			// 判断是否选中一项
@@ -442,15 +435,9 @@
 			} else {
 				resultName = "审核不通过";
 			}
-			$.messager.confirm("提示", "您确定要对志愿者：" + row.volunteer + "-"
-					+ resultName + "？", function(data) {
+			$.messager.confirm("提示", "您确定要对志愿者：" + row.volunteer + "(申请："+row.institution
+					+")"+ resultName + "？", function(data) {
 				if (data) {
-					/* $.post("/api/VolunteerApply/updateapplystate?id=" + row.id+"&applyState="+state+"&volunteerid="+row.volunteerid, function(data) {
-						if (data == "1") {
-							$('#volunteerlist').datagrid('reload');
-						} else
-							$.messager.alert("错误", "志愿者审核失败！", "error");
-					}); */
 					$.ajax({
 						url : '/api/VolunteerApply/updateapplystate',
 						type : "POST",
@@ -480,10 +467,37 @@
 				}
 			});
 		};
+		
+		//根据菜单ID获取登录人是否有对应权限（例如：menuid=68为审核志愿者）
+		var ifRole = function(menuid){
+			$.ajax({
+						url : '/api/Dictionary/getIFRole',
+						type : "POST",
+						data : {
+							roleid : $('#roleid').html(),
+							menuid : menuid
+						},
+						success : function(msg) {
+							if (msg == 1) {
+								$('#ifCheck').html(1);
+							} else {
+								$('#ifCheck').html(0);
+							}
+						},
+						error : function() {
+							$.messager.alert("错误", "获取审核权限失败！","error");
 
+						}
+					});
+		}
+
+		
+
+		//获取cookie内的人员信息
 		var uName;
 		var pWord;
-		var id;
+		var roleid;//角色串
+		var instituid;//机构ID
 		function ReadCookie() {
 			var strCookie = document.cookie;
 			//将多cookie切割为多个名/值对
@@ -503,19 +517,27 @@
 					pWord = arr[1];
 					continue;
 				}
-				if ("id" == mes) {
-					id = arr[1];
+				if ("roleid" == mes) {
+					roleid = arr[1];
+					continue;
+				}
+				if ("instituid" == mes) {
+					instituid = arr[1];
 					continue;
 				}
 			}
 		}
+
 		//加载页面执行
-		$(document)
-				.ready(
+		$(document).ready(
 						function() {
 							ReadCookie();
 							$('#uName').html(uName);//赋值登录名给隐藏文本
+							$('#institutionid').html(instituid);//赋值机构编码给隐藏文本
+							$('#roleid').html(roleid);//赋值角色编码给隐藏文本
 
+							ifRole(68);//判断是否可以审核志愿者
+							
 							var date = new Date();
 							var day = 30;
 							var hour = 1;
@@ -534,7 +556,7 @@
 							//alert(startTime);
 							$('#startTime').datetimebox('setValue', startTime);
 							$('#endTime').datetimebox('setValue', endTime);
-                            
+							
 							//#region 志愿者类型
 							$("#volunteertype").combobox(
 											{
@@ -550,16 +572,33 @@
 
 											});
 							//#endregion 
-							$('#volunteertype').combobox('setValue','-1');//加载赋值
+							$('#volunteertype').combobox('setValue', '-1');//加载赋值
 							//$('#applystate').combobox('setValue','0');//审核状态--默认待审核
+                            
+							//#region 申请机构
+							$("#institution").combobox(
+											{
+												url : '/api/Dictionary/get?table=T_INSTITUTION&typeCode=volunteertype&isAddSelect=1',
+												valueField : 'name',
+												textField : 'name',
+												method : "GET",
+												//editable : false,
+												//panelHeight : 'auto',
+												onLoadSuccess : function() {
+													$('#institution').combobox('setValue','--请选择--');
+												}
+
+											});
+							//#endregion 
 							
 
-
+							//列表加载
 							$("#volunteerlist").datagrid(
 									{
 										url : '/api/VolunteerApply/list',
 										method : 'POST',
-										pageSize : 20,
+										pageSize : 15,//每页显示的记录条数，默认为10 
+										pageList : [ 10, 15, 20, 30 ],//可以设置每页记录条数的列表 
 										pagination : true,
 										fit : true,//自动大小
 										rownumbers : true,//行号
@@ -568,11 +607,12 @@
 											applybegintime : $("#startTime").datetimebox('getValue'),
 											applyendtime : $('#endTime').datetimebox('getValue'),
 											area : $('#area').val(),
-											institution : $('#institution').val(),
+											institution :  $('#institution').combobox('getValue'),
 											volunteertype : $('#volunteertype').combobox('getValue'),
 											volunteer : $('#volunteer').val(),
 											applystate : $('#applystate').combobox('getValue'),
-											skill:$('#skill').val()
+											skill : $('#skill').val(),
+											institutionid : $('#institutionid').html()
 										},
 										toolbar : "#toolbar",
 										rowStyler : function(index, row) {
@@ -586,35 +626,29 @@
 											} */
 											return '';
 										},
-										onDblClickRow : function(rowIndex,
-												rowData) {
+										onDblClickRow : function(rowIndex,rowData) {
 
 										},
 										onSelect : function(index, row) {
-											if (row.applystate == "0") {
-												$('#btnCheckPass').linkbutton(
-														'enable');
-												$('#btnCheckNotPass')
-														.linkbutton('enable');
+											if (row.applystate == "0" && $('#ifCheck').html()==1) {
+												$('#btnCheckPass').linkbutton('enable');
+												$('#btnCheckNotPass').linkbutton('enable');
 											} else {
-												$('#btnCheckPass').linkbutton(
-														'disable');
-												$('#btnCheckNotPass')
-														.linkbutton('disable');
+												$('#btnCheckPass').linkbutton('disable');
+												$('#btnCheckNotPass').linkbutton('disable');
 											}
 										}
 									});
-							//设置分页控件 
-							var p = $('#volunteerlist').datagrid('getPager');
-							$(p).pagination(
-											{
-												pageSize : 15,//每页显示的记录条数，默认为10 
-												pageList : [ 10, 15, 20, 30 ],//可以设置每页记录条数的列表 
-												beforePageText : '第',//页数文本框前显示的汉字 
-												afterPageText : '页    共 {pages} 页',
-												displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
-											});
 
+							setdatagridPager();//设置分页控件
+							 /* //设置分页控件 
+							 var p = $('#volunteerlist').datagrid('getPager');
+							$(p).pagination(
+									{
+										beforePageText : '第',//页数文本框前显示的汉字 
+										afterPageText : '页    共 {pages} 页',
+										displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+									});  */ 
 						});
 	</script>
 </body>

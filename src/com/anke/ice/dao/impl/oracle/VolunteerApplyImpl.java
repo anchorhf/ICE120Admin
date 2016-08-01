@@ -1,12 +1,15 @@
 package com.anke.ice.dao.impl.oracle;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.log4j.Logger;
@@ -26,7 +29,7 @@ public class VolunteerApplyImpl extends BaseDaoImpl implements VolunteerApplyDao
 	@Override
 	public Map<String, Object> findVolunteerApply(int pageNum, int pageSize, String volunteer, String are
 			,String institution, int volunteertype, int applystate, String applybegintime, String applyendtime
-			,String skill) {
+			,String skill,int institutionid) {
 		Map<String, Object> page = new HashMap<String, Object>();
 		try {
 
@@ -35,11 +38,15 @@ public class VolunteerApplyImpl extends BaseDaoImpl implements VolunteerApplyDao
 			sbSQL.append(" ,INSTITUTIONID,INSTITUTION,TYPEID,VOLUNTEERTYPE,AUDITRESULT");
 			sbSQL.append(" ,VALIDPERIOD,APPLYSTATE,APPLYSTATENAME,SKILL,APPLYTIME,CHECKTIME,CHECKPERSON,rn");
 			sbSQL.append(" from (");
+			sbSQL.append(" select ID,VOLUNTEERID,VOLUNTEER,AREAID,AREA");
+			sbSQL.append(" ,INSTITUTIONID,INSTITUTION,TYPEID,VOLUNTEERTYPE,AUDITRESULT");
+			sbSQL.append(" ,VALIDPERIOD,APPLYSTATE,APPLYSTATENAME,SKILL,APPLYTIME,CHECKTIME,CHECKPERSON,rownum rn");
+			sbSQL.append(" from (");
 			sbSQL.append(" select tva.ID,tva.USERID as VOLUNTEERID,tv.NAME as VOLUNTEER,AREAID,ta.NAME as AREA");
 			sbSQL.append(" ,INSTITUTIONID,ti.NAME as INSTITUTION,TYPEID,tvt.NAME as VOLUNTEERTYPE");
 			sbSQL.append(" ,VALIDPERIOD,APPLYSTATE");
 			sbSQL.append(" ,(case when APPLYSTATE=0 then '待审核' when APPLYSTATE=1 then '审核通过' else '审核不通过' end) as APPLYSTATENAME");
-			sbSQL.append(" ,SKILL,APPLYTIME,CHECKTIME,CHECKPERSON,AUDITRESULT,rownum rn");
+			sbSQL.append(" ,SKILL,APPLYTIME,CHECKTIME,CHECKPERSON,AUDITRESULT");
 			sbSQL.append(" from T_VOLUNTEER_APPLY tva");
 			sbSQL.append(" left join T_VOLUNTEER tv on tva.USERID=tv.USERID");
 			sbSQL.append(" left join T_AREA ta on tva.AREAID=ta.ID");
@@ -54,25 +61,42 @@ public class VolunteerApplyImpl extends BaseDaoImpl implements VolunteerApplyDao
 			WhereClauseUtility.AddStringLike("tva.SKILL", skill, sbSQL);// 技能
 			WhereClauseUtility.AddIntEqual("tva.TYPEID", volunteertype, sbSQL);// 志愿者类型
 			WhereClauseUtility.AddIntEqual("tva.APPLYSTATE", applystate, sbSQL);// 申请状态
+			//如果不是超级管理员，就查询本机构和合作机构的信息
+			if(institutionid!=-2){
+				sbSQL.append(" and (tva.APPLYSTATE=1 or tva.institutionid="+institutionid+")");
+				sbSQL.append(" and (tva.institutionid="+institutionid+" or INSTR((select ',' || wm_concat(tic.institutionid)  || ','");
+				sbSQL.append("     from T_INSTITUTION ti");
+				sbSQL.append("     left join T_INSTITUTION_CENTER tic on ti.centerid = tic.centerid");
+				sbSQL.append("     where ti.id="+institutionid+"), ',' ||  TRIM(TO_CHAR(tva.INSTITUTIONID))  || ',')>0)");
+			}
 			/*if(applystate!=-1){
 				sbSQL.append(" and tva.APPLYSTATE="+applystate);
 			}*/
 			sbSQL.append(" order by tva.APPLYTIME DESC");
 
-			sbSQL.append(" )t where t.rn>" + ((pageNum - 1) * pageSize) + " and t.rn<=" + pageNum * pageSize);
+			sbSQL.append(" )t");
+			sbSQL.append(" )tt");
+			StringBuilder sbSQLR = new StringBuilder();
+			sbSQLR.append(sbSQL +" where tt.rn>" + ((pageNum - 1) * pageSize) + " and tt.rn<=" + pageNum * pageSize);
 
-			String sql = sbSQL.toString();
+			String sql = sbSQLR.toString();
+			
+			StringBuilder sbSQLT = new StringBuilder();//取总共条数
+			sbSQLT.append("select count(*) from ("+sbSQL+")ttt");
+			String countSql = sbSQLT.toString();
+			int total = runner.query(conn, countSql, new ResultSetHandler<Integer>() {
+				@Override
+				public Integer handle(ResultSet rs) throws SQLException {
+					if (rs.next())
+						return rs.getInt(1);
+					else
+						return 1;
+				}
+			});
 
-			/*
-			 * String countSql = "select count(*) from #temp t "; int total =
-			 * runner.query(conn, countSql, new ResultSetHandler<Integer>() {
-			 * 
-			 * @Override public Integer handle(ResultSet rs) throws SQLException
-			 * { if (rs.next()) return rs.getInt(1); else return 1; } });
-			 */
 			List<VolunteerApplyModel> rows = runner.query(conn, sql,
 					new BeanListHandler<VolunteerApplyModel>(VolunteerApplyModel.class));
-			int total = rows.size();
+			
 			page.put("total", total);
 			page.put("rows", rows);
 			page.put("pages", (total % pageSize != 0 ? total / pageSize + 1 : total / pageSize));
@@ -90,15 +114,20 @@ public class VolunteerApplyImpl extends BaseDaoImpl implements VolunteerApplyDao
 			StringBuilder sbSQL = new StringBuilder();
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
 			String nowdate = df.format(new Date());
+			Calendar curr = Calendar.getInstance();
+			curr.set(Calendar.YEAR,curr.get(Calendar.YEAR)+1);//当前时间加一年
+			String validperiod=df.format(curr.getTime());//有效期限
+			
 			sbSQL.append("update T_VOLUNTEER_APPLY set applystate=" + applyState);
-			sbSQL.append(",CHECKTIME=to_date('" + nowdate + "','yyyy-mm-dd hh24:mi:ss')");
-			sbSQL.append(",CHECKPERSON='" + uname + "'");
-			sbSQL.append(",AUDITRESULT='" + auditresult + "' where id=" + id);
+			sbSQL.append(",CHECKTIME=to_date('" + nowdate + "','yyyy-mm-dd hh24:mi:ss')");//审核时间
 			if (applyState == 1) {
 				// sbSQL.append(";update T_VOLUNTEER set ISVALID=1 where
 				// ID="+volunteerid+" ");
 				updateVolunteerIsValid(volunteerid, 1);
+				sbSQL.append(",VALIDPERIOD=to_date('" + validperiod + "','yyyy-mm-dd hh24:mi:ss')");//有效期限
 			}
+			sbSQL.append(",CHECKPERSON='" + uname + "'");
+			sbSQL.append(",AUDITRESULT='" + auditresult + "' where id=" + id);
 			String sql = sbSQL.toString();
 			// Object [] params = new Object[]{volunteerid};
 			return runner.update(conn, sql);
@@ -115,7 +144,7 @@ public class VolunteerApplyImpl extends BaseDaoImpl implements VolunteerApplyDao
 	public int updateVolunteerIsValid(int id, int ISVALID) {
 		try {
 
-			return runner.update(conn, "update T_VOLUNTEER set ISVALID=" + ISVALID + " where ID=" + id);
+			return runner.update(conn, "update T_VOLUNTEER set ISVALID=" + ISVALID + " where USERID=" + id);
 		} catch (SQLException e) {
 			logger.error("修改志愿者为有效失败", e.getCause());
 			return 0;

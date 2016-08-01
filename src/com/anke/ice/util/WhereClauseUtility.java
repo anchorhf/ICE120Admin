@@ -9,7 +9,7 @@ public class WhereClauseUtility {
     /// <param name="sbWhereClause"></param>
     public static void AddStringEqual(String columnName, String valueStr, StringBuilder sbWhereClause)
     {
-        if ((valueStr != null) && (valueStr != "") && (valueStr != "-1") && valueStr != "--请选择--" && (valueStr.length()!=0))
+        if ((valueStr != null) && (valueStr != "") && (!valueStr.equals("-1")) && (!valueStr.equals("--请选择--")) && (valueStr.length()!=0))
         {
             if (sbWhereClause.length() > 0)
                 sbWhereClause.append(" AND ").append(columnName).append(" = '").append(valueStr).append("' ");
@@ -35,7 +35,7 @@ public class WhereClauseUtility {
     /// <param name="sbWhereClause"></param>
     public static void AddStringLike(String columnName, String valueStr, StringBuilder sbWhereClause)
     {
-        if ((valueStr != null) && (valueStr.length()!=0))
+        if ((valueStr != null) && (valueStr.length()!=0) && (!valueStr.equals("--请选择--")))
         {
             if (sbWhereClause.length() > 0)
                 sbWhereClause.append(" AND ").append(columnName).append(" LIKE '%").append(valueStr).append("%' ");
@@ -136,7 +136,7 @@ public class WhereClauseUtility {
     }
     public static void AddStringNotInSelectQuery(String columnName, String selectQuery, StringBuilder sbWhereClause)
     {
-        if ((selectQuery != null) && (selectQuery != "" && selectQuery != "''") && (selectQuery != "'-1'" && selectQuery != "-1") && (selectQuery != "'--请选择--'" && selectQuery != "--请选择--"))
+        if ((selectQuery != null) && (selectQuery != "" && selectQuery != "''") && (selectQuery != "'-1'" && selectQuery != "-1") && (!selectQuery.equals("'--请选择--'")) && (!selectQuery.equals("--请选择--")))
         {
             if (sbWhereClause.length() > 0)
                 sbWhereClause.append(" AND ").append(columnName).append(" NOT IN ('").append(selectQuery).append("') ");
@@ -146,7 +146,7 @@ public class WhereClauseUtility {
     }
     public static void AddInSelectQuery(String columnName, String selectQuery, StringBuilder sbWhereClause)
     {
-        if ((selectQuery != null) && (selectQuery != "" && selectQuery != "''") && (selectQuery != "'-1'" && selectQuery != "-1") && (selectQuery != "'--请选择--'" && selectQuery != "--请选择--"))
+        if ((selectQuery != null) && (selectQuery != "" && selectQuery != "''") && (selectQuery != "'-1'" && selectQuery != "-1") && (!selectQuery.equals("'--请选择--'")) && (!selectQuery.equals("--请选择--")))
         {
             if (sbWhereClause.length() > 0)
                 sbWhereClause.append(" AND ").append(columnName).append(" IN (").append(selectQuery).append(") ");
@@ -156,7 +156,7 @@ public class WhereClauseUtility {
     }
     public static void AddStringInSelectQuery(String columnName, String selectQuery, StringBuilder sbWhereClause)
     {
-        if ((selectQuery != null) && (selectQuery != "" && selectQuery != "''") && (selectQuery != "'-1'" && selectQuery != "-1") && (selectQuery != "'--请选择--'" && selectQuery != "--请选择--"))
+        if ((selectQuery != null) && (selectQuery != "" && selectQuery != "''") && (selectQuery != "'-1'" && selectQuery != "-1") && (!selectQuery.equals("'--请选择--'")) && (!selectQuery.equals("--请选择--")))
         {
             if (sbWhereClause.length() > 0)
                 sbWhereClause.append(" AND ").append(columnName).append(" IN ('").append(selectQuery).append("') ");

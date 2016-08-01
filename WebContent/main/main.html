@@ -50,8 +50,9 @@
 		ReadCookie();
 		var mySpan = document.getElementById("loginN");
 		mySpan.innerHTML +=uName;
+// 		alert(roleid);
 		$("#menuTree").tree({
-			url : '/api/serchleft/selectleft?roleid='+roleid+'&instituid='+instituid,
+			url : '/api/serchleft/selectleft?roleid='+roleid,
 			method : 'GET',
 			onClick : function(node) {
 				var urlen = parseInt(node.url.length);

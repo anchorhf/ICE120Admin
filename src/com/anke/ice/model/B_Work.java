@@ -9,13 +9,13 @@ import com.anke.ice.inject.Table;
 public class B_Work {
 	@Id
 	@FormParam("newrole")
-	private int newrole;
+	private String newrole;
     @FormParam("institutionid")
     private int institutionid;
-	public int getNewrole() {
+	public String getNewrole() {
 		return newrole;
 	}
-	public void setNewrole(int newrole) {
+	public void setNewrole(String newrole) {
 		this.newrole = newrole;
 	}
 	public int getInstitutionid() {

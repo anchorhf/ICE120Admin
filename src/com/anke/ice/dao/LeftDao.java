@@ -7,13 +7,6 @@ import com.anke.ice.model.MYTreeNode;
 
 
 public interface LeftDao extends BaseDao {
-
-	/**
-	 * 
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public List<MYTreeNode> select(String roleid,int instituid);
+	public List<MYTreeNode> select(String roleid);
 
 }

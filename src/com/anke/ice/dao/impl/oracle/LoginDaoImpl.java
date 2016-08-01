@@ -35,8 +35,9 @@ public class LoginDaoImpl extends BaseDaoImpl implements LoginDao {
 				B_Work getdata=runner.query(conn,"select newrole,institutionid from B_WORKER t where LOGINNAME='"+bean.getuserName()+"' and PASSWORD='"+retvaluetwo+"'",new BeanHandler<B_Work>(B_Work.class));
 //				System.out.println(getresulttwo);
 				if (getdata != null) {
+//					System.out.println(getdata.getNewrole());
 			        String contactdata=getdata.getNewrole()+"/"+getdata.getInstitutionid();
-					System.out.println(contactdata);
+//					System.out.println(contactdata);
 					return contactdata;
 //					return "ROLE_ADMIN";
 					}

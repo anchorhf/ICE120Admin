@@ -7,4 +7,5 @@ import com.anke.ice.model.DictionaryModel;
 
 public interface DictionaryDao extends BaseDao {
 	public List<DictionaryModel> GetDictionary(String table,String typeCode,int isAddSelect);
+	public int IFRole(String roleid, int menuid);
 }

@@ -53,15 +53,15 @@ document.createElement("footer");
 				return $("#edit-form").form("validate");
 			},
 			success : function(data) {
-				 alert(data);
+// 				 ALERT(DATA);
   				if (data!=null)
   				{      var arrdata=data.split("/");
-  				       alert(arrdata);
+//   				       alert(arrdata);
     				   document.cookie="uName="+userName+"";
     				   document.cookie="pWord="+password+"";
     				   document.cookie="roleid="+arrdata[0]+"";
     				   document.cookie="instituid="+arrdata[1]+"";
-//     			       window.location.href="./main/main.html";
+    			       window.location.href="./main/main.html";
                 }  
   				else 
   				{$.messager.alert("错误", "用户名或密码不正确！", "error");
