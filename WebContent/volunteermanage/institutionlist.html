@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui">
+<title>机构管理</title>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/color.css">
+<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../css/app.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../ckeditor/ckeditor.js"></script>
+
+<style type="text/css">
+       
+#tabinstitution
+  {   border-collapse:   separate;   border-spacing:   2px;   } 
+
+     
+    </style>
+
+</head>
+<body style="height:100%">
+	<table id="insititutionlist" title="机构列表" class="easyui-datagrid">
+		<thead>
+			<tr>
+				<th data-options="field:'id',width:'8%'">编码</th>
+				<th data-options="field:'name' ,width: '13%'">机构名称</th>
+				<th data-options="field:'cetname' ,width: '13%'">急救中心名称</th>
+				<th data-options="field:'dupdatetime' ,width: '16%'">更新时间</th>
+				<th data-options="field:'thvolunteertype' ,width: '20%'">志愿者类型</th>
+				<th data-options="field:'thspeciality' ,width: '20%'">特长</th>
+				<th data-options="field:'istisvalid' ,width: '8%'">是否有效</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar">
+		<div data-options="region:'north',split:true">
+			<table style="width: 100%;" border="0" cellspacing="0"
+				cellpadding="0">
+				<tr>
+					<td align="left" style="padding-left:5px">机构名称：</td>
+					<td><input class="easyui-textbox" type="text" style="width:140px"
+						id="name"></td>
+					<td align="right">志愿者类型：</td>
+					<td><select class="easyui-combobox" style="width: 140px" 
+						id="tabvolunteertype" data-options="panelHeight: 'auto',multiple:true">
+                        <option value="5">AED</option>
+                        <option value="6">担架员</option>
+						</select></td>
+						
+						<td align="right">特长：</td>
+						<td><select class="easyui-combobox" style="width: 140px" 
+						id="tabspeciality" data-options="panelHeight: 'auto',multiple:true">
+						<option value="1">攀岩</option>
+                        <option value="3">心肺复苏</option>
+                        <option value="4">除颤</option>
+						</select></td>
+						
+							<td align="right">是否有效：</td>
+					<td><select class="easyui-combobox" style="width: 140px" 
+						id="tabisvalid" data-options="panelHeight: 'auto'">
+					    <option value="-1">--请选择--</option>
+                        <option value="1">有效</option>
+                        <option value="2">无效</option>
+						</select></td>
+					<td>&nbsp;</td>
+					<td><a href="javascript:void(0)" id="btnSearch"
+						class="easyui-linkbutton" onclick="reSearch()"
+						data-options="iconCls:'icon-search'">查询</a></td>
+				</tr>
+			</table>
+		</div>
+		<div>
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				iconCls="icon-add" plain="true" onclick="lookInstitution()">查看</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				iconCls="icon-add" plain="true" onclick="addInstitution()">新增</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton"
+				iconCls="icon-edit" plain="true" onclick="editIstitution()">修改</a>
+		</div>
+		
+	</div>
+	
+		<div id="edit" closed="true">
+		<!-- <div id="edit"> -->
+		<form id="edit-form" method="post">
+		<input id="id" type="hidden" name="id" value="-1" />
+			<h5 id=institle class="title">机构信息</h5>
+			<table id="tabinstitution" style="width: 100%;" border="0" cellspacing="1" cellpadding="0">
+			<tr>
+				<td>机构名称</td>
+				<td>
+					<input class="easyui-textbox" data-options="required:true" style="width:72%"
+						type="text" name="name" id="insname"/>
+				</td>
+				<td>急救中心名称</td>
+				<td>
+					<input class="easyui-textbox" data-options="" style="width:72%"
+						type="text" name="centername" />
+				</td>
+			</tr>
+			<tr>
+				<td>志愿者类型</td>
+				<td>
+					<select class="easyui-combobox" style="" id="volunteertype" 
+						name="volunteertype" data-options="panelHeight: 'auto',multiple:true, editable:false">
+						</select>
+				</td>
+				<td>特长</td>
+				<td>
+				<select class="easyui-combobox" style="" id="speciality" 
+						name="speciality" data-options="panelHeight: 'auto',multiple:true, editable:false ">
+						<option value="1">攀岩</option>
+                        <option value="3">心肺复苏</option>
+                        <option value="4">除颤</option>
+						</select>
+				</td>
+			</tr>
+			<tr>
+			<td>是否有效</td>
+			<td>
+					<input type="radio" name="isvalid" value="1" checked="checked"/>有效
+					<input type="radio" name="isvalid" value="0" />无效
+				</td>
+			</tr>
+
+			<tr>
+ 			<td><textarea id="strdetail" name="strdetail"  cols="20" rows="5" style="display:none"></textarea> </td></tr>	
+			</table>
+	
+		
+				<div class="easyui-panel" title="机构简介" style="width:99%;height:280px;padding:5px">
+			     
+					<textarea  name="txtarea"  cols="20" rows="5" ></textarea> 
+					<script type="text/javascript">CKEDITOR.replace("txtarea");</script>
+		       </div>	
+		  </form>
+	</div>
+	
+
+	<script type="text/javascript">
+	
+	var ckeditordata;
+	var instituid;
+	function ReadCookie(){
+		var strCookie=document.cookie;
+		//将多cookie切割为多个名/值对
+		var arrCookie=strCookie.split(";");
+
+		//遍历cookie数组，处理每个cookie对
+		for(var i=0;i<arrCookie.length;i++){
+	 	var arr=arrCookie[i].split("=");
+	    //对arr[0]格式化
+	 	mes = arr[0].replace( /^\s+|\s+$/g, "" );
+	    //找到名称为uName、pWord、id的cookie，并返回它的值
+	 	if ("uName"==mes){
+	 		uName=arr[1];
+	 		continue;
+	 	}
+	  	if("pWord"==mes){
+	  		pWord=arr[1];
+	  		continue;
+	  	}
+	  	if("roleid"==mes){
+	  		roleid=arr[1];
+	  		continue;
+	  	}
+		if("instituid"==mes){
+			instituid=arr[1];
+	  		continue;
+	  	}
+	}
+		}
+		var reSearch = function() {
+//   			alert( $('#volunteertype').combobox('getValues'));
+			$("#insititutionlist").datagrid({
+// 				alert( $('#volunteertype').combobox('getValue'));
+				 pageNumber: 1,
+                 queryParams: {
+                 	id:instituid,
+ 					name : $('#name').val(),
+ 					volunteertype : $('#tabvolunteertype').combobox('getValues').toString(),
+ 					speciality :$('#tabspeciality').combobox('getValues').toString(),
+ 					isvalid :$('#tabisvalid').combobox('getValue') 
+                 }
+			});
+		};
+		
+		$(document).ready(function() {
+			ReadCookie();
+			$("#tabspeciality").combobox('setValue','');
+			$("#tabvolunteertype").combobox('setValue','');
+			$("#insititutionlist").datagrid({
+				url : '/api/institution/list',
+				method : 'POST',
+				pageSize : 20,
+				pagination : true,
+				fit : true,//自动大小
+				toolbar : "#toolbar",
+				rownumbers : true,//行号
+				singleSelect : true,
+				queryParams : {
+					id:instituid,
+					name : $('#name').val(),
+					volunteertype : $('#tabvolunteertype').combobox('getValues').toString(),
+					speciality :$('#tabspeciality').combobox('getValues').toString(),
+					isvalid :$('#tabisvalid').combobox('getValue') 
+				},
+				rowStyler : function(index, row) {
+					/* if (row.machinestatus == "正常")
+						return 'color:blue;';
+					if (row.machinestatus == "故障")
+						return 'color:red;';
+					return ''; */
+				},
+				onDblClickRow : function(rowIndex, rowData) {
+					
+				}
+			});
+			//设置分页控件 
+			var p = $('#insititutionlist').datagrid('getPager');
+			$(p).pagination({
+				pageSize : 15,//每页显示的记录条数，默认为10 
+				pageList : [ 10, 15, 20, 30 ],//可以设置每页记录条数的列表 
+				beforePageText : '第',//页数文本框前显示的汉字 
+				afterPageText : '页    共 {pages} 页',
+				displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+			});
+			
+		});
+		
+		
+		$("#edit-form").form({
+			url : "/api/institution/modify",
+			onSubmit : function() {
+				return $("#edit-form").form("validate");
+			},
+			success : function(data) {
+				if (data == "true") {
+					$('#list').datagrid('reload');
+					$("#edit").dialog("close");
+				} else
+					$.messager.alert("错误", "接入点信息保存失败！", "error");
+			}
+		});
+		
+		var lookInstitution = function() {
+			$("#edit").dialog({
+				title : "查看机构",
+				buttons : [{
+					text : "关闭",
+					handler : function() {
+						$("#edit").dialog("close");
+					}
+				} ]
+				
+			});
+			// 判断是否选中一项
+			$("#edit-form").form("clear");
+			var row = $("#insititutionlist").datagrid("getSelected");
+			if (row == null) {
+				$.messager.alert("警告", "请先选中一条记录进行编辑！", "error");
+				return;
+			}
+			$('#edit-form').form('clear');
+ 		    $("#edit-form").form("load", "/api/institution/get?id=" + row.id)
+ 		    setTimeout('institutiontimeout()',500);
+		};
+		
+		function institutiontimeout()
+		{  
+			ckeditordata=$('#strdetail').val();
+			CKEDITOR.instances.txtarea.setData(ckeditordata);
+  	 		$("#edit").dialog("open")
+		};
+		
+		var addInstitution = function() {
+			$("#edit-form").form("clear");
+			$('#speciality').combobox('setValue','');
+			$('#volunteertype').combobox('setValue','');
+
+			$("#edit").dialog({
+				title : "增加机构",
+				buttons : [ {
+					text : "保存",
+					handler : function() {
+					var getckeditordata=CKEDITOR.instances.txtarea.getData();
+					var getckeditor= getckeditordata.replace(/<.*?>/ig,"");
+				    $('#strdetail').val(getckeditor);
+  				     var specialitys=$('#speciality').combobox('getValues');
+                     $('#speciality').combobox('setValue',specialitys);
+                 
+   				     var volunteertypes=$('#volunteertype').combobox('getValues');
+                     $('#volunteertype').combobox('setValue',volunteertypes);
+                   
+                     var isvalidradio= $('input:radio[name="isvalid"]:checked').val();
+                     if(isvalidradio==null){
+                    	$.messager.alert("警告", "是否有效未选中！", "warning");
+                     }
+                     else{	$("#edit-form").submit();} 
+				
+					}
+				}, {
+					text : "关闭",
+					handler : function() {
+						$("#edit").dialog("close");
+					}
+				} ]
+			});
+		
+// 			$("#edit-form").form("clear");
+			CKEDITOR.instances.txtarea.setData("");
+			$("#edit").dialog("open");
+			//$("#insname").val("sdasd");
+			//alert($("#insname").val());
+			
+		};
+		
+		var editIstitution = function() {
+			
+			$("#edit").dialog({
+				title : "编辑机构",
+				buttons : [ {
+					text : "保存",
+					handler : function() {
+						var getckeditordata=CKEDITOR.instances.txtarea.getData();
+						var getckeditor= getckeditordata.replace(/<.*?>/ig,"");
+					    $('#strdetail').val(getckeditor);
+						$("#edit-form").submit();
+					}
+				}, {
+					text : "关闭",
+					handler : function() {
+						$("#edit").dialog("close");
+					}
+				} ]
+			});
+			// 判断是否选中一项
+			$("#edit-form").form("clear");
+			var row = $("#insititutionlist").datagrid("getSelected");
+			if (row == null) {
+				$.messager.alert("警告", "请先选中一条记录进行编辑！", "error");
+				return;
+			}
+			$('#edit-form').form('clear');
+ 		    $("#edit-form").form("load", "/api/institution/get?id=" + row.id)
+ 		    setTimeout('institutiontimeout()',500);
+  	 	
+ 		};
+	
+		 $("#edit").dialog({
+			iconCls : "icon-edit",
+			maximizable : true,
+			width : "50%",
+			height : "500px",
+			modal : true
+		}); 
+		//#region 志愿者类型
+			$("#volunteertype").combobox(
+							{
+								url : '/api/Dictionary/get?table=T_DICTIONARY&typeCode=volunteertype&isAddSelect=0',
+								valueField : 'id',
+								textField : 'name',
+								method : "GET",
+								editable : false,
+								panelHeight : 'auto',
+								multiple:true, 
+								onLoadSuccess : function() {
+									$('#volunteertype').combobox('setValue','-1');
+								}
+
+							});
+			//#endregion 
+		
+	</script>
+	
+
+</body>
+</html>
