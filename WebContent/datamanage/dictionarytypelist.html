@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>字典管理</title>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/color.css">
+<link rel="stylesheet" type="text/css" href="../css/app.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+</head>
+<body>
+	<table id="dictionarytypelist" class="easyui-datagrid"></table>
+	<div id="toolbar">
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;类型描述：<input class="easyui-textbox"
+			type="text" style="width: 180px" id="name"> <a
+			href="javascript:void(0)" id="btnSearch" class="easyui-linkbutton"
+			onclick="reSearch()" data-options="iconCls:'icon-search'">查询</a> <input
+			id="typename" type="hidden" />
+	</div>
+	<div id="treeDictionarydialog" class="easyui-dialog" title="字典子目录维护"
+		data-options="modal:true,collapsible:false,minimizable:false,maximizable:false,closed:true,resizable:false,iconCls:'icon-cWeiHu'"
+		style="width: 65%; height: 420px; padding: 5px;">
+
+		<div data-options="region:'center'"
+			style="background: #fafafa; overflow: hidden">
+			<table id="treedictionarylist" border="0"></table>
+		</div>
+	</div>
+
+	<div id="DictionaryEdit" class="easyui-dialog" title="维护"
+		data-options="modal:true,collapsible:false,minimizable:false,maximizable:false,closed:true,resizable:false,iconCls:'icon-custom-cWuZiWeiHu'"
+		style="width: 300px; height: 165px; padding: 0px;">
+
+		<form id="edit-form" method="post">
+			<div data-options="region:'center'" style="overflow: hidden">
+				<table style="width: 99%">
+					<tr style="height: 40px">
+						<td align="right">名称：</td>
+						<td><input id="DictionaryName" class="easyui-textbox"
+							style="width: 160px" data-options="required:true,validType:'length[0,16]'" /> <input
+							id="DictionaryNameForIsActive" type="hidden" /> <input
+							id="DictionaryID" type="hidden" /><input
+							id="DictionaryISVALID" type="hidden" /></td>
+					</tr>
+					<tr style="height: 40px">
+						<td align="right">顺序号：</td>
+						<td><input id="DictionarySN" class="easyui-numberbox"
+							style="width: 160px" /></td>
+					</tr>
+					<tr style="height: 30px">
+						<td colspan="2" align="center"><a href="javascript:void(0)"
+							id="btnedit" class="easyui-linkbutton"
+							data-options="iconCls:'icon-edit'" onclick="submitAddForm(1);">修改</a>
+							<a href="javascript:void(0)" id="btnadd"
+							class="easyui-linkbutton" data-options="iconCls:'icon-add'"
+							onclick="submitAddForm(0);">新增</a></td>
+					</tr>
+				</table>
+			</div>
+		</form>
+	</div>
+
+	<script type="text/javascript">
+	
+	//#region 禁用Backspace键
+    window.onload = function () {
+        document.getElementsByTagName("body")[0].onkeydown = function () {
+
+            //获取事件对象
+            var elem = event.relatedTarget || event.srcElement || event.target || event.currentTarget;
+
+            if (event.keyCode == 8) {//判断按键为backSpace键
+
+                //获取按键按下时光标做指向的element
+                var elem = event.srcElement || event.currentTarget;
+
+                //判断是否需要阻止按下键盘的事件默认传递
+                var name = elem.nodeName;
+
+                if (name != 'INPUT' && name != 'TEXTAREA') {
+                    return StopBackspace(event);
+                }
+                var type_e = elem.type.toUpperCase();
+                if (name == 'INPUT' && (type_e != 'TEXT' && type_e != 'TEXTAREA' && type_e != 'PASSWORD' && type_e != 'FILE')) {
+                    return StopBackspace(event);
+                }
+                if (name == 'INPUT' && (elem.readOnly == true || elem.disabled == true)) {
+                    return StopBackspace(event);
+                }
+            }
+        }
+    }
+    function StopBackspace(e) {
+        if (e.returnValue) {
+            e.returnValue = false;
+        }
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+
+        return false;
+    }
+    //#endregion
+    
+	//点击查询按钮
+	var reSearch = function() {
+		$("#dictionarytypelist").datagrid({
+			pageNumber : 1,
+			queryParams : {
+				name : $("#name").val()
+			}
+		});
+		setdatagridPager();
+	}
+	
+	//设置分页控件 
+	var setdatagridPager= function(){
+
+		var p = $('#dictionarytypelist').datagrid('getPager');
+		$(p).pagination(
+				{
+					pageSize : 20,//每页显示的记录条数，默认为10 
+					pageList : [ 10, 20, 30, 50 ],//可以设置每页记录条数的列表 
+					beforePageText : '第',//页数文本框前显示的汉字 
+					afterPageText : '页    共 {pages} 页',
+					displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+				});
+	}
+	
+	//加载页面执行
+	$(document).ready(function() {
+	$('#dictionarytypelist').datagrid({
+        //width: 'auto',
+        //height: 'auto',
+        //fitColumns: true,
+        singleSelect: true,
+        loadMsg: '数据加载中请稍后……',
+		method : 'POST',
+        url: '/api/Dictionary/typelist',
+		fit : true,//自动大小
+        //striped: true,
+        pagination: true,//启用分页，默认每页10行
+        rownumbers: true,//显示页码，默认 提供 10 - 50 的页容量选择下拉框
+		toolbar : "#toolbar",
+        queryParams : {
+        	name : $("#name").val()
+        },
+        frozenColumns: [[
+       { field: "id", width: '10%', align: "center", hidden: true },
+       { field: "name", title: "类型描述", width: '40%', align: "center" },
+       { field: "typecode", title: "类型编码", width: '30%', align: "center" },
+       {
+             field: 'opt', title: '维护子目录', width: '15%', align: 'center', frozen: 'true',
+             formatter: function (value, row, index) {
+                 var typecode = row.typecode;
+                 var name=row.name;
+                 //加\变引号，避免JS错认为typecode为变量（找不到变量），不为值。
+                 return '<a  class="linkURLcls" onclick="openURL(\'' + typecode + '\',\''+name+'\');"  href="javascript:void(0)">维护</a>';
+             }
+        }
+       ]],
+        rowStyler: function (index, row) {
+            /* if (row.IsActive == false) {
+                return 'color:red';
+            } */
+        },
+        onLoadSuccess: function (data) {
+            $('.linkURLcls').linkbutton({
+                text: '维护',
+                plain: true,
+                iconCls: 'icon-cWeiHu'
+            });
+        },
+        onSelect: function (index, row) {
+        	
+          /* var row = $('#dictionarytypelist').datagrid('getSelected');
+          if (row) {
+        	$('#typename').val(row.name);//取选择行的类型描述
+          } */
+        }
+    });
+	setdatagridPager();
+	});
+	
+
+    var DictionaryType;
+    //打开维护连接，加载字典树 根据typecode
+    function openURL(typecode,name) {
+    	
+    	$("#treeDictionarydialog").dialog({
+			title : "字典子目录维护【"+name +"】"
+		});
+        $('#treeDictionarydialog').dialog('open');
+        //将传入的参数类型编码赋值给全局变量 DictionaryType 
+        DictionaryType = typecode;
+
+        $('#treedictionarylist').datagrid({
+            //width: 'auto',
+            //height: 'auto',
+            //fitColumns: true,
+            url: '/api/Dictionary/list',
+            loadMsg: '数据加载中请稍后……',
+            //striped: true,
+            singleSelect: true,
+    		//fit : true,//自动大小
+            pagination: true,//启用分页，默认每页10行
+            rownumbers: true,//显示页码，默认 提供 10 - 50 的页容量选择下拉框
+            pageSize: 10,//设置 页容量5为
+            pageList: [5, 10, 15],//设置 页容量下拉框
+            queryParams: {
+            	typecode: typecode
+            },
+            frozenColumns: [[
+           { field: "id", width: '2%', align: "center", hidden: true },
+
+           { field: "name", title: "名称", width: '40%', align: "center" },
+           { field: "typecode", title: "类型编码", width: '30%', align: "center" },
+           {
+               field: "isvalid", title: "是否有效", width: '10%',
+               formatter: function (value, rowData, rowIndex) {
+                   if (value == true) {
+                       return "有效";
+                   }
+                   else {
+                       return "无效";
+                   }
+               }
+           },
+           { field: "orderno", title: "顺序号", width: '10%', align: "center" }
+            ]],
+            rowStyler: function (index, row) {
+                if (row.isvalid == false) {
+                    return 'color:red';
+                }
+            },
+            toolbar: [
+              {
+                  id: 'btnTypeAdd',
+                  text: '新增',
+                  iconCls: 'icon-add',
+                  handler: function () {
+                      // $('#DictionaryEdit').dialog('open');
+
+                      AddDictionaryLevel();
+                  }
+              }, '-',
+              {
+                  id: 'btnTypeEdit',
+                  text: '修改',
+                  iconCls: 'icon-edit',
+                  handler: function () {
+
+                      var row = $('#treedictionarylist').datagrid('getSelected');
+                      if (row) {
+                          $("#DictionaryID").val(row.id);
+                         // $("#DictionarySN").val(row.SN);
+                          $('#DictionarySN').numberbox('setText', row.orderno);
+                          $("#DictionaryName").textbox("setText", row.name);
+                          
+                          $("#DictionaryISVALID").val(row.isvalid);
+                          EditDictionaryInfo();
+                       
+                      } else {
+                          $.messager.alert('提示', '请选择数据行', 'info', function () {
+                          });
+                      }
+                  }
+              }, '-',
+              {
+                  id: 'btnJinYong',
+                  text: '<span style="color:red">禁用</span>',
+                  iconCls: 'icon-cJinYong',
+                  handler: function () {
+                      var row = $('#treedictionarylist').datagrid('getSelected');
+                      if (row) {
+                          $("#DictionaryID").val(row.id);
+                          banInfo();
+                      } else {
+                          $.messager.alert('提示', '请选择数据行', 'info', function () {
+                          });
+                      }
+                  }
+              }, '-',
+              {
+                  id: 'btnQiYong',
+                  text: '<span style="color:darkgreen">启用</span>',
+                  iconCls: 'icon-cQiYong',
+                  handler: function () {
+                      var row = $('#treedictionarylist').datagrid('getSelected');
+                      if (row) {
+                          $("#DictionaryID").val(row.id);
+                          startInfo();
+                      } else {
+                          $.messager.alert('提示', '请选择数据行', 'info', function () {
+                          });
+                      }
+                  }
+              }
+            ],
+            onSelect: function (index, row) {
+
+                if (row.isvalid) {
+                    
+                    $('#btnQiYong').linkbutton('disable');
+                    $('#btnJinYong').linkbutton('enable');
+                } else {
+                    $('#btnQiYong').linkbutton('enable');
+                    $('#btnJinYong').linkbutton('disable');
+                }
+            }
+          
+        });
+    }
+    
+    //新增平级字典
+    function AddDictionaryLevel() {
+
+        //$.GID("btnadd").style.display = "block";
+        //$.GID("btnedit").style.display = "none";
+        $('#btnadd').css("display", "");//显示新增按钮
+        $('#btnedit').css("display", "none");//隐藏保存按钮
+        $('#DictionarySN').numberbox('clear');
+        $('#DictionaryName').textbox('clear');
+        $('#DictionaryEdit').dialog('open');
+        $('#btnadd').linkbutton('enable');
+    }
+    
+    //修改字典
+    function EditDictionaryInfo() {
+
+        //$.GID("btnadd").style.display = "none";
+        //$.GID("btnedit").style.display = "block";
+        $('#btnadd').css("display", "none");//隐藏新增按钮
+        $('#btnedit').css("display", "");//显示保存按钮
+        $('#DictionaryEdit').dialog('open');
+        $('#btnedit').linkbutton('enable');
+    }
+    //字典禁用
+    function banInfo() {
+        var isvalid = 0;
+        submitActiveForm(isvalid);
+    }
+    //字典启用
+    function startInfo() {
+        var isvalid = 1;
+        submitActiveForm(isvalid);
+    }
+
+    //字典禁用，启用提交方法
+    function submitActiveForm(isvalid) {
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/Dictionary/isvalid',
+            data:
+                {
+                    id: $('#DictionaryID').val(),
+                    isvalid: isvalid
+                },
+            //dataType: "json",
+            success: function (jsData) {
+                if(jsData!=0) {
+                    $('#treedictionarylist').datagrid("reload");
+        
+                }
+            },
+			error : function(ms) {
+				$.messager.alert("错误", "修改字典表是否有效失败！","error");
+
+			}
+        });
+    }
+    
+    /* //保存字典表信息
+    $("#edit-form").form({
+		url : "/api/Dictionary/modify",
+		onSubmit : function() {
+			return $("#edit-form").form("validate");
+		},
+		success : function(data) {
+			if (data == "true") {
+				$('#treedictionarylist').datagrid('reload');
+				$("#treedictionarydialog").dialog("close");
+			} else
+				$.messager.alert("错误", "字典表保存失败！", "error");
+		}
+	}); */
+
+    //新增/修改字典提交方法
+    function submitAddForm(value) {
+        var validate = $("#DictionaryEdit").form("validate");
+        var id=0;
+        var isvalid=1;
+        if (validate) {
+            if(value==1){
+                $('#btnedit').linkbutton('disable');
+                id =$('#DictionaryID').val();
+
+                isvalid=$("#DictionaryISVALID").val();
+            }
+            else{
+                $('#btnadd').linkbutton('disable');
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/api/Dictionary/modify',
+                data:
+                    {
+                        id: id,
+                        typecode: DictionaryType,
+                        orderno: $('#DictionarySN').numberbox('getText'),
+
+                        name: $('#DictionaryName').textbox('getText'),
+                        isvalid:isvalid
+                    },
+                dataType: "json",
+                success: function (jsData) {
+                    //$.handleJsonResult(jsData, function () {
+                        $('#treedictionarylist').datagrid("reload");
+                        $('#DictionaryEdit').dialog('close');
+                    //},
+                    //function () {
+                        $('#btnadd').linkbutton('enable');
+                    //});
+                },
+    			error : function(ms) {
+    				$.messager.alert("错误", "修改字典表失败！","error");
+
+    			}
+            });
+        }
+    }
+    
+
+	</script>
+</body>
+</html>

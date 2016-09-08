@@ -1,9 +1,13 @@
 package com.anke.ice.dao.impl.oracle;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.log4j.Logger;
+
+import com.anke.ice.dao.DBHelper;
 import com.anke.ice.dao.LoginDao;
 import com.anke.ice.model.CheckLogin;
 import com.anke.ice.model.B_Work;
@@ -15,8 +19,11 @@ import com.anke.ice.core.IcePasswordEncoder;
 
 public class LoginDaoImpl extends BaseDaoImpl implements LoginDao {
 	private static final Logger logger = LoggerUtil.getInstance(LoginDaoImpl.class);
+	//protected static Connection conn;//建立数据库连接
+	
 	@Override
 	public String judgelogin(CheckLogin bean) {
+		Connection conn = DBHelper.getInstance().getConnection();
 		try {
 			String rawPass=bean.getPassword();
 			Object salt =16;
@@ -42,14 +49,16 @@ public class LoginDaoImpl extends BaseDaoImpl implements LoginDao {
 //					return "ROLE_ADMIN";
 					}
 			    else
-			    {return null;}
+			    {return "-1";}
 			}
 			
 		} catch (SQLException e) {
 			logger.error("判断用户登录信息失败！", e.getCause());
 			return null;
 		}
-
+		finally{
+			DbUtils.closeQuietly(conn);
+		}
     }
 
 }

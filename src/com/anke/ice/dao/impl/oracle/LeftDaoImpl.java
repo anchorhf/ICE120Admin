@@ -1,11 +1,16 @@
 package com.anke.ice.dao.impl.oracle;
 
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.log4j.Logger;
+
+import com.anke.ice.dao.DBHelper;
 import com.anke.ice.dao.LeftDao;
 import com.anke.ice.model.serchleft;
 import com.anke.ice.model.MYTreeNode;
@@ -14,16 +19,18 @@ import com.anke.ice.util.WhereClauseUtility;
 
 public class LeftDaoImpl extends BaseDaoImpl implements LeftDao {
 	private static final Logger logger = LoggerUtil.getInstance(LeftDaoImpl.class);
+	//protected static Connection conn;//建立数据库连接
 	
 	@Override
 	public List<MYTreeNode> select(String roleid) {
+		Connection conn = DBHelper.getInstance().getConnection();
 		try { 
 			  String[] sourceStrArray=roleid.split(",");
 			  List<serchleft> rows=null;
 			 switch(sourceStrArray.length)
 			 {
 			 case 1:{ StringBuilder sbSQL= new StringBuilder();
-			          sbSQL.append(" select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[0]+"");
+			          sbSQL.append(" select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[0]+" order by me.menuid");
 				      String sql = sbSQL.toString();
 //						System.out.println(sql);
 			          rows =runner.query(conn,sql, new BeanListHandler<serchleft>(serchleft.class));
@@ -31,9 +38,9 @@ public class LeftDaoImpl extends BaseDaoImpl implements LeftDao {
 			 
 			 case 2:{ StringBuilder sbSQL= new StringBuilder();
 			  sbSQL.append(" select menuid,label,parentmenuid,url,role from (");
-			  sbSQL.append(" (select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[0]+" )");
+			  sbSQL.append(" (select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[0]+")");
 			  sbSQL.append(" union ");
-			  sbSQL.append(" (select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[1]+" ))");
+			  sbSQL.append(" (select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[1]+")) order by menuid");
 			  String sql = sbSQL.toString();
 //				System.out.println(sql);
 	          rows =runner.query(conn,sql, new BeanListHandler<serchleft>(serchleft.class));
@@ -45,7 +52,7 @@ public class LeftDaoImpl extends BaseDaoImpl implements LeftDao {
 			  sbSQL.append(" union ");
 			  sbSQL.append(" (select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[1]+" )");
 			  sbSQL.append(" union ");
-			  sbSQL.append(" (select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[2]+" ))");
+			  sbSQL.append(" (select me.menuid,me.label,me.parentmenuid,me.url,me.role from t_menu me left join  T_ROLEMENU rm on me.menuid=rm.menuid where me.isshow=1 and rm.roleid="+sourceStrArray[2]+" )) order by menuid");
 			  String sql = sbSQL.toString();
 //				System.out.println(sql);
 	          rows =runner.query(conn,sql, new BeanListHandler<serchleft>(serchleft.class));
@@ -56,6 +63,9 @@ public class LeftDaoImpl extends BaseDaoImpl implements LeftDao {
 		} catch (SQLException e) {
 			logger.error("查询左侧列表失败", e.getCause());
 			return null;
+		}
+		finally{
+			DbUtils.closeQuietly(conn);
 		}
 	}
 	

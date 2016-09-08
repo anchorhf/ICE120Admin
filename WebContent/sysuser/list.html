@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>用户管理</title>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/color.css">
+<link rel="stylesheet" type="text/css" href="../css/app.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+</head>
+<body>
+	<table id="workerlist" class="easyui-datagrid"></table>
+
+	<div id="toolbar" style="padding: 5px; height: auto">
+		<div data-options="region:'north',split:true,overflow: hidden">
+
+			&nbsp;&nbsp;&nbsp;&nbsp;用户名：<input class="easyui-textbox" type="text"
+				style="width: 142px" id="mloginname"> 
+				&nbsp;&nbsp;&nbsp;&nbsp;所属机构：<select
+				class="easyui-combobox" style="width: 200px" id="minstitution"
+				data-options="">
+			</select>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" id="btnSearch"
+				class="easyui-linkbutton" onclick="reSearch()"
+				data-options="iconCls:'icon-search'">查询</a>
+				<input id="uname" type="hidden" />
+				<input id="roleid" type="hidden" />
+				<input id="institutionid" type="hidden" />
+				<input id="role" type="hidden" />
+				<input id="centerid" type="hidden" />
+				<input id="id" type="hidden" />
+				<input id="upassword" type="hidden" />
+				<input id="md5password" type="hidden" />
+			
+		</div>
+		<div>
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				iconCls="icon-add" plain="true" id="addbutton" onclick="addWork()">新增</a>|<a
+				href="javascript:void(0)" class="easyui-linkbutton"
+				iconCls="icon-edit" plain="true" id="editbutton" onclick="editWork()">修改</a>|<a
+				href="javascript:void(0)" class="easyui-linkbutton" id="btnLook"
+				iconCls="icon-search" plain="true" id="lookbutton" onclick="lookWork()">查看</a>
+			<lable id="ifCheck" style="visibility:hidden;" />
+		</div>
+	</div>
+	<div id="edit" class="easyui-dialog" title="查看"
+		data-options="modal:true,collapsible:false,minimizable:false,maximizable:false,closed:true,resizable:false,iconCls:'icon-search'"
+		style="width: 38%; height: 300px; padding: 10px;">
+		<form id="edit-form" method="post">
+			<table id="edit-table" border="0" cellpadding="0" cellspacing="0"
+				style="width: 100%;">
+				<!-- <tr>
+					<td style="height: 2px; width: 15%"></td>
+					<td style="height: 2px; width: 25%"></td>
+				</tr> -->
+				<tr>
+					<td align="right" style="width: 23%">用户名：</td>
+					<td style="height: 25px;"><input class="easyui-textbox"
+						type="text" id="loginname"
+						data-options="width: '200px',required:true,prompt:'用户名',validType:'length[0,25]'" /></td>
+
+				</tr>
+				<tr id="traddpass">
+					<td align="right">密码：</td>
+					<td style="height: 25px;">
+					<span id="addpassword" onclick="selectaddPassword()">
+					<input type="radio" id="RadioButtonList_addpassword_0"  name="addpassword" value="11" /><label for="RadioButtonList_addpassword_0">默认</label>
+					<input type="radio" id="RadioButtonList_addpassword_1"  name="addpassword" value="12" /><label for="RadioButtonList_addpassword_1">手动输入</label>
+					</span>（默认：a）
+					</td>
+
+				</tr>
+				<tr id="treditpass">
+					<td align="right">密码：</td>
+					<td style="height: 25px;">
+					<span id="password" onclick="selectPassword()">
+					<input type="radio" id="RadioButtonList_password_0"  name="password" value="1" /><label for="RadioButtonList_password_0">默认</label>
+					<input type="radio" id="RadioButtonList_password_1"  name="password" value="2" /><label for="RadioButtonList_password_1">还原初始</label>
+					<input type="radio" id="RadioButtonList_password_2"  name="password" value="3" /><label for="RadioButtonList_password_2">修改密码</label>
+					</span>（还原初始：a）
+					</td>
+
+				</tr>
+				<tr id="troldpassword">
+					<td align="right">原密码：</td>
+					<td style="height: 25px;"><input class="easyui-textbox"
+						type="text" name="oldpassword" id="oldpassword"
+						data-options="width: '200px',prompt:'原密码'" /></td>
+
+				</tr>
+				<tr id="trnewpassword">
+					<td align="right">新密码：</td>
+					<td style="height: 25px;"><input class="easyui-textbox"
+						type="password" name="newpassword" id="newpassword"
+						data-options="width: '200px'" /></td>
+					
+				</tr>
+				<tr id="trqnewpassword">
+					<td align="right">确认密码：</td>
+					<td style="height: 25px;"><input class="easyui-textbox"
+						type="password" name="qnewpassword" id="qnewpassword"
+						data-options="width: '200px'" /></td>
+					
+				</tr>
+				<tr>
+					<td align="right">角色权限：</td>
+					<td style="height: 25px;">
+					<select class="easyui-combobox" style="width: 200px" id="newrole" data-options="prompt:'--请选择--'">
+			        </select></td>
+
+				</tr>
+				<tr>
+					<td align="right">所属机构：</td>
+					<td style="height: 25px;">
+					<select class="easyui-combobox" style="width: 200px" id="institution" data-options="">
+			        </select></td>
+
+				</tr>
+				<tr style="height: 20px">
+				</tr>
+				<tr style="height: 30px">
+						<td colspan="2" align="center"><a href="javascript:void(0)"
+							id="btnedit" class="easyui-linkbutton"
+							data-options="iconCls:'icon-edit'" onclick="submitAddForm(1);">修改</a>
+							<a href="javascript:void(0)" id="btnadd"
+							class="easyui-linkbutton" data-options="iconCls:'icon-add'"
+							onclick="submitAddForm(0);">新增</a></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+
+
+	<script type="text/javascript">
+		//#region 禁用Backspace键
+		window.onload = function() {
+			document.getElementsByTagName("body")[0].onkeydown = function() {
+
+				//获取事件对象
+				var elem = event.relatedTarget || event.srcElement
+						|| event.target || event.currentTarget;
+
+				if (event.keyCode == 8) {//判断按键为backSpace键
+
+					//获取按键按下时光标做指向的element
+					var elem = event.srcElement || event.currentTarget;
+
+					//判断是否需要阻止按下键盘的事件默认传递
+					var name = elem.nodeName;
+
+					if (name != 'INPUT' && name != 'TEXTAREA') {
+						return StopBackspace(event);
+					}
+					var type_e = elem.type.toUpperCase();
+					if (name == 'INPUT'
+							&& (type_e != 'TEXT' && type_e != 'TEXTAREA'
+									&& type_e != 'PASSWORD' && type_e != 'FILE')) {
+						return StopBackspace(event);
+					}
+					if (name == 'INPUT'
+							&& (elem.readOnly == true || elem.disabled == true)) {
+						return StopBackspace(event);
+					}
+				}
+			}
+		}
+		function StopBackspace(e) {
+			if (e.returnValue) {
+				e.returnValue = false;
+			}
+			if (e.preventDefault) {
+				e.preventDefault();
+			}
+
+			return false;
+		}
+		//#endregion
+
+		//点击查询按钮
+		var reSearch = function() {
+			$("#workerlist").datagrid({
+				pageNumber : 1,
+				queryParams : {
+					loginname : $("#mloginname").val(),
+					institutionid : $('#minstitution').combobox('getValue')=="" ?-1:$('#minstitution').combobox('getValue')
+				}
+			});
+			setdatagridPager();
+		}
+
+		//设置分页控件 
+		var setdatagridPager = function() {
+
+			var p = $('#workerlist').datagrid('getPager');
+			$(p).pagination({
+				pageSize : 20,//每页显示的记录条数，默认为10 
+				pageList : [ 15, 20, 30, 50 ],//可以设置每页记录条数的列表 
+				beforePageText : '第',//页数文本框前显示的汉字 
+				afterPageText : '页    共 {pages} 页',
+				displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+			});
+		}
+		
+		//#region 获取角色权限
+		$("#newrole").combobox(
+						{
+							url : '/api/Dictionary/get?table=T_ROLE&typeCode=&isAddSelect=0',
+							valueField : 'id',
+							textField : 'name',
+							method : "GET",
+							editable : false,
+							panelHeight : 'auto',
+							multiple:true,
+							required:true,
+							onLoadSuccess : function() {
+								
+							}
+						});
+		//#endregion 
+		
+		var showinstitution = function() {
+							//#region 修改页面所属机构
+							$("#institution").combobox(
+											{
+												url : '/api/Dictionary/get?table=T_INSTITUTION&typeCode=volunteertype&isAddSelect=1',
+												valueField : 'id',
+												textField : 'name',
+												method : "GET",
+												editable : false,
+												//panelHeight : 'auto',
+												onLoadSuccess : function() {
+													//$('#institution').combobox('setValue',-1);
+												}
+
+											});
+							//#endregion 
+							$('#institution').combobox('setValue',-1);
+
+				  	 		SetRadioOfList("addpassword","11");//新增的时候默认选择“默认”
+				  	 		SetRadioOfList("password","1");//修改的时候默认选择“默认”
+
+		}
+
+		function SetRadioOfList(Name, List) {
+	            $('input[name=' + Name + '][value=' + List + ']').prop("checked", true);
+
+	    }
+		
+		//#region 获取
+	    /*
+	    Name:控件名称
+	    */
+	    function GetCheckBox(Name) {
+	        var chk_value = [];
+	        $('input[name="' + Name + '"]:checked').each(function () {
+	            chk_value.push($(this).val());
+	        });
+	        return chk_value;
+	    }
+	    //#endregion
+		
+		//新增用户点击密码后面的2个radio按钮
+		var selectaddPassword = function(){
+			$('#treditpass').css("display", "none");//隐藏
+			var selectName = GetCheckBox("addpassword");//获取密码选择
+			if(selectName==11){
+
+				$('#troldpassword').css("display", "none");//隐藏
+				$('#trnewpassword').css("display", "none");//隐藏
+				$('#trqnewpassword').css("display", "none");//隐藏
+			}
+			else{
+
+				$('#troldpassword').css("display", "none");//显示
+				$('#trnewpassword').css("display", "");//显示
+				$('#trqnewpassword').css("display", "");//显示
+			}
+		}
+	    
+		//修改点击密码后面的3个radio按钮
+		var selectPassword = function(){
+			$('#traddpass').css("display", "none");//隐藏
+			var selectName = GetCheckBox("password");//获取密码选择
+			if(selectName==1 || selectName==2){
+
+				$('#troldpassword').css("display", "none");//隐藏
+				$('#trnewpassword').css("display", "none");//隐藏
+				$('#trqnewpassword').css("display", "none");//隐藏
+			}
+			else{
+
+				$('#troldpassword').css("display", "");//显示
+				$('#trnewpassword').css("display", "");//显示
+				$('#trqnewpassword').css("display", "");//显示
+			}
+		}
+		
+		
+		//点击新增按钮
+		var addWork = function() {
+			$("#edit").dialog({
+				title : "新增用户信息",
+				iconCls : "icon-add"
+			    });
+			$("#edit-form").form("clear");
+			showinstitution();
+			$('#loginname').textbox('textbox').attr('disabled',false);//禁用用户名
+			
+	        $('#traddpass').css("display", "");//显示新增密码按钮行
+	        $('#treditpass').css("display", "none");//隐藏修改密码按钮行
+	        
+	        $('#btnadd').css("display", "");//显示新增按钮
+	        $('#btnedit').css("display", "none");//隐藏保存按钮
+	        
+            $('#btnadd').linkbutton('enable');
+            $('#newrole').combobox('enable');//禁用--权限
+            $('#institution').combobox('enable');//禁用--所属机构
+			selectaddPassword();//执行密码选择
+			$("#edit").dialog("open");
+
+		};
+		//点击修改按钮
+		var editWork = function() {
+			$("#edit").dialog({
+				title : "修改用户信息",
+				iconCls : "icon-edit"
+			    });
+			$("#edit-form").form("clear");
+			showinstitution();
+			
+			// 判断是否选中一项
+			var row = $("#workerlist").datagrid("getSelected");
+			if (row == null) {
+				$.messager.alert("警告", "请先选中一条记录进行修改！", "info");
+				return;
+			}
+			else{
+				$('#role').val(row.role);//取选择行的隐藏角色
+				$('#centerid').val(row.centerid);//取选择行的隐藏中心编码
+				$('#id').val(row.id);
+                $("#loginname").textbox("setText", row.loginname);
+				$('#upassword').val(row.password);
+				$('#newrole').combobox('setValues',row.newrole); 
+				$('#institution').combobox('setValue',row.institutionid==-2? -1:row.institutionid);
+			}
+
+			// 获取信息
+			//$("#edit-form").form("load", "/api/VolunteerApply/get?id=" + row.id);
+
+			$('#loginname').textbox('textbox').attr('disabled',true);//禁用用户名
+			
+	        $('#traddpass').css("display", "none");//隐藏新增密码按钮行
+	        $('#treditpass').css("display", "");//显示修改密码按钮行
+	        $('#btnadd').css("display", "none");//隐藏新增按钮
+	        $('#btnedit').css("display", "");//显示保存按钮
+            $('#btnedit').linkbutton('enable');
+			selectPassword();//执行密码选择
+	        
+	        var instituid=$('#institutionid').val();
+            if(instituid==-2){
+                $('#newrole').combobox('enable');//启用--权限
+                $('#institution').combobox('enable');//启用--所属机构
+			}
+			else if(instituid==0){
+
+                $('#newrole').combobox('disable');//禁用--权限
+                $('#institution').combobox('disable');//禁用--所属机构
+			}
+			else{
+                $('#newrole').combobox('disable');//禁用--权限
+                $('#institution').combobox('disable');//禁用--所属机构
+			}
+			$("#edit").dialog("open");
+
+		};
+		//点击查看按钮
+		var lookWork = function() {
+			$("#edit").dialog({
+				title : "查看用户信息",
+				iconCls : "icon-serch"
+			    });
+			$("#edit-form").form("clear");
+			showinstitution();
+
+			// 判断是否选中一项
+			var row = $("#workerlist").datagrid("getSelected");
+			if (row == null) {
+				$.messager.alert("警告", "请先选中一条记录进行查看！", "info");
+				return;
+			}
+			else{
+				$('#role').val(row.role);//取选择行的隐藏角色
+				$('#centerid').val(row.centerid);//取选择行的隐藏中心编码
+				$('#id').val(row.id);
+                $("#loginname").textbox("setText", row.loginname);
+				$('#upassword').val(row.password);
+				$('#newrole').combobox('setValues',row.newrole); 
+				$('#institution').combobox('setValue',row.institutionid==-2? -1:row.institutionid);
+			}
+
+			$('#loginname').textbox('textbox').attr('disabled',true);//禁用用户名
+	        $('#btnadd').css("display", "none");//隐藏新增按钮
+	        $('#btnedit').css("display", "none");//隐藏保存按钮
+            $('#newrole').combobox('disable');//禁用--权限
+            $('#institution').combobox('disable');//禁用--所属机构
+			selectPassword();//执行密码选择
+	        
+			$("#edit").dialog("open");
+
+		};
+		
+		//获取combobox多选值的字符串
+	    function GetComboboxMultiple(ID) {
+	        var dcSupplement = "";
+	        if (ID != "") {
+	            var array = $('select[id="' + ID + '"]').combobox('getValues');
+	            for (var i = 0; i < array.length ; i++) {
+	                if (dcSupplement != '') {
+	                    dcSupplement += ',';
+	                }
+	                dcSupplement += array[i];
+	            }
+	        }
+	        return dcSupplement;
+	    }
+		
+		//获取combobox多选值Text的字符串
+	    function GetComboboxMultipleText(ID) {
+	        var dcSupplement = "";
+	        if (ID != "") {
+	            var array = $('select[id="' + ID + '"]').combobox('getText');
+	            for (var i = 0; i < array.length ; i++) {
+	                if (dcSupplement != '') {
+	                    dcSupplement += ',';
+	                }
+	                dcSupplement += array[i];
+	            }
+	        }
+	        return dcSupplement;
+	    }
+		
+		
+		var Alert="";
+		//判断必填项
+		function GetValid(){
+            var radiopass= $('input:radio[name="password"]:checked').val();//获取修改密码选择值
+            var radioaddpass= $('input:radio[name="addpassword"]:checked').val();//获取新增密码选择值
+
+        	var loginname=$('#loginname').textbox('getText');
+            var newrole=GetComboboxMultiple('newrole');//获取多选框权限的选择值
+            var newroleText=$('#newrole').combobox('getText');//获取多选框权限的选择值
+        	if(loginname==""){
+                Alert += " 用户名";
+        	}
+            if(radiopass==3){
+            	var oldpassword=$('#oldpassword').textbox('getText');
+            	var newpassword=$('#newpassword').textbox('getText');
+            	var qnewpassword=$('#qnewpassword').textbox('getText');
+            	if(oldpassword==""){
+                    Alert += " 原密码";
+            	}
+            	if(newpassword==""){
+                    Alert += " 新密码";
+            	}
+            	if(qnewpassword==""){
+                    Alert += " 确认密码";
+            	}
+            }
+            //如果新增用户密码选择手动输入
+            if(radioaddpass==12){
+            	var newpassword=$('#newpassword').textbox('getText');
+            	var qnewpassword=$('#qnewpassword').textbox('getText');
+
+            	if(newpassword==""){
+                    Alert += " 新密码";
+            	}
+            	if(qnewpassword==""){
+                    Alert += " 确认密码";
+            	}
+            }
+            if(newrole==""){
+                Alert += " 角色权限";
+        	}
+            if(newroleText.indexOf("超级管理员")<0){
+            	var institution=$('#institution').combobox('getValue');
+            	if(institution==-1){
+                    Alert += " 所属机构";
+            	}
+            } 
+            if (Alert.length > 0)
+                Alert += " 没有填写！";
+		}
+		
+		//对密码进行加密
+		function GetMD5RawPass(password){
+			alert(password);
+			$.ajax({
+                type: 'POST',
+                url: '/api/worker/MD5RawPass',
+                data:
+                    {
+                        password: password
+                    },
+                dataType: "json",
+                success: function (jsData) {
+                	alert(jsData);
+                	$('#md5password').val(jsData);
+                },
+    			error : function(ms) {
+    				$.messager.alert("错误", "密码加密失败！","error");
+
+    			}
+            });
+		}
+		
+		//新增/修改字典提交方法
+	    function submitAddForm(value) {
+	        var validate = $("#edit-form").form("validate");
+	        var id=0;
+	        var role='';
+	        var centerid='';
+	        var password='';
+            var radiopass= $('input:radio[name="password"]:checked').val();//获取修改密码选择值
+            var radioaddpass= $('input:radio[name="addpassword"]:checked').val();//获取新增密码选择值
+            var passwordstate="";
+	        if (validate) {
+	        	GetValid();//判断必填项
+	        	
+	        	if (Alert == "") {
+		            if(value==1){
+		                id =$('#id').val();
+	
+		                role=$("#role").val();
+		                centerid=$("#centerid").val();
+		                passwordstate=radiopass;
+		                if(radiopass==1){
+		                	password=$('#upassword').val();
+		                }
+		                else if(radiopass==2){
+		                	password='a';
+		                }
+		                else{
+
+		                	password=$('#newpassword').textbox('getText');//新密码
+		                	//towNotEqual();
+		                	var newpassword=$('#newpassword').textbox('getText');
+		                	var qnewpassword=$('#qnewpassword').textbox('getText');
+		                	if(newpassword!=qnewpassword){
+
+		        				$.messager.alert("消息", "新密码与确认密码不同，请重新输入！","info");
+		        				$('#newpassword').textbox('setText',"");//清空新密码
+		        				$('#qnewpassword').textbox('setText',"");//清空确认密码
+		        				return;
+		                	}
+		                	//GetMD5RawPass(oldpassword);
+		                	//var md5password=$('#md5password').val();
+		                	////如果原密码与数据库不相等
+		                	//if(md5password!=$('#upassword').val()){
+
+		    				//	$.messager.alert("消息", "原密码不匹配，请重新输入！","info");
+		    				//	$('#oldpassword').textbox('setText',"");//清空原密码
+		    				//	return;
+		                	//}
+		                }
+		                //$('#btnedit').linkbutton('disable');
+		            }
+		            else{
+		            	role ="ROLE_USER";
+		                passwordstate=radioaddpass;
+		                if(radioaddpass==11){
+		                	password='a';
+		                }
+		                else{
+		                	password=$('#newpassword').textbox('getText');//新密码
+		                	
+		                	var newpassword=$('#newpassword').textbox('getText');
+		                	var qnewpassword=$('#qnewpassword').textbox('getText');
+		                	if(newpassword!=qnewpassword){
+
+		        				$.messager.alert("消息", "新密码与确认密码不同，请重新输入！","info");
+		        				$('#newpassword').textbox('setText',"");//清空新密码
+		        				$('#qnewpassword').textbox('setText',"");//清空确认密码
+		        				return;
+		                	}
+		                }
+		                //$('#btnadd').linkbutton('disable');
+		            }
+		            
+		            
+		            var newrole=GetComboboxMultiple('newrole');//获取多选框权限的选择值
+		            $.ajax({
+		                type: 'POST',
+		                url: '/api/worker/modify',
+		                data:
+		                    {
+		                        id: id,
+		                        loginname: $('#loginname').textbox('getText'),
+		                        passwordstate:passwordstate,
+		                        password: password,
+		                        oldpassword: $('#oldpassword').textbox('getText'),
+		                        oldDBpassword: $('#upassword').val(),
+		                        role:role,
+		                        centerid:centerid,
+		                        newrole:newrole,
+		                        institutionid:  $('#institution').combobox('getValue')==-1?-2:$('#institution').combobox('getValue')
+	
+		                    },
+		                dataType: "json",
+		                success: function (jsData) {
+		                	if(jsData==3){
+
+		    					$.messager.alert("消息", "原密码不匹配，请重新输入！","info");
+		    					$('#oldpassword').textbox('setText',"");//清空原密码
+		    					$('#newpassword').textbox('setText',"");//清空新密码
+		    					$('#qnewpassword').textbox('setText',"");//清空确认密码
+		    					
+		    					document.getElementById("oldpassword").focus();
+		    					$("input[name='oldpassword']:first").focus();
+		    					
+		    					//$('#oldpassword').focus();
+		    					return;
+		                	}
+		                	//如果返回9，说明用户名数据库已经存在
+		                	if(jsData==9){
+
+		    					$.messager.alert("消息", "用户名已经存在，请重新输入！","info");
+		    					$('#loginname').textbox('setText',"");//清空用户名
+		    					return;
+		                	}
+		                	
+		                    //$.handleJsonResult(jsData, function () {
+		                        $('#workerlist').datagrid("reload");
+		                        $('#edit').dialog('close');
+		                    //},
+		                    //function () {
+		                        $('#btnadd').linkbutton('disable');
+		    	                $('#btnedit').linkbutton('disable');
+		                    //});
+		                },
+		    			error : function(ms) {
+		    				$.messager.alert("错误", "新增或修改用户信息失败！","error");
+	
+		    			}
+		            });
+		        }
+	            else {
+					$.messager.alert("消息", "" + Alert + "","info");
+	                //$.showMsg("" + Alert + "", "提示");
+	                Alert = "";
+	            }
+	        }
+	    }
+
+
+
+		//获取cookie内的人员信息
+		var uName;
+		var pWord;
+		var roleid;//角色串
+		var instituid;//机构ID
+		function ReadCookie() {
+			var strCookie = document.cookie;
+			//将多cookie切割为多个名/值对
+			var arrCookie = strCookie.split(";");
+
+			//遍历cookie数组，处理每个cookie对
+			for (var i = 0; i < arrCookie.length; i++) {
+				var arr = arrCookie[i].split("=");
+				//对arr[0]格式化
+				mes = arr[0].replace(/^\s+|\s+$/g, "");
+				//找到名称为uName、pWord、id的cookie，并返回它的值
+				if ("uName" == mes) {
+					uName = arr[1];
+					continue;
+				}
+				if ("pWord" == mes) {
+					pWord = arr[1];
+					continue;
+				}
+				if ("roleid" == mes) {
+					roleid = arr[1];
+					continue;
+				}
+				if ("instituid" == mes) {
+					instituid = arr[1];
+					continue;
+				}
+			}
+		}
+		
+		//加载页面执行
+		$(document).ready(function() {
+			ReadCookie();
+			$('#uName').val(uName);//赋值登录名给隐藏文本
+			$('#institutionid').val(instituid);//赋值机构编码给隐藏文本
+			$('#roleid').val(roleid);//赋值角色编码给隐藏文本
+
+			//#region 查询条件所属机构
+			$("#minstitution").combobox(
+							{
+								url : '/api/Dictionary/get?table=T_INSTITUTION&typeCode=volunteertype&isAddSelect=1',
+								valueField : 'id',
+								textField : 'name',
+								method : "GET",
+								//editable : false,
+								//panelHeight : 'auto',
+								onLoadSuccess : function() {
+									//$('#institution').combobox('setValue',-1);
+								}
+
+							});
+			//#endregion 
+			if(instituid==-2){
+				$('#minstitution').combobox('setValue',-1);
+			}
+			else if(instituid==0){
+
+				$('#minstitution').combobox('disable'); 
+                $('#newrole').combobox('disable');//禁用--权限
+                $('#institution').combobox('disable');//禁用--所属机构
+				$('#addbutton').linkbutton('disable');//禁用--列表上的新增按钮
+			}
+			else{
+				$('#minstitution').combobox('setValue',$('#institutionid').val());
+				$('#minstitution').combobox('disable'); 
+                $('#newrole').combobox('disable');//禁用--权限
+                $('#institution').combobox('disable');//禁用--所属机构
+                
+				$('#addbutton').linkbutton('disable');//禁用--列表上的新增按钮
+			}
+			
+			
+
+			$('#workerlist').datagrid(
+					{
+						//width: 'auto',
+						//height: 'auto',
+						//fitColumns: true,
+						singleSelect : true,
+						loadMsg : '数据加载中请稍后……',
+						method : 'POST',
+						url : '/api/worker/list',
+						fit : true,//自动大小
+						//striped: true,
+						pagination : true,//启用分页，默认每页10行
+						rownumbers : true,//显示页码，默认 提供 10 - 50 的页容量选择下拉框
+						toolbar : "#toolbar",
+						queryParams : {
+							loginname : $("#mloginname").val(),
+							institutionid : $('#minstitution').combobox('getValue')=="" ?-1:$('#minstitution').combobox('getValue')
+						},
+						frozenColumns : [ [ {
+							field : "id",title : "编码",width : '10%',align : "center",hidden: true
+						}, {
+							field : "loginname",title : "用户名",width : '20%',align : "center"
+						}, {
+							field : "newrole",title : "权限",width : '0%',align : "center",hidden: true
+						}, {
+							field : "institution",title : "所属机构",width : '35%',align : "center"
+						}, {
+							field : "password",title : "密码",width : '0%',align : "center",hidden: true
+						}, {
+							field : "role",title : "角色",width : '0%',align : "center",hidden: true
+						}, {
+							field : "centerid",title : "中心编码",width : '0%',align : "center",hidden: true
+						}, {
+							field : "institutionid",title : "机构编码",width : '0%',align : "center",hidden: true
+						}
+
+						] ],
+						rowStyler : function(index, row) {
+							/* if (row.IsActive == false) {
+							    return 'color:red';
+							} */
+						},
+						onLoadSuccess : function(data) {
+
+						},
+						onSelect : function(index, row) {
+
+						}
+					});
+			setdatagridPager();
+		});
+	</script>
+</body>
+</html>

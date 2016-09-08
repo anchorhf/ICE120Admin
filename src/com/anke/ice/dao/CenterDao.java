@@ -39,5 +39,7 @@ public interface CenterDao extends BaseDao {
 	 * @return
 	 */
 	public int delete(int id);
-
+	
+	//修改接入点名称后，同时修改机构表的机构名称2016-08-16
+	public int updateInstitutionName(int id,String name);
 }

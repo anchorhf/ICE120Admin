@@ -164,4 +164,37 @@ public class WhereClauseUtility {
                 sbWhereClause.append(" WHERE ").append(columnName).append(" IN ('").append(selectQuery).append("') ");
         }
     }
+    
+    /// <summary>
+    /// 增加 字符串类型 相似 的 where 语句， 
+    /// </summary>
+    /// <param name="columnName"></param>
+    /// <param name="valueStr"></param>
+    /// <param name="sbWhereClause"></param>
+    public static void OrStringLike(String columnName, String valueStr, StringBuilder sbWhereClause)
+    {
+        if ((valueStr != null) && (valueStr.length()!=0))
+        {
+            if (sbWhereClause.length() > 0)
+                sbWhereClause.append(" OR ").append(columnName).append(" LIKE '%").append(valueStr).append("%' ");
+            else
+                sbWhereClause.append(" WHERE ").append(columnName).append(" LIKE '%").append(valueStr).append("%' ");
+        }
+    }
+    /// <summary>
+    /// 整型等于
+    /// </summary>
+    /// <param name="columnName"></param>
+    /// <param name="valueStr"></param>
+    /// <param name="sbWhereClause"></param>
+    public static void AddDoubleEqual(String columnName, double valueStr, StringBuilder sbWhereClause)
+    {
+        if (valueStr >= 0)
+        {
+            if (sbWhereClause.length() > 0)
+                sbWhereClause.append(" AND ").append(columnName).append(" = ").append(String.valueOf(valueStr)).append(" ");
+            else
+                sbWhereClause.append(" WHERE ").append(columnName).append(" = ").append(String.valueOf(valueStr)).append(" ");
+        }
+    }
 }

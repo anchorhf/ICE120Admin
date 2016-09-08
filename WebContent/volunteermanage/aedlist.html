@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" name="viewport"
+	content="initial-scale=1, user-scalable=0, minimal-ui">
+<title>AED管理</title>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/color.css">
+<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../css/app.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<style type="text/css">
+
+</style>
+
+</head>
+<body style="height: 100%">
+	<table id="aedlist"  class="easyui-datagrid">
+		<thead>
+			<tr>
+				<th data-options="field:'tabid',width:0,hidden: 'true'">编码</th>
+				<th data-options="field:'tabarea' ,width: '9%'">省市</th>
+				<th data-options="field:'tabaddress' ,width: '17%'">地址</th>
+				<th data-options="field:'tabbuilding' ,width: '12%'">场所</th>
+				<th data-options="field:'tabplace' ,width: '17%'">安放位置</th>
+				<th data-options="field:'tablongitude' ,width: '8%'">经度</th>
+				<th data-options="field:'tablatitude',width:'8%'">纬度</th>
+				<th data-options="field:'tabcreatetime',width:'12%'">创建时间</th>
+				<th data-options="field:'tabremark',width:'10%'">备注</th>
+				<th data-options="field:'tabisvalid',width:'6%'">是否有效</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar">
+		<div data-options="region:'north',split:true">
+			<table style="width: 100%; font-size: 12px;background: #ffffff;border-collapse: separate; 
+			border-spacing: 2px;" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+				    <td align="right" style="width: 6%">起始时刻：</td>
+					<td style="width: 14%"><input class="easyui-datetimebox"
+						style="width: 90%" id="startTime" name="startTime"
+						data-options="editable: false"></td>
+
+					<td align="right" style="width: 6%">终止时刻：</td>
+					<td style="width: 14%"><input class="easyui-datetimebox"
+						style="width: 90%" id="endTime" name="endTime"
+						data-options="editable: false"></td>
+					<td align="right" style="width: 4%">经度：</td>
+					<td style="width: 14%"><input class="easyui-textbox"
+						type="text" style="width: 90%" id="mlongitude" name="mlongitude"></td>
+					<td align="right" style="width: 6%">纬度：</td>
+					<td style="width: 14%"><input class="easyui-textbox"
+						type="text" style="width: 90%" id="mlatitude" name="mlatitude"></td>
+					<td align="right" style="width: 6%">是否有效：</td>
+					<td style="width: 10%"><select class="easyui-combobox" 
+						style="width: 80%" id="misvalid" name="misvalid"
+						data-options="panelHeight: 'auto',editable:false">
+							<option value="-1">--请选择--</option>
+							<option value="1">有效</option>
+							<option value="0">无效</option>
+					</select></td><td rowspan="2"><a href="javascript:void(0)" 
+						id="btnSearch" class="easyui-linkbutton" onclick="reSearch()"
+						data-options="iconCls:'icon-search'">查询</a></td></tr><tr>	
+					<td align="right" style="width: 6%">省市：</td>
+					<td style="width: 14%"><input class="easyui-textbox"
+						type="text" style="width: 90%" id="marea" name="marea"></td>	
+					<td align="right" style="width: 6%">地址：</td>
+					<td style="width: 14%"><input class="easyui-textbox"
+						type="text" style="width: 90%" id="maddress" name="maddress"></td>
+					<td align="right" style="width: 4%">场所：</td>
+					<td style="width: 14%"><input class="easyui-textbox"
+						type="text" style="width: 90%" id="mbuilding" name="mbuilding"></td>
+					<td align="right" style="width: 6%">安放位置：</td>
+					<td style="width: 14%"><input class="easyui-textbox"	
+						type="text" style="width: 90%" id="mplace" name="mplace"></td>
+					<td></td><td></td>
+				</tr>
+			</table>
+		</div>
+		<div style="padding-left: 10px">
+			<a href="javascript:void(0)" class="easyui-linkbutton" id="addbutton"
+				iconCls="icon-add" plain="true" onclick="addaed()">新增</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton" id="editbutton"
+				iconCls="icon-edit" plain="true" onclick="editaed()">修改</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton" id=lookbutton
+				iconCls="icon-search" plain="true" onclick="lookaed()">查看</a> 
+		</div>
+	</div>
+
+	<div id="edit" closed="true">
+		<form id="edit-form" method="post" >
+			<table id="tabaed" style="width: 96%; margin: 5px 0px 0px 5px; border-collapse: separate; 
+			border-spacing: 5px;" border="0" cellspacing="1" cellpadding="0">
+                    <tr>
+					<td align="right" style="width:14%">省市：</td>
+					<td style="width: 35%"><input class="easyui-textbox" data-options="required:true,validType:'length[0,100]'"
+						type="text" style="width: 90%" id="area" name="area"></td>	
+					<td align="right">地址(街道)：</td>
+					<td style="width: 35%"><input class="easyui-textbox" data-options="required:true,validType:'length[0,250]'"
+						type="text" style="width: 90%" id="address" name="address"></td></tr><tr>
+					<td align="right">场所(建筑)：</td>
+					<td style="width: 35%"><input class="easyui-textbox" data-options="required:true,validType:'length[0,100]'"
+						type="text" style="width: 90%" id="building" name="building"></td>
+					<td align="right">安放位置：</td>
+					<td style="width: 35%"><input class="easyui-textbox" data-options="required:true,validType:'length[0,100]'"
+						type="text" style="width: 90%" id="place" name="place"></td></tr>
+									<tr>
+					<td align="right">经度：</td>
+					<td style="width:35%"><input class="easyui-numberbox" data-options="required:true,min:0,precision:4"
+						type="text" style="width: 90%" id="longitude" name="longitude"></td>
+					<td align="right">纬度：</td>
+					<td style="width: 35%"><input class="easyui-numberbox" data-options="required:true,min:0,precision:4"
+						type="text" style="width: 90%" id="latitude" name="latitude"></td></tr>
+					<tr>
+					<td align="right">备注：</td>
+					<td colspan="3"><textarea id="remark" name="remark" cols="20" style="width:97%;height:60px"  onpropertychange="checkLength(this,300);" oninput="checkLength(this,300);"
+							rows="2" ></textarea></td></tr>
+							
+					<tr><td align="right">是否有效：</td>
+					<td style="width: 35%"><select class="easyui-combobox" style="width:50%" 
+						 id="isvalid" name="isvalid"
+						data-options="panelHeight: 'auto',editable:false">
+							<option value="1">有效</option>
+							<option value="0">无效</option>
+					</select></td>
+					<td><input class="text" id="id" name="id" style="display: none" /></td></tr>	
+			</table>
+		</form>
+	</div>
+	<script type="text/javascript">
+	
+	//#region 禁用Backspace键
+    window.onload = function () {
+        document.getElementsByTagName("body")[0].onkeydown = function () {
+
+            //获取事件对象
+            var elem = event.relatedTarget || event.srcElement || event.target || event.currentTarget;
+
+            if (event.keyCode == 8) {//判断按键为backSpace键
+
+                //获取按键按下时光标做指向的element
+                var elem = event.srcElement || event.currentTarget;
+
+                //判断是否需要阻止按下键盘的事件默认传递
+                var name = elem.nodeName;
+
+                if (name != 'INPUT' && name != 'TEXTAREA') {
+                    return StopBackspace(event);
+                }
+                var type_e = elem.type.toUpperCase();
+                if (name == 'INPUT' && (type_e != 'TEXT' && type_e != 'TEXTAREA' && type_e != 'PASSWORD' && type_e != 'FILE')) {
+                    return StopBackspace(event);
+                }
+                if (name == 'INPUT' && (elem.readOnly == true || elem.disabled == true)) {
+                    return StopBackspace(event);
+                }
+            }
+        }
+    }
+    function StopBackspace(e) {
+        if (e.returnValue) {
+            e.returnValue = false;
+        }
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+
+        return false;
+    }
+    //#endregion
+    
+    function checkLength(obj,maxlength){
+    if(obj.value.length > maxlength){
+        obj.value = obj.value.substring(0,maxlength);
+        }
+     }
+    
+    
+    var roleid;
+
+	//获取cookie值
+	function ReadCookie(){
+		var strCookie=document.cookie;
+		//将多cookie切割为多个名/值对
+		var arrCookie=strCookie.split(";");
+
+		//遍历cookie数组，处理每个cookie对
+		for(var i=0;i<arrCookie.length;i++){
+	 	var arr=arrCookie[i].split("=");
+	    //对arr[0]格式化
+	 	mes = arr[0].replace( /^\s+|\s+$/g, "" );
+	    //找到名称为uName、pWord、id的cookie，并返回它的值
+	 	if ("uName"==mes){
+	 		uName=arr[1];
+	 		continue;
+	 	}
+	  	if("pWord"==mes){
+	  		pWord=arr[1];
+	  		continue;
+	  	}
+	  	if("roleid"==mes){
+	  		roleid=arr[1];
+	  		continue;
+	  	}
+		if("instituid"==mes){
+			instituid=arr[1];
+	  		continue;
+	  	}
+	}
+		}
+    
+    
+		$(document).ready(function() {
+			
+            ReadCookie();
+			
+ 			ifRole(75);
+ 			ifRole(76);
+ 			ifRole(77);
+			
+			var date = new Date();
+			var day = 30;
+			var hour = 1;
+			var d2 = new Date(date.getTime() - day * 24 * 60
+					* 60 * 1000);
+			var d3 = new Date(date.getTime() + hour * 60 * 60
+					* 1000);
+			var startTime = d2.getFullYear() + "-"
+					+ (d2.getMonth() + 1) + "-" + d2.getDate()
+					+ " " + d2.getHours() + ":"
+					+ d2.getMinutes() + ":" + d2.getSeconds();
+			var endTime = d3.getFullYear() + "-"
+					+ (d3.getMonth() + 1) + "-" + d3.getDate()
+					+ " " + d3.getHours() + ":"
+					+ d3.getMinutes() + ":" + d3.getSeconds();
+			//alert(startTime);
+			$('#startTime').datetimebox('setValue', startTime);
+			$('#endTime').datetimebox('setValue', endTime);
+			
+			$("#aedlist").datagrid({
+				url : '/api/aed/list',
+				method : 'POST',
+				pageSize : 15,//每页显示的记录条数，默认为15
+				pageList : [ 10, 15, 20, 30 ],//可以设置每页记录条数的列表 
+				pagination : true,
+				fit : true,//自动大小
+				toolbar : "#toolbar",
+				rownumbers : true,//行号
+ 				singleSelect : true,
+				queryParams : {
+					releasebegintime : $("#startTime").datetimebox('getValue'),
+					releaseendtime : $('#endTime').datetimebox('getValue'),
+					mlongitude : $('#mlongitude').val(),
+					mlatitude : $('#mlatitude').val(),
+					marea : $('#marea').val(),
+					maddress : $('#maddress').val(),
+					mbuilding : $('#mbuilding').val(),
+					mplace : $('#mplace').val(),
+					misvalid :$('#misvalid').combobox('getValue') 
+				},
+				rowStyler : function(index, row) {
+					if (row.tabisvalid == "无效")
+						return 'color:red;';
+					return '';	
+				},
+				onDblClickRow : function(rowIndex, rowData) {
+					
+				},
+				onSelect : function(index, row) {
+				       
+				}
+			});
+			//设置分页控件 
+			setdatagridPager();
+			
+		});
+    
+		var ifRole = function(menuid) {
+			$.ajax({
+				url : '/api/Dictionary/getIFRole',
+				type : "POST",
+				data : {
+					roleid :roleid,
+					menuid : menuid
+				},
+				success : function(msg) {
+					if (msg == 1&&menuid==75) {
+						$('#addbutton').linkbutton('enable');
+					}else if(msg ==0&&menuid==75){
+						$('#addbutton').linkbutton('disable');
+					}else if (msg == 1&&menuid==76) {
+						$('#editbutton').linkbutton('enable');
+					}else if(msg ==0&&menuid==76){
+						$('#editbutton').linkbutton('disable');
+					}else if (msg == 1&&menuid==77) {
+						$('#lookbutton').linkbutton('enable');
+					}else if(msg ==0&&menuid==77){
+						$('#lookbutton').linkbutton('disable');
+					}
+				},
+				error : function() {
+					$.messager.alert("错误", "获取审核权限失败！", "error");
+
+				}
+			});
+		}	
+    
+    
+		//查询
+	var reSearch = function() {
+			$("#aedlist").datagrid({
+				 pageNumber: 1,
+                 queryParams: {
+                	releasebegintime : $("#startTime").datetimebox('getValue'),
+ 					releaseendtime : $('#endTime').datetimebox('getValue'),
+ 					mlongitude : $('#mlongitude').val(),
+ 					mlatitude : $('#mlatitude').val(),
+ 					marea : $('#marea').val(),
+ 					maddress : $('#maddress').val(),
+ 					mbuilding : $('#mbuilding').val(),
+ 					mplace : $('#mplace').val(),
+ 					misvalid :$('#misvalid').combobox('getValue') 
+                 }
+			});
+			setdatagridPager();
+	};
+	
+	//查看急救手册
+	var lookaed = function() {
+		$("#edit").dialog({
+			title : "查看AED",
+			iconCls : "icon-search",
+			buttons : [{
+				text : "关闭",
+				handler : function() {
+					$("#edit").dialog("close");
+				}
+			}]
+			
+		});
+		// 判断是否选中一项
+		$("#edit-form").form("clear");
+		var row = $("#aedlist").datagrid("getSelected");
+		if (row == null) {
+			$.messager.alert("警告", "请先选中一条记录查看！", "warning");
+			return;
+		}
+		$('#edit-form').form('clear');
+		$("#edit-form").form("load", "/api/aed/get?id=" + row.tabid);
+		$("#edit").dialog("open");
+	};
+	
+	//新增急救手册
+	var addaed = function() {
+		$("#edit-form").form("clear");
+		$("#isvalid").combobox('setValue','1');
+		$("#edit").dialog({
+			title : "新增AED",
+			iconCls : "icon-add",
+			buttons : [ {
+				text : "保存",
+				id:'addid',
+				handler : function() {
+					  $('#addid').linkbutton('disable');
+				      $("#edit-form").submit();	
+         }
+			}, {
+				text : "关闭",
+				handler : function() {
+					$("#edit").dialog("close");
+				}
+			} ]
+		});
+		$("#edit").dialog("open");
+	};
+	
+	//编辑急救手册
+	var editaed = function() {
+		 $("#edit").dialog({
+				title : "修改AED",
+				iconCls : "icon-edit",
+				buttons : [ {
+					text : "保存",
+					id:'editid',
+					handler : function() {
+						$('#editid').linkbutton('disable');
+						isvalidval=$('#isvalid').combobox('getValue') 
+						if(isvalidval==0){
+							$.messager.confirm('提示', '是否确定要将AED改为：无效？"', function (r) {
+				                if (r) {
+				                	$('#editid').linkbutton('disable');
+				                	$("#edit-form").submit();
+				                }
+				            })
+						}else{
+							$("#edit-form").submit();
+						}
+	                }
+				}, {
+					text : "关闭",
+					handler : function() {
+						$("#edit").dialog("close");
+					}
+				} ]
+			});
+		// 判断是否选中一项
+		$("#edit-form").form("clear");
+		
+		var row = $("#aedlist").datagrid("getSelected");
+		if (row == null) {
+			$.messager.alert("警告", "请先选中一条记录！", "warning");
+			return;
+		}
+		$('#edit-form').form('clear');
+		$("#edit-form").form("load", "/api/aed/get?id=" + row.tabid)
+		$("#edit").dialog("open");
+	};
+	
+	//侦听表单
+	$("#edit-form").form({
+		url : "/api/aed/modify",
+		onSubmit : function() {
+			return $("#edit-form").form("validate");
+		},
+		success : function(data) {
+			if (data == "true") {
+				$('#aedlist').datagrid('reload');
+				$("#edit").dialog("close");
+			} else
+				$.messager.alert("错误", "AED信息保存失败！", "error");
+		}
+	});
+	
+    $("#edit").dialog({
+			width : "45%",
+			height : "270px",
+			modal : true
+		}); 
+
+	//设置分页控件 
+	var setdatagridPager= function(){
+
+		var p = $('#aedlist').datagrid('getPager');
+		$(p).pagination(
+				{
+					beforePageText : '第',//页数文本框前显示的汉字 
+					afterPageText : '页    共 {pages} 页',
+					displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+				});
+	}	
+	</script>
+</body>
+</html>

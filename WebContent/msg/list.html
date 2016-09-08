@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" name="viewport"
+	content="initial-scale=1, user-scalable=0, minimal-ui">
+<title>资讯管理</title>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/color.css">
+<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../css/app.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="../ckfinder/ckfinder.js"></script>
+<style type="text/css">
+#cke_1_contents {
+  	height: 215px !important;  */
+}
+.file {
+    position: relative; 
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 1px 1px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    height:22px;
+    top:7px;
+}
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+} 
+ .file:hover { 
+     background: #AADFFD; 
+     border-color: #78C3F3; 
+     color: #004974; 
+     text-decoration: none; 
+}
+</style>
+
+</head>
+<body style="height: 100%">
+	<table id="meslist"  class="easyui-datagrid">
+		<thead>
+			<tr>
+<!-- 				<th data-options="field:'ck',checkbox:true,width:'3%'">选择</th> -->
+				<th data-options="field:'tabmsgid',width:'5%'">编码</th>
+				<th data-options="field:'tabtitle' ,width: '28%'">消息标题</th>
+				<th data-options="field:'tabmsgtype' ,width: '10%'">消息类型</th>
+				<th data-options="field:'tabprofile' ,width: '20%'">消息简介</th>
+				<th data-options="field:'tabreleasetime' ,width: '12%'">发布时间</th>
+				<th data-options="field:'tabinstitution' ,width: '18%'">所属机构</th>
+				<th data-options="field:'tabinstitutionid' ,width:0,hidden: 'true'">机构编码</th>
+				<th data-options="field:'tabapproval' ,width: '6%'">审核状态</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar">
+		<div data-options="region:'north',split:true">
+			<table style="width: 100%; font-size: 12px;background: #ffffff;border-collapse: separate; border-spacing: 2px;" border="0" 
+				cellspacing="0" cellpadding="0">
+				<tr>
+					<td align="right" style="width: 9%">发布开始时刻：</td>
+					<td style="width: 13%"><input class="easyui-datetimebox"
+						style="width: 90%" id="startTime" name="startTime"
+						data-options="editable: false"></td>
+
+					<td align="right" style="width: 9%">发布终止时刻：</td>
+					<td style="width: 13%"><input class="easyui-datetimebox"
+						style="width: 90%" id="endTime" name="endTime"
+						data-options="editable: false"></td>
+                   
+                    <td align="right" style="width: 6%">所属机构：</td>
+					<td style="width: 16%"><select class="easyui-combobox"
+						style="width: 98%" id="minstitution" name="minstitution"
+						data-options="multiple:true,editable: false">
+					</select></td>
+					<td align="right" style="width: 9%">消息简介：</td>
+					<td style="width: 13%"><input class="easyui-textbox"
+						type="text" style="width: 90%" id="mprofile" name="mprofile"></td>
+					<td rowspan="2"><a href="javascript:void(0)"
+						id="btnSearch" class="easyui-linkbutton" onclick="reSearch()"
+						data-options="iconCls:'icon-search'">查询</a></td>
+				</tr>
+				<tr>
+				    <td align="right" style="width: 9%">消息标题：</td>
+					<td style="width: 13%"><input class="easyui-textbox"
+						type="text" style="width: 90%" id="mtitle" name="mtitle"></td>
+
+					<td align="right" style="width: 9%">消息类型：</td>
+					<td style="width: 13%"><select class="easyui-combobox"
+						style="width: 90%" id="mtype" name="mtype"
+						data-options="panelHeight: 'auto',multiple:true,editable: false">
+					</select></td>
+				
+					
+
+					<td align="right" style="width: 6%">审核状态：</td>
+					<td style="width: 16%"><select class="easyui-combobox"
+						style="width: 98%" id="mapproval" name="mapproval"
+						data-options="panelHeight: 'auto',editable: false">
+							<option value="-1">--请选择--</option>
+							<option value="1">已审核</option>
+							<option value="0">未审核</option>
+					</select></td>
+
+					
+					<td align="right" style="width: 9%"></td>
+					<td style="width: 13%"></td>
+					
+
+				</tr>
+			</table>
+		</div>
+		<div style="padding-left: 5px">
+
+			<a href="javascript:void(0)" class="easyui-linkbutton" id="addbutton"
+				iconCls="icon-add" plain="true" onclick="addMsg()">新增</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton" id="editbutton"
+				iconCls="icon-edit" plain="true" onclick="editMsg()">修改</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton" id="deletebutton"
+				iconCls="icon-remove" plain="true" onclick="deleteMsg()">删除</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton" id="lookbutton"
+				iconCls="icon-search" plain="true" onclick="lookMsg()">查看</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton" id="checkbutton"
+				iconCls="icon-checkbt" plain="true" onclick="checkMsg()">审核</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton" id="postbutton"
+				iconCls="icon-postbt" plain="true" onclick="postMsg()">推送</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" id="previewbutton"
+				iconCls="icon-previewbt" plain="true" onclick="previewMsg()">预览</a>
+		</div>
+	</div>
+
+	<div id="edit" closed="true">
+		<form id="edit-form" method="post">
+			<table id="tabmsg"
+				style="width: 100%; margin: 0px 0px 0px 0px; border-collapse: separate; border-spacing: 4px;"
+				border="0" cellspacing="1" cellpadding="0">
+				<tr>
+					<td align="right" style="width: 10%">消息标题：</td>
+					<td colspan="3"><input class="easyui-textbox" data-options="required:true,validType:'length[0,100]'" 
+						type="text" style="width: 90%" id="title" name="title"></td>
+				</tr>
+				<tr></tr>
+				<tr>
+					<td align="right">消息简介：</td>
+					<td colspan="3"><input class="easyui-textbox" data-options="validType:'length[0,250]'" 
+						type="text" style="width: 90%" id="profile" name="profile"></td>
+				</tr>
+				
+				<tr><td align="right">上传图标：</td>
+					<td colspan="2">
+					<input class="easyui-textbox" type="text"  id="picname" name="picname" style="width:80%" data-options="editable:false">&nbsp;
+					<a href="javascript:;" class="file">选择文件
+                    <input type="file" data-options=""  id="url" name="url" onchange="imgload()">
+                    </a></td>
+                    <td><span id="result" name="result" style="float:left;height:33px; vertical-align:middle" ></span><span style="color:red">*注：图片尺寸120×90<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;图片名称只能包含英文和数字（如：201605040124.png）</span></td>
+                    </tr>
+                <tr style="width:100%">
+                	<td align="right" style="width:10%">消息类型：</td>
+					<td style="width:38%"><select class="easyui-combobox" style="width:78%" id="msgtypeidval"
+						name="msgtypeid" 
+						data-options="panelHeight: 'auto', editable:false ">
+					</select></td>
+					<td align="right" style="width:10%">所属机构：</td>
+					<td style="width:38%"><select class="easyui-combobox" style="width:78%" id="centerid"
+						name="centerid" data-options=" editable:false ">
+					</select></td>
+				</tr>
+				    
+                    <tr><td><textarea id="strurl" name="strurl" cols="20" rows="5" style="display: none"></textarea></td></tr>
+                    
+                    <tr><td><input class="text" id="msgid" name="msgid"
+						style="display: none" /></td>
+						<td><input class="text" id="approval" name="approval"
+						style="display: none" /></td>
+					<td><textarea id="strcontent" name="strcontent" cols="20"
+							rows="5" style="display: none"></textarea></td></tr>
+			</table>
+		</form>
+					<div class="easyui-panel" title="内容" style="width: 100%; height:280px; padding: 2px; border: 0px">
+
+				<textarea name="txtarea" cols="20" rows="10" style="height: 100%"></textarea>
+				<script type="text/javascript">
+				var editor=CKEDITOR.replace("txtarea");
+				</script>
+			</div>
+	</div>
+	<script type="text/javascript">
+	
+	//#region 禁用Backspace键
+    window.onload = function () {
+        document.getElementsByTagName("body")[0].onkeydown = function () {
+
+            //获取事件对象
+            var elem = event.relatedTarget || event.srcElement || event.target || event.currentTarget;
+
+            if (event.keyCode == 8) {//判断按键为backSpace键
+
+                //获取按键按下时光标做指向的element
+                var elem = event.srcElement || event.currentTarget;
+
+                //判断是否需要阻止按下键盘的事件默认传递
+                var name = elem.nodeName;
+
+                if (name != 'INPUT' && name != 'TEXTAREA') {
+                    return StopBackspace(event);
+                }
+                var type_e = elem.type.toUpperCase();
+                if (name == 'INPUT' && (type_e != 'TEXT' && type_e != 'TEXTAREA' && type_e != 'PASSWORD' && type_e != 'FILE')) {
+                    return StopBackspace(event);
+                }
+                if (name == 'INPUT' && (elem.readOnly == true || elem.disabled == true)) {
+                    return StopBackspace(event);
+                }
+            }
+        }
+    }
+    function StopBackspace(e) {
+        if (e.returnValue) {
+            e.returnValue = false;
+        }
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+
+        return false;
+    }
+    //#endregion
+    
+	var roleid;
+	var instituid;
+	var addb;
+	var editb;
+	var lookb;
+	var deleteb;
+	var checkb;
+	var postb;
+	//获取cookie值
+	function ReadCookie(){
+		var strCookie=document.cookie;
+		//将多cookie切割为多个名/值对
+		var arrCookie=strCookie.split(";");
+
+		//遍历cookie数组，处理每个cookie对
+		for(var i=0;i<arrCookie.length;i++){
+	 	var arr=arrCookie[i].split("=");
+	    //对arr[0]格式化
+	 	mes = arr[0].replace( /^\s+|\s+$/g, "" );
+	    //找到名称为uName、pWord、id的cookie，并返回它的值
+	 	if ("uName"==mes){
+	 		uName=arr[1];
+	 		continue;
+	 	}
+	  	if("pWord"==mes){
+	  		pWord=arr[1];
+	  		continue;
+	  	}
+	  	if("roleid"==mes){
+	  		roleid=arr[1];
+	  		continue;
+	  	}
+		if("instituid"==mes){
+			instituid=arr[1];
+	  		continue;
+	  	}
+	}
+		}
+
+		$(document).ready(function() {
+			
+			ReadCookie();
+			
+ 			ifRole(27);
+ 			ifRole(28);
+ 			ifRole(29);
+ 			ifRole(30);
+ 			ifRole(33);
+ 			ifRole(34);
+			
+			var date = new Date();
+			var day = 30;
+			var hour = 1;
+			var d2 = new Date(date.getTime() - day * 24 * 60
+					* 60 * 1000);
+			var d3 = new Date(date.getTime() + hour * 60 * 60
+					* 1000);
+			var startTime = d2.getFullYear() + "-"
+					+ (d2.getMonth() + 1) + "-" + d2.getDate()
+					+ " " + d2.getHours() + ":"
+					+ d2.getMinutes() + ":" + d2.getSeconds();
+			var endTime = d3.getFullYear() + "-"
+					+ (d3.getMonth() + 1) + "-" + d3.getDate()
+					+ " " + d3.getHours() + ":"
+					+ d3.getMinutes() + ":" + d3.getSeconds();
+			//alert(startTime);
+			$('#startTime').datetimebox('setValue', startTime);
+			$('#endTime').datetimebox('setValue', endTime);
+			
+			
+			$("#mtype").combobox.SelectIndex=-1;
+			if(instituid==0){
+				$('#minstitution').combobox('disable'); 	
+			}
+			else if(instituid==-2){
+				$("#minstitution").combobox.SelectIndex=-1;
+			}
+			else{
+			    $("#minstitution").combobox('setValue',instituid);
+				$("#minstitution").combobox('disable'); 	
+			}	
+		
+			$("#meslist").datagrid({
+				url : '/api/msg/list',
+				method : 'POST',
+				pageSize : 15,//每页显示的记录条数，默认为15
+				pageList : [ 10, 15, 20, 30 ],//可以设置每页记录条数的列表 
+				pagination : true,
+				fit : true,//自动大小
+				toolbar : "#toolbar",
+				rownumbers : true,//行号
+ 				singleSelect : true,
+				queryParams : {
+					releasebegintime : $("#startTime").datetimebox('getValue'),
+					releaseendtime : $('#endTime').datetimebox('getValue'),
+					minstitution : instituid,
+					mtitle : $('#mtitle').val(),
+					mprofile : $('#mprofile').val(),
+					mtype : $('#mtype').combobox('getValues').toString(),
+					mapproval :$('#mapproval').combobox('getValue') 
+				},
+				rowStyler : function(index, row) {
+					if (row.tabapproval == "已审核")
+						return 'color:green;';
+					return '';
+				},
+				onDblClickRow : function(rowIndex, rowData) {
+					
+				},
+				onSelect : function(index, row) {
+					    var tabmsgtypeid;
+					    if(row.tabmsgtype=="APP使用帮助"){
+					    	tabmsgtypeid=100;
+					    }
+				        //超級管理員
+						if(instituid==-2){
+						    //所屬機構不為空
+							if(row.tabinstitution !=null){
+								$('#checkbutton').linkbutton('disable');
+								$('#deletebutton').linkbutton('disable');	
+								$('#editbutton').linkbutton('disable');	
+								if(row.tabapproval =="已审核"){
+									if(postb==1){
+										$('#postbutton').linkbutton('enable');
+									}else{
+										$('#postbutton').linkbutton('disable');
+									}
+								}else{
+									$('#postbutton').linkbutton('disable');
+								}
+							}else{
+								if(editb==1){
+									$('#editbutton').linkbutton('enable');		
+								}else{
+									$('#editbutton').linkbutton('disable');		
+								}
+								if(row.tabapproval =="已审核"){
+									$('#checkbutton').linkbutton('disable');
+									$('#deletebutton').linkbutton('disable');
+									
+									if(postb==1){
+										$('#postbutton').linkbutton('enable');
+									}else{
+										$('#postbutton').linkbutton('disable');
+									}
+								}else{
+									if(checkb==1){
+										$('#checkbutton').linkbutton('enable');
+									}else{
+										$('#checkbutton').linkbutton('disable');
+									}
+									if(tabmsgtypeid==100){
+										$('#deletebutton').linkbutton('disable');
+									}else{
+										if(deleteb==1){
+											$('#deletebutton').linkbutton('enable');
+										}else{
+											$('#deletebutton').linkbutton('disable');
+										}
+										
+									}
+
+									$('#postbutton').linkbutton('disable');
+								}
+							}
+						}else{
+						
+							if(row.tabapproval =="已审核"){
+								$('#checkbutton').linkbutton('disable');
+								$('#deletebutton').linkbutton('disable');
+								if(editb==1){
+									$('#editbutton').linkbutton('enable');		
+								}else{
+									$('#editbutton').linkbutton('disable');		
+								}
+								if(postb==1){
+									$('#postbutton').linkbutton('enable');
+								}else{
+									$('#postbutton').linkbutton('disable');
+								}
+							}else{ 
+								if(checkb==1){
+									$('#checkbutton').linkbutton('enable');
+								}else{
+									$('#checkbutton').linkbutton('disable');
+								}
+								if(tabmsgtypeid==100){
+									$('#deletebutton').linkbutton('disable');
+								}else{
+									if(deleteb==1){
+										$('#deletebutton').linkbutton('enable');
+									}else{
+										$('#deletebutton').linkbutton('disable');
+									}
+								}
+								
+								
+								
+								$('#postbutton').linkbutton(
+								'disable');
+								if(editb==1){
+									$('#editbutton').linkbutton('enable');		
+								}else{
+									$('#editbutton').linkbutton('disable');		
+								}
+						    }
+						}
+				}
+			});
+			//设置分页控件 
+			setdatagridPager();
+			
+		});
+		
+		
+		var ifRole = function(menuid) {
+			$.ajax({
+				url : '/api/Dictionary/getIFRole',
+				type : "POST",
+				data : {
+					roleid :roleid,
+					menuid : menuid
+				},
+				success : function(msg) {
+					if (msg == 1&&menuid==27) {
+						$('#addbutton').linkbutton('enable');
+						addb=1;
+					} else if(msg ==0&&menuid==27){
+						$('#addbutton').linkbutton('disable');
+						addb=0;
+					}else if (msg == 1&&menuid==28) {
+						$('#editbutton').linkbutton('enable');
+						editb=1;
+					}else if(msg ==0&&menuid==28){
+						$('#editbutton').linkbutton('disable');
+						editb=0;
+					}else if (msg == 1&&menuid==29) {
+						$('#deletebutton').linkbutton('enable');
+						deleteb=1;
+					}else if(msg ==0&&menuid==29){
+						$('#deletebutton').linkbutton('disable');
+						deleteb=0;
+					}else if (msg == 1&&menuid==30) {
+						$('#lookbutton').linkbutton('enable');
+						lookb=1;
+					}else if(msg ==0&&menuid==30){
+						$('#lookbutton').linkbutton('disable');
+						lookb=0;
+					}else if (msg == 1&&menuid==33) {
+						$('#checkbutton').linkbutton('enable');
+						checkb=1;
+					}else if(msg ==0&&menuid==33){
+						$('#checkbutton').linkbutton('disable');
+						checkb=0;
+					}else if (msg == 1&&menuid==34) {
+				    	$('#postbutton').linkbutton('enable');
+				    	postb=1;
+					}else if(msg ==0&&menuid==34){
+						$('#postbutton').linkbutton('disable');
+						postb=0;
+					}
+				},
+				error : function() {
+					$.messager.alert("错误", "获取审核权限失败！", "error");
+
+				}
+			});
+		}	
+		//查询
+	var reSearch = function() {
+			$("#meslist").datagrid({
+				 pageNumber: 1,
+                 queryParams: {
+                	releasebegintime : $("#startTime").datetimebox('getValue'),
+ 					releaseendtime : $('#endTime').datetimebox('getValue'),
+ 					minstitution : $('#minstitution').combobox('getValues').toString(),
+ 					mtitle : $('#mtitle').val(),
+ 					mprofile : $('#mprofile').val(),
+ 					mtype : $('#mtype').combobox('getValues').toString(),
+ 					mapproval :$('#mapproval').combobox('getValue') 
+                 }
+			});
+			setdatagridPager();
+	};
+	
+	//查看资讯
+	var lookMsg = function() {
+		$("#edit").dialog({
+			title : "查看资讯",
+			iconCls : "icon-search",
+			buttons : [{
+				text : "关闭",
+				handler : function() {
+					$("#edit").dialog("close");
+				}
+			} ]
+			
+		});
+		// 判断是否选中一项
+		$("#edit-form").form("clear");
+		document.getElementById('result').innerHTML = "";
+		var row = $("#meslist").datagrid("getSelected");
+		if (row == null) {
+			$.messager.alert("警告", "请先选中一条记录查看！", "warning");
+			return;
+		}
+		$('#edit-form').form('clear');
+		$("#edit-form").form("load", "/api/msg/get?id=" + row.tabmsgid)
+		setTimeout('msgtimeout()',500);
+	};
+	//延迟加载
+	function msgtimeout()
+	{   
+		var cetval=$('#centerid').combobox('getValue') ;
+		
+			if(instituid==0){
+				$('#centerid').combobox('disable'); 	
+			}
+			else if(instituid==-2){
+				$('#centerid').combobox('setValue',cetval);	
+			}
+			else{
+				$("#centerid").combobox('disable');
+				$('#centerid').combobox('setValue',cetval);	
+			}	
+		
+		ckeditordata=$('#strcontent').val();
+		CKEDITOR.instances.txtarea.setData(ckeditordata);
+		 var result=document.getElementById("result"); 
+		 var getimgpath=$('#picname').val();
+         //显示文件  
+           result.innerHTML='<img src="' +getimgpath +'" alt="" style="width:20px;height:20px;"/>';  
+	 		$("#edit").dialog("open");
+	};
+	
+	
+	function imgload()
+	{   var file = document.getElementById("url").files[0]; 
+        if(!/image\/\w+/.test(file.type)){  
+    	$.messager.alert("警告", "文件类型必须是图片！", "warning");
+        return false;  
+        }
+      
+    	$('#picname').textbox('setValue',file.name);
+//     document.getElementById("picname").value=file.name; 
+    var reader = new FileReader();  
+    //将文件以Data URL形式读入页面  
+    reader.readAsDataURL(file);  
+    reader.onload=function(e){ 
+    var result=document.getElementById("result"); 
+	         //显示文件  
+	result.innerHTML='<img src="' + this.result +'" alt="" style="width:20px;height:20px;"/>';  
+       }
+	};
+	
+	function urltimeout()
+	{      
+		    var mtival=$('#msgtypeidval').combobox('getValue');
+		   
+		    if(mtival==-1){
+		    	$.messager.alert("警告", "请选择消息类型！","warning");		
+		    }else{
+				var getckeditordata=CKEDITOR.instances.txtarea.getData();
+			    $('#strcontent').val(getckeditordata);
+			    $('#editid').linkbutton('disable');
+			    $('#addid').linkbutton('disable');
+				$("#edit-form").submit();
+		    }
+	};
+	//新增资讯
+	var addMsg = function() {
+		$("#edit-form").form("clear");
+		document.getElementById('result').innerHTML = "";
+		CKEDITOR.instances.txtarea.setData("");
+		if(instituid==0){
+			$('#centerid').combobox('disable'); 	
+		}
+		else if(instituid==-2){
+			$("#centerid").combobox('setValue',-1);
+		}
+		else{
+			$("#centerid").combobox('disable'); 
+			$("#centerid").combobox('setValue',instituid);
+		}	
+
+ 		$("#msgtypeidval").combobox('setValue','-1');
+
+		$("#edit").dialog({
+			title : "新增资讯",
+			iconCls : "icon-add",
+			buttons : [ {
+				text : "保存",
+				id:'addid',
+				handler : function() {
+				
+				        var file = document.getElementById("url").files[0];  
+				        
+	                    if(typeof(file) != "undefined"&&file!=null){
+// 	                    	 if(!/image\/\w+/.test(file.type)){  
+// 	     			        	$.messager.alert("错误", "文件类型必须是图片！", "error");
+// 	     			            return false;  
+// 	     			        } 
+                            
+	     			        var reader = new FileReader();  
+	     			        //将文件以Data URL形式读入页面  
+	     			        reader.readAsDataURL(file);  
+	     			        reader.onload=function(e){  
+	     			         $('#strurl').val(this.result);
+	     			        }
+	                    }	
+	                  
+	                    setTimeout('urltimeout()',500);  	 
+         }
+			}, {
+				text : "关闭",
+				handler : function() {
+					$("#edit").dialog("close");
+				}
+			} ]
+		});
+	
+		$("#edit").dialog("open");
+	};
+	
+	//编辑资讯
+	var editMsg = function() {
+		 $("#edit").dialog({
+				title : "修改资讯",
+				iconCls : "icon-edit",
+				buttons : [ {
+					text : "保存",
+					id:'editid',
+					handler : function() {
+						 
+						
+						  var file = document.getElementById("url").files[0];
+						   
+						   if(typeof(file) != "undefined"&&file!=null){
+							   var reader = new FileReader();  
+						        //将文件以Data URL形式读入页面  
+						        reader.readAsDataURL(file);  
+						        reader.onload=function(e){  
+//		 				        	alert(this.result);
+						         $('#strurl').val(this.result);
+						        } 
+						   }
+						   setTimeout('urltimeout()',500); 
+	                }
+				}, {
+					text : "关闭",
+					handler : function() {
+						$("#edit").dialog("close");
+					}
+				} ]
+			});
+		// 判断是否选中一项
+		$("#edit-form").form("clear");
+		document.getElementById('result').innerHTML = "";
+		var row = $("#meslist").datagrid("getSelected");
+		if (row == null) {
+			$.messager.alert("警告", "请先选中一条记录！", "warning");
+			return;
+		}
+		$('#edit-form').form('clear');
+		$("#edit-form").form("load", "/api/msg/get?id=" + row.tabmsgid)
+		setTimeout('msgtimeout()',500);
+	};
+	//删除资讯
+	var deleteMsg = function() {
+        //多选		
+// 		var row = new Array();
+// 		row= $("#meslist").datagrid("getSelections");
+// 		for(var i=0;i<row.length;i++)
+// 		{
+// 		}
+     // 判断是否选中一项
+        var row = $("#meslist").datagrid("getSelected");
+		if (row == null) {
+			$.messager.alert("警告", "请先选中一条记录进行删除！", "warning");
+			return;
+		}
+		
+		$.messager.confirm("提示", "您确定要删除《" + row.tabtitle + "》这条资讯吗？", function(data) {
+			if (data) {
+					$.post("/api/msg/delete?id=" + row.tabmsgid, function(data) {
+						if (data == "1") {
+							$('#meslist').datagrid('reload');
+						} else{
+							$.messager.alert("错误", "资讯信息删除失败！", "error");
+						}
+					});
+				
+			}
+		});
+	};
+	//审核资讯
+	var checkMsg = function() {
+
+     // 判断是否选中一项
+        var row = $("#meslist").datagrid("getSelected");
+		if (row == null) {
+			$.messager.alert("警告", "请先选中一条记录进行审核！", "warning");
+			return;
+		}
+		
+		$.messager.confirm("提示", "您确定要审核《" + row.tabtitle + "》这条资讯吗？", function(data) {
+			if (data) {
+					$.post("/api/msg/check?id=" + row.tabmsgid, function(data) {
+						if (data == "1") {
+							$('#meslist').datagrid('reload');
+						} else
+							$.messager.alert("错误", "资讯信息审核失败！", "error");
+					});
+			}
+		});
+	};
+	
+	//推送消息
+	var postMsg= function(){
+		var row = $("#meslist").datagrid("getSelected");
+		if (row == null) {
+			$.messager.alert("警告", "请先选中一条记录进行推送！", "warning");
+			return;
+		}
+		$.messager.confirm("提示", "您确定要推送《" + row.tabtitle + "》这条资讯吗？", function(data) {
+			if (data) {
+		$.ajax({
+			url : 'http://app.anke.net.cn:8890/ICE120WebService/api/pushmessage/sendpublicmsg',
+			type : "POST",
+			data : {
+				institutionid:row.tabinstitutionid,
+				content : row.tabtitle
+				
+			},
+			dataType:'json',
+			success : function(msg) {
+				 if(msg.code==200){
+					$.messager.alert("消息", "消息发送成功！","info");
+				} else{
+					$.messager.alert("消息", "消息发送失败！","info");
+				}
+			},
+			error : function(msg) {
+				//alert(ms);
+
+			}
+		});
+	  }
+		});
+	}
+
+	
+	var previewMsg= function(){
+		var row = $("#meslist").datagrid("getSelected");
+		if (row == null) {
+			$.messager.alert("警告", "请先选中一条记录进行预览！", "warning");
+			return;
+		}
+		
+		var value="http://app.anke.net.cn:8890/ICE120WebService/msgdetail.jsp?id="+row.tabmsgid+"";
+		window.open(value);
+	}
+	
+	
+	
+	
+	//侦听表单
+	$("#edit-form").form({
+		url : "/api/msg/modify",
+		onSubmit : function() {
+			return $("#edit-form").form("validate");
+		},
+		success : function(data) {
+			if (data == "true") {
+				$('#meslist').datagrid('reload');
+				$("#edit").dialog("close");
+			} else
+				$.messager.alert("错误", "资讯信息保存失败！", "error");
+		}
+	});
+	
+    $("#edit").dialog({
+			width : "84%",
+			height : "490px",
+			modal : true
+		}); 
+    
+
+	//设置分页控件 
+	var setdatagridPager= function(){
+
+		var p = $('#meslist').datagrid('getPager');
+		$(p).pagination(
+				{
+					beforePageText : '第',//页数文本框前显示的汉字 
+					afterPageText : '页    共 {pages} 页',
+					displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+				});
+	}	
+	
+
+// 		#region 志愿者类型
+			$("#minstitution").combobox(
+							{
+								url : '/api/Dictionary/get?table=T_INSTITUTION&typeCode=anyvalue&isAddSelect=0',
+								valueField : 'id',
+								textField : 'name',
+								method : "GET",
+								editable : false,
+								panelHeight : '170px',
+								onLoadSuccess : function() {
+									
+								}
+
+							});
+// 			#endregion 
+				//#region 志愿者类型
+			$("#mtype").combobox(
+							{
+								url : '/api/Dictionary/get?table=T_MSGTYPE&typeCode=anyvalue&isAddSelect=0',
+								valueField : 'id',
+								textField : 'name',
+								method : "GET",
+								editable : false,
+								panelHeight : 'auto',
+								onLoadSuccess : function() {
+									
+								}
+
+							});
+			//#endregion 
+				//#region 志愿者类型
+			$("#centerid").combobox(
+							{
+								url : '/api/Dictionary/get?table=T_INSTITUTION&typeCode=anyvalue&isAddSelect=1',
+								valueField : 'id',
+								textField : 'name',
+								method : "GET",
+								editable : false,
+								panelHeight : '170px',
+								onLoadSuccess : function() {
+									$('#centerid').combobox('setValue','-1');
+								}
+
+							});
+			//#endregion 
+				//#region 志愿者类型
+			$("#msgtypeidval").combobox(
+							{
+								url : '/api/Dictionary/get?table=T_MSGTYPE&typeCode=anyvalue&isAddSelect=1',
+								valueField : 'id',
+								textField : 'name',
+								method : "GET",
+								editable : false,
+								panelHeight : 'auto',
+								onLoadSuccess : function() {
+								
+								}
+
+							});
+			//#endregion 
+			
+	</script>
+</body>
+</html>

@@ -4,12 +4,55 @@
 <meta charset="UTF-8">
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/js/app.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
 <title>安克AMS</title>
 	<style type="text/css">
     body{margin: 10px auto;}     
       
     </style>
 <script type="text/javascript">
+
+//#region 禁用Backspace键
+window.onload = function () {
+    document.getElementsByTagName("body")[0].onkeydown = function () {
+
+        //获取事件对象
+        var elem = event.relatedTarget || event.srcElement || event.target || event.currentTarget;
+
+        if (event.keyCode == 8) {//判断按键为backSpace键
+
+            //获取按键按下时光标做指向的element
+            var elem = event.srcElement || event.currentTarget;
+
+            //判断是否需要阻止按下键盘的事件默认传递
+            var name = elem.nodeName;
+
+            if (name != 'INPUT' && name != 'TEXTAREA') {
+                return StopBackspace(event);
+            }
+            var type_e = elem.type.toUpperCase();
+            if (name == 'INPUT' && (type_e != 'TEXT' && type_e != 'TEXTAREA' && type_e != 'PASSWORD' && type_e != 'FILE')) {
+                return StopBackspace(event);
+            }
+            if (name == 'INPUT' && (elem.readOnly == true || elem.disabled == true)) {
+                return StopBackspace(event);
+            }
+        }
+    }
+}
+function StopBackspace(e) {
+    if (e.returnValue) {
+        e.returnValue = false;
+    }
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+
+    return false;
+}
+//#endregion
+
  //这里是获得登录时候的时间，用来和动态的时间做差来求时长
  var loadtime = new Date();
  function clockon() {
@@ -118,6 +161,8 @@
 	  	}
 	}
 		}
+ 
+
 </script>
 </head>
 <body onload="clockon()">
@@ -144,10 +189,13 @@
                 <div style=" float:left;">欢迎：</div>        
                 <div id="duser" style="color:red;margin-top:5px"> </div>
                 </div>
-                <div style=" float:left">版本号： v 1.6.7.1</div>  
+                <div style=" float:left">版本号： v 1.0.0.0</div>  
         </div>
         </div>
  <div style="background-color:rgb(228,242,251);width: 100%;height:10px"></div>
+ 
+
+
  </body>
 </html>
  

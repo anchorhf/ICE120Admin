@@ -94,3 +94,30 @@
 .icon-large-chart{
 	background:url('icons/large_chart.png') no-repeat center center;
 }
+
+.icon-cWeiHu{
+	background:url('icons/cWeiHu.png') no-repeat center center;
+}
+.icon-cJinYong{
+	background:url('icons/cJinYong.png') no-repeat center center;
+}
+.icon-cQiYong{
+	background:url('icons/cQiYong.png') no-repeat center center;
+}
+.icon-cStorage{
+	background:url('icons/cStorage.png') no-repeat center center;
+}
+
+.icon-institution{
+	background:url('icons/institution.png') no-repeat center center;
+}
+.icon-checkbt{
+	background:url('icons/checkbt.png') no-repeat center center;
+}
+.icon-postbt{
+	background:url('icons/postbt.png') no-repeat center center;
+}
+.icon-previewbt{
+	background:url('icons/previewbt.png') no-repeat center center;
+}
+

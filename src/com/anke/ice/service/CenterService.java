@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -67,5 +68,11 @@ public class CenterService {
 	public int deleteById(@QueryParam("id") int id) {
 		return DBHelper.getInstance().getCenterDao().delete(id);
 	}
-
+	
+	//修改接入点名称后，同时修改机构表的机构名称2016-08-16
+	@POST
+	@Path("/updateInstitutionName")
+	public int updateInstitutionName(@FormParam("id") int id,@FormParam("name") String name) {
+		return DBHelper.getInstance().getCenterDao().updateInstitutionName(id, name);
+	}
 }

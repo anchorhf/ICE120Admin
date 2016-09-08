@@ -19,39 +19,40 @@
 	<table id="list" title="接入点列表" class="easyui-datagrid">
 		<thead>
 			<tr>
-				<th field="centerid" sortable="false">接入点编码</th>
-				<th field="name">接入点名称</th>
-				<th field="ipport">IP地址：端口号</th>
-				<th field="account">登录名</th>
-				<th field="password">密码</th>
-				<th field="maxmemory">最大内存</th>
-				<th field="totalmemory">已用内存</th>
-				<th field="freememory">剩余内存</th>
-				<th field="cpu">CPU</th>
-				<th field="machinestatus">接入点状态</th>
+				<th data-options="field:'centerid',width:'6%'" sortable="false">接入点编码</th>
+				<th data-options="field:'name',width:'21%'" >接入点名称</th>
+				<th data-options="field:'area',width:'16%'" >行政区划</th>
+				<th data-options="field:'workphone',width:'12%'" >工作电话</th>
+				<th data-options="field:'ipport',width:'15%',hidden: 'true'" >IP地址：端口号</th>
+				<th data-options="field:'ip',width:'12%'" >IP地址</th>
+				<th data-options="field:'port',width:'6%'" >端口号</th>
+				<th data-options="field:'account',width:'9%'" >用户名</th>
+				<th data-options="field:'password',width:'9%'" >密码</th>
+				<th data-options="field:'machinestatus',width:'6%'" >接入点状态</th>
 			</tr>
 		</thead>
 	</table>
 	<div id="toolbar">
-		<input id="ss" class="easyui-searchbox" prompt="请输入关键字"
-			searcher="search" style="width: 130px; vertical-align: middle;" /> <a
-			href="javascript:void(0)" class="easyui-linkbutton"
+		    <a href="javascript:void(0)" class="easyui-linkbutton"
 			iconCls="icon-add" plain="true" onclick="addCenter()">新增接入点</a> <a
 			href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-edit" plain="true" onclick="editCenter()">修改接入点</a> <a
+			iconCls="icon-edit" plain="true" onclick="editCenter()">修改接入点</a> <!-- <a
 			href="javascript:void(0)" class="easyui-linkbutton"
-			iconCls="icon-remove" plain="true" onclick="deleteCenter()">删除接入点</a>
+			iconCls="icon-remove" plain="true" onclick="deleteCenter()">删除接入点</a> -->
+			&nbsp;&nbsp;&nbsp;&nbsp;接入点名称：<input id="ss" class="easyui-searchbox" prompt="请输入关键字" 
+			searcher="search" style="width: 300px; vertical-align: middle;" />
 	</div>
 	<div id="edit" closed="true">
 		<!-- <div id="edit"> -->
 		<form id="edit-form" method="post">
 			<input id="centerid" type="hidden" name="centerid" value="-1" />
-			<h3 class="title">编辑接入点信息</h3>
+			<input id="hidname" type="hidden" />
+			<h3 id="h3title" class="title">修改接入点信息</h3>
 			<div class="container line">
 				<div class="col-xs-2 field">接入点名称</div>
 				<div class="col-xs-4">
 					<input class="easyui-textbox" data-options="required:true"
-						tipBottom="true" type="text" name="name" />
+						tipBottom="true" id="name" type="text" name="name" />
 				</div>
 				<div class="col-xs-2 field">行政区划</div>
 				<div class="col-xs-4">
@@ -127,10 +128,52 @@
 		</form>
 	</div>
 	<script type="text/javascript">
+	
+	//#region 禁用Backspace键
+    window.onload = function () {
+        document.getElementsByTagName("body")[0].onkeydown = function () {
+
+            //获取事件对象
+            var elem = event.relatedTarget || event.srcElement || event.target || event.currentTarget;
+
+            if (event.keyCode == 8) {//判断按键为backSpace键
+
+                //获取按键按下时光标做指向的element
+                var elem = event.srcElement || event.currentTarget;
+
+                //判断是否需要阻止按下键盘的事件默认传递
+                var name = elem.nodeName;
+
+                if (name != 'INPUT' && name != 'TEXTAREA') {
+                    return StopBackspace(event);
+                }
+                var type_e = elem.type.toUpperCase();
+                if (name == 'INPUT' && (type_e != 'TEXT' && type_e != 'TEXTAREA' && type_e != 'PASSWORD' && type_e != 'FILE')) {
+                    return StopBackspace(event);
+                }
+                if (name == 'INPUT' && (elem.readOnly == true || elem.disabled == true)) {
+                    return StopBackspace(event);
+                }
+            }
+        }
+    }
+    function StopBackspace(e) {
+        if (e.returnValue) {
+            e.returnValue = false;
+        }
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+
+        return false;
+    }
+    //#endregion
+    var update=0;
 	var search = function() {
 		$("#list").datagrid({
 			url : '/api/center/list?keyword=' + $("#ss").val()
 		});
+		setdatagridPager();
 	};
 		var deleteCenter = function() {
 			// 判断是否选中一项
@@ -151,6 +194,11 @@
 			});
 		};
 		var editCenter = function() {
+			update=1;
+			$("#edit").dialog({
+			title : "修改接入点信息"
+		    });
+			$("#h3title").html("修改接入点信息");
 			$("#edit-form").form("clear");
 			// 判断是否选中一项
 			var row = $("#list").datagrid("getSelected");
@@ -158,14 +206,56 @@
 				$.messager.alert("警告", "请先选中一条记录进行编辑！", "error");
 				return;
 			}
+			else{
+				$("#hidname").val(row.name);
+			}
 			// 获取信息
 			$("#edit-form").form("load", "/api/center/get?id=" + row.centerid);
 			$("#edit").dialog("open");
 		};
 		var addCenter = function() {
+			update=0;
+			$("#edit").dialog({
+				title : "新增接入点信息"
+			});
+			$("#h3title").html("新增接入点信息");
 			$("#edit-form").form("clear");
 			$("#edit").dialog("open");
 		};
+		
+		//设置分页控件 
+		var setdatagridPager= function(){
+
+			var p = $('#list').datagrid('getPager');
+			$(p).pagination(
+					{
+						pageSize : 20,//每页显示的记录条数，默认为10 
+						pageList : [ 10, 20, 30, 50 ],//可以设置每页记录条数的列表 
+						beforePageText : '第',//页数文本框前显示的汉字 
+						afterPageText : '页    共 {pages} 页',
+						displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+					});
+		}
+		
+		//修改接入点名称后，同时修改机构表的机构名称2016-08-16
+		var updateInstitutionName=function(){
+		
+			$.ajax({
+				type : 'POST',
+				url : '/api/center/updateInstitutionName',
+				data : {
+					id : $('#centerid').val(),
+					name : $('#name').val()
+				},
+				dataType : "json",
+				success : function(jsData) {
+					if (jsData == 0) {
+						$.messager.alert("错误", "同时修改机构名称失败！", "error");
+					}
+				}
+			});
+		}
+		
 		$(document).ready(function() {
 			$("#list").datagrid({
 				url : '/api/center/list',
@@ -187,20 +277,12 @@
 					alert(rowData.name);
 				}
 			});
-			//设置分页控件 
-			var p = $('#list').datagrid('getPager');
-			$(p).pagination({
-				pageSize : 20,//每页显示的记录条数，默认为10 
-				pageList : [ 10, 20, 50, 100 ],//可以设置每页记录条数的列表 
-				beforePageText : '第',//页数文本框前显示的汉字 
-				afterPageText : '页    共 {pages} 页',
-				displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
-			});
+			setdatagridPager();
 
 			$("#edit").dialog({
-				title : "编辑接入点信息",
+				title : "修改接入点信息",
 				iconCls : "icon-edit",
-				maximizable : true,
+				//maximizable : true,
 				width : 900,
 				modal : true,
 				buttons : [ {
@@ -223,12 +305,18 @@
 				},
 				success : function(data) {
 					if (data == "true") {
+						//如果修改了接入点名称，同时修改机构表的名称
+						if($("#hidname").val()!=$("#name").val() && update==1){
+							updateInstitutionName();
+						}
+					
 						$('#list').datagrid('reload');
 						$("#edit").dialog("close");
 					} else
 						$.messager.alert("错误", "接入点信息保存失败！", "error");
 				}
 			});
+			
 		});
 	</script>
 </body>

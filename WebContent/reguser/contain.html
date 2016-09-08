@@ -12,154 +12,128 @@
 <script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="../js/bootstrap.min.js"></script>
-<style type="text/css">
-       
-        .mc{
-            height:6%;
-            width:7%;
-            float:left;
-            margin-left:2%;
-            margin-top:2%;
-        }
-       .mcf{
-            height:6%;
-            width:11%;
-            float:left;
-            margin-left:6%;
-            margin-top:2%;
-            
-        }
-        
-         .mcs{
-            height:6%;
-            width:9%;
-            float:left;
-            margin-left:2%;
-            margin-top:2%;
-            
-        }
-        
-         .mct{
-            height:6%;
-            width:13%;
-            float:left;
-            margin-left:2%;
-            margin-top:2%;
-            
-        }
-        .jg{
-            height: 6%;
-            width:33%;
-            float:left;
-            margin-right:1%;
-            margin-top:2%;
-        }
-        
-          .jgt{
-            height: 6%;
-            width:33%;
-            float:left;
-            margin-right:1%;
-            margin-top:2%;
-        }
-           .jgf{
-            height: 6%;
-            width:70%;
-            float:left;
-            margin-right:1%;
-            margin-top:2%;
-        }
-    </style>
+
        
 </head> 
 <body onload="init()">
 <div id="edit" closed="true" style="height:60%;width:100%">
-	
 		<form id="edit-form" method="post" style="width:100%">
-		<div style="float:left"><img id="imgface" src="" style="height:100px;width:80px;"/></div>
-		
-			<div class="container line" style="font-size:80%;">
+		<div style="float:left"><img src="" style="width:100px;height:120px;" id="imgperson"/></div>
+		<table id="tabda" style="width:80%;margin:4px 0px 4px 0px;font-size:12px;color:black;border-collapse:separate; border-spacing:3px;" 
+		border="0" cellspacing="1" cellpadding="0">
+		    <tr><td><input  class="text" id="pic"  name="pic" style="display:none"/></td></tr>
+			<tr>
+			  <td style="width:15%">姓名</td>
+				<td style="width:30%">
+						<input class="easyui-textbox" type="text" name="name" style="width:80%"/>
+				</td>
+				<td style="width:15%">昵称</td>
+				<td style="width:30%">
+						<input class="easyui-textbox" type="text" name="nickname" style="width:80%"/>
+				</td>
+			</tr>
 			
-			    <div class="mc">姓名</div>
-				<div class="jg">
-					<input class="easyui-textbox" type="text" name="name" />
-				</div>
-				<div class="mc">昵称</div>
-				<div class="jg">
-					<input class="easyui-textbox" type="text" name="nickname" />
-				</div>
-				<div class="mc">血型</div>
-				<div class="jg">
-					<input class="easyui-textbox" type="text" name="blood" />
-				</div>
-				<div class="mc">体重</div>
-				<div class="jg">
-					<input class="easyui-textbox" type="text" name="weight" />
-		        </div>
-				<div class="mc">生日</div>
-				<div class="jg">
-					<input class="easyui-textbox" type="text" name="birthday" />
-				</div>
-			    <div class="mc">电话</div>
-				<div class="jg">
-					<input class="easyui-textbox" type="text" name="telphone" />
-				</div>
-				<div class="mcs">病史</div>
-				<div class="jg">
-					<input class="easyui-textbox" type="text" name="medicalhistory" />
-				</div>
-		
-				<div class="mcf">其他病史</div>
-				<div class="jg">
-					<input class="easyui-textbox" type="text" name="othermedicalhistory" />
-				</div>
-				<div class="mcs">过敏史</div>
-				<div class="jg">
-					<input class="easyui-textbox" type="text" name="allergy" />
-				</div>
-		
-				<div class="mcqt">其他过敏史</div>
-				<div class="jgt">
-					<input class="easyui-textbox" type="text" name="otherallergy" />
-				</div>
-				<div class="mct">常住地址</div>
-				<div class="jgf">
-					<input class="easyui-textbox" type="text" name="permanentaddress" />
-				</div>
-				<div class="mct">备注</div>
-				<div class="jgf">
-					<input class="easyui-textbox" type="text" name="remark" />
-				</div>
-			</div>
+			<tr>
+				<td style="width:15%">血型</td>
+				<td style="width:30%">
+						<input class="easyui-textbox" type="text" name="blood" style="width:80%"/>
+				</td>
+				
+				<td style="width:15%">体重</td>
+				<td style="width:30%">
+					    <input class="easyui-textbox" type="text" name="weight" style="width:80%"/>
+				</td> 
+			</tr>
+						<tr>
+				<td style="width:15%">生日</td>
+				<td style="width:30%">
+					<input class="easyui-textbox" type="text" name="birthday" style="width:80%"/>
+				</td>
+				
+				<td style="width:15%">电话</td>
+				<td style="width:30%">
+					<input class="easyui-textbox" type="text" name="telphone" style="width:80%"/>
+				</td> 
+			</tr>
+						<tr>
+				<td style="width:15%">病史</td>
+				<td style="width:30%">
+						<input class="easyui-textbox" type="text" name="medicalhistory" style="width:80%"/>
+				</td>
+				
+				<td style="width:15%">其他病史</td>
+				<td style="width:30%">
+					<input class="easyui-textbox" type="text" name="othermedicalhistory" style="width:80%"/>
+				</td> 
+			</tr>
+						<tr>
+				<td style="width:15%">过敏史</td>
+				<td style="width:30%">
+						<input class="easyui-textbox" type="text" name="allergy" style="width:80%"/>
+				</td>
+				
+				<td style="width:15%">其他过敏史</td>
+				<td style="width:30%">
+					<input class="easyui-textbox" type="text" name="otherallergy" style="width:80%"/>
+				</td> 
+			</tr>
+									<tr>
+				<td style="width:15%">常住地址</td>
+				<td style="width:30%">
+					<input class="easyui-textbox" type="text" name="permanentaddress" style="width:80%"/>
+				</td>
+				
+				<td style="width:15%">备注</td>
+			    <td style="width:30%">
+				<input class="easyui-textbox" type="text" name="remark" style="width:80%"/>
+				</td> 
+			</tr>
+			</table>
 <!-- 			<div><input id="pic" type="text" name="pic"/></div> -->
 	</form>
-<div>
-	<table id="dg" title="紧急联系人" class="easyui-datagrid">
+<div style="border:0px">
+	<table id="dg" title="紧急联系人" class="easyui-datagrid"
+	 data-options="iconCls:'icon-edit',singleSelect: true,toolbar:'#tb', onClickRow: onClickRow">
 		<thead>
 			<tr>
-				<th field="cnickname">姓名</th>
-				<th field="ctelphone">电话</th>
+				<th data-options="field:'cnickname',width:250,editor:'textbox'" >姓名</th>
+			
+			    <th data-options="field:'ctelphone',width:250,editor:'textbox'" >电话</th>
+	
 			</tr>
 		</thead>
 	</table>
+		<div id="tb" style="height:auto">
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">Append</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">Remove</a>
 	</div>
+</div>
 
 </div>
 
 
 	<script type="text/javascript">
 	var LocString;
+	var fid;
+	var sid;
 	function init() {
 		LocString = String(window.document.location.href);
 // 		var fid = request.QueryString("fid");
 // 		var sid = request.QueryString("sid").toString();
 
-		var fid=getQueryStr("fid");
-		var sid=getQueryStr("sid");
-		
-//  	    alert(sid);
- 		$("#edit-form").form("load", "/api/sysmanage/regetc?fid="+fid+"&sid="+sid);
-		
+		fid=getQueryStr("fid");
+		sid=getQueryStr("sid");
+		if(fid==-1&&sid==-1){
+			
+			addnewfile();
+		}else{
+			getfile();
+		}
+	}
+	function getfile(){
+		$("#edit-form").form("load", "/api/sysmanage/regetc?fid="+fid+"&sid="+sid);
+ 		setTimeout('pictimeout()',500);
+ 		
 // 		$("#edit").dialog("open");　
 //  		alert($("#pic").val());
 //  		document.getElementById("imgface").src=document.getElementById("pic").value;
@@ -168,9 +142,17 @@
 			method : 'GET',
 		    url:'/api/sysmanage/regetem?fid='+fid+'&sid='+sid
 		});
-	
+	}
+	function addnewfile(){
+		$("#edit-form").form("clear");
 	}
 	
+	//图片加载
+	function pictimeout()
+	{   var picval=$('#pic').val();
+	    document.getElementById("imgperson").src =picval;
+	}
+	//获取连接参数
 	function getQueryStr(str) {
 	var rs = new RegExp("(^|)" + str + "=([^&]*)(&|$)", "gi").exec(LocString), tmp;
 	if (tmp = rs) {
@@ -179,7 +161,48 @@
 	// parameter cannot be found
 	return "";
 	} 
-		
+	
+	var editIndex = undefined;
+	function endEditing(){
+		if (editIndex == undefined){return true}
+		if ($('#dg').datagrid('validateRow', editIndex)){
+// 			var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'cnickname'});
+// 			var cnickname = $(ed.target).textbox('getText');
+// 			$('#dg').datagrid('getRows')[editIndex]['cnickname'] = cnickname;
+			$('#dg').datagrid('endEdit', editIndex);
+			editIndex = undefined;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	function onClickRow(index){
+		if (editIndex != index){
+			if (endEditing()){
+				$('#dg').datagrid('selectRow', index)
+						.datagrid('beginEdit', index);
+				editIndex = index;
+			} else {
+				$('#dg').datagrid('selectRow', editIndex);
+			}
+		}
+	}
+	function append(){
+		if (endEditing()){
+			$('#dg').datagrid('appendRow',{status:'P'});
+			editIndex = $('#dg').datagrid('getRows').length-1;
+			$('#dg').datagrid('selectRow', editIndex)
+					.datagrid('beginEdit', editIndex);
+		}
+	}
+	function removeit(){
+		if (editIndex == undefined){return}
+		$('#dg').datagrid('cancelEdit', editIndex)
+				.datagrid('deleteRow', editIndex);
+		editIndex = undefined;
+	}
+
 	</script>
 </body>
 </html>

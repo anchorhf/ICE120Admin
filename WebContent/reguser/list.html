@@ -55,21 +55,20 @@
 
 		<div>
 			<a href="javascript:void(0)" class="easyui-linkbutton"
-				iconCls="icon-add" plain="true" onclick="addmenber()">新增会员</a> <a
+				iconCls="icon-add" plain="true" onclick="addMenber()">新增会员</a> <a
 				href="javascript:void(0)" class="easyui-linkbutton"
 				iconCls="icon-edit" plain="true" onclick="editmenber()">修改会员</a> <a
 				href="javascript:void(0)" class="easyui-linkbutton"
 				iconCls="icon-remove" plain="true" onclick="deletemenber()">删除会员</a><a
 				href="javascript:void(0)" class="easyui-linkbutton"
-				iconCls="icon-remove" plain="true" onclick="serchmenber()">查询会员</a>
+				iconCls="icon-search" plain="true" onclick="serchmenber()">查询会员</a>
 		</div>
 	</div>
 	<div id="edit" closed="true">
 		<!-- <div id="edit"> -->
 		<form id="edit-form" method="post">
 			<input id="userid" type="hidden" name="userid" value="-1" />
-			<h3 id=htitle class="title">会员信息</h3>
-			<p style="font-weight:bold">账户信息</p>
+			<h6 class="menbertitle"  align="center" style="margin-top:10px" >会员信息</h6>
 			<div class="container line">
 				<div class="col-xs-2 field">用户编号</div>
 				<div class="col-xs-3">
@@ -78,41 +77,41 @@
 				</div>
 				<div class="col-xs-2 field">绑定电话</div>
 				<div class="col-xs-3">
-					<input class="easyui-textbox" data-options="required:true"
+					<input class="easyui-textbox" data-options=""
 						type="text" name="ltelphone" />
 				</div>
 			</div>
 			<div class="container line">
 				<div class="col-xs-2 field">邮箱地址</div>
 				<div class="col-xs-3">
-					<input class="easyui-textbox" data-options="required:true"
+					<input class="easyui-textbox" data-options=""
 						type="text" name="email" />
 				</div>
 				<div class="col-xs-2 field">注册地址</div>
 				<div class="col-xs-3">
-					<input class="easyui-textbox" data-options="required:true"
+					<input class="easyui-textbox" data-options=""
 						type="text" name="registrationaddress" />
 				</div>
 			</div>
 						<div class="container line">
 							<div class="col-xs-2 field">详细地址</div>
 							<div class="col-xs-3">
-								<input class="easyui-textbox" data-options="required:true"
+								<input class="easyui-textbox" data-options=""
 									 type="text" name="address" />
 							</div>
 							<div class="col-xs-2 field">最后定位</div>
 							<div class="col-xs-3">
-								<input class="easyui-textbox" data-options="required:true"
+								<input class="easyui-textbox" data-options=""
 									type="text" name="describe" />
 							</div>
 						</div>
 			<!-- 				<p>档案信息</p> -->
-			<div id="tt" class="easyui-tabs" data-options="tools:'#tab-tools'" style="width:100%; height:65%">
+			<div id="tt" class="easyui-tabs" data-options="tools:'#tab-tools'" style="width:100%; height:290px">
 
 			</div>
 			<div id="tab-tools">
 				<a href="javascript:void(0)" class="easyui-linkbutton"
-					data-options="plain:true,iconCls:'icon-add'" onclick="addPanel()"></a>
+					data-options="plain:true,iconCls:'icon-add'" onclick="addNewPanel()"></a>
 				<a href="javascript:void(0)" class="easyui-linkbutton"
 					data-options="plain:true,iconCls:'icon-remove'"
 					onclick="removePanel()"></a>
@@ -120,24 +119,16 @@
 		</form>
 	</div>
 	<script type="text/javascript">
-// 	var index = 0;
-// 	function addPanel(){
-// 		index++;
-// 		$('#tt').tabs('add',{
-// 			title: 'Tab'+index,
-// 			content: '<div style="padding:10px">Content'+index+'</div>',
-// 			content: document.getElementById("daxx").innerHTML,
-//             content:$('#daxx').html(),
-// 			closable: true
-// 		});
-// 	}
-// 	function removePanel(){
-// 		var tab = $('#tt').tabs('getSelected');
-// 		if (tab){
-// 			var index = $('#tt').tabs('getTabIndex', tab);
-// 			$('#tt').tabs('close', index);
-// 		}
-// 	}
+	var index = 0;
+	function addNewPanel(nfid,nsid){
+		index++;
+ 		$('#tt').tabs('add',{
+ 			title: 'Tab'+index,
+ 			content:'<iframe id="'+index+'"  src="../reguser/contain.html?fid='+nfid+'&sid='+nsid+'" frameborder="0" style="height:98%;width:100%;"></iframe>',
+            closable: true
+ 		});
+	}
+
 	    function reSearch(){
 	    	var telphone=$("#telphone").val()
 	    	var email=$("#email").val()
@@ -211,25 +202,37 @@
 	                $('#tt').tabs('update', {
 	                    tab: selecttab,
 	                    options: {
-// 	                    	cache:false,
-// 	                    	title:selectindex,
-	                    	content:'<iframe id="'+ifrid+'"  src="../reguser/contain.html?fid='+row.userid+'&sid='+selectid+'" frameborder="0" style="height:95%;width:100%;"></iframe>',
+//		                    	cache:false,
+//		                    	title:selectindex,
+	                    	content:'<iframe id="'+ifrid+'"  src="../reguser/contain.html?fid='+row.userid+'&sid='+selectid+'" frameborder="0" style="height:98%;width:100%;"></iframe>',
 	                    }
 	                });
 	            }
 	        });
-		       
 }   
+
 		//清空所有的Tab  
 	     function closeAllTabs(id){  
 	         var id = "#"+id  
 	         var tabs = $(id).tabs("tabs");
 	         if(tabs.length>0){  
 	         for(var i=0;i<tabs.length;i++){ 
-    	     $(id).tabs('remove',tabs[i].panel('options').title);  
+	        	 
+	        	 alert(tabs[i].panel('options').title);
+    	     $(id).tabs('close',tabs[i].panel('options').title);  
+    	     
+//     	     var index = $('#tt').tabs('getTabIndex', tab);
+//  			$('#tt').tabs('close', index);
 	         }  
 	       }  
-	     }   
+	     }
+//	  	function removePanel(){
+//	 		var tab = $('#tt').tabs('getSelected');
+//	 		if (tab){
+//	 			var index = $('#tt').tabs('getTabIndex', tab);
+//	 			$('#tt').tabs('close', index);
+//	 		}
+//	 	}
  		function addPanel(i,tabsec){
 	     $('#tt').tabs('add',{
 	    	    id:tabsec,
@@ -239,7 +242,30 @@
                 closable: false
  			});
            }
- 		
+ 		//新增会员
+ 		var addMenber = function() {
+ 			$("#edit-form").form("clear");
+
+ 			$("#edit").dialog({
+ 				title : "新增会员",
+ 				buttons : [ {
+ 					text : "保存",
+ 					handler : function() {
+ 						$("#edit-form").submit();	
+ 	         }
+ 				}, {
+ 					text : "关闭",
+ 					handler : function() {
+ 						$("#edit").dialog("close");
+ 					}
+ 				} ]
+ 			});
+  			closeAllTabs("tt");
+ 			addNewPanel(-1,-1);
+ 			$("#edit").dialog("open");
+ 			
+ 			
+ 		};
  		
 // 		var editmenber = function() {
 // 			$("#edit-form").form("clear");
@@ -270,7 +296,7 @@ function ReadCookie(){
  	var arr=arrCookie[i].split("=");
     //对arr[0]格式化
  	mes = arr[0].replace( /^\s+|\s+$/g, "" );
-    //找到名称为uName、pWord、id的cookie，并返回它的值
+    //找到名称为uName、pWord的cookie，并返回它的值
  	if ("uName"==mes){
  		uName=arr[1];
  		continue;
@@ -279,7 +305,7 @@ function ReadCookie(){
   		pWord=arr[1];
   		continue;
   	}
-  	if("id"==mes){
+  	if("roleid"==mes){
   		id=arr[1];
   		continue;
   	}
@@ -288,13 +314,13 @@ function ReadCookie(){
 		$(document).ready(function() {
 			ReadCookie();
 			var telphone;
+			if(id==2){
+				telphone=uName;	
+			}else{
+				telphone="";	
+			}
 			var email="";
 			var address="";
-			if(id==0)
-				{telphone="";}
-			else
-				{telphone=uName;
-				}
 			$("#list").datagrid({
 				url:'/api/sysmanage/menberlist?telphone='+telphone+'&email='+email+'&address='+address,
 				method : 'GET',
@@ -328,9 +354,8 @@ function ReadCookie(){
 			$("#edit").dialog({
 				title : "编辑会员信息",
 				iconCls : "icon-edit",
-				maximizable : true,
-				width : "50%",
-				height : "70%",
+				width : "70%",
+				height : "500px",
 				modal : true,
 				buttons : [ {
 					text : "保存",

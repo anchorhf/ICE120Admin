@@ -1,11 +1,13 @@
 package com.anke.ice.dao.impl.oracle;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -41,6 +43,7 @@ public class MenberDaoImpl extends BaseDaoImpl implements MenberDao {
 	@Override
 	public Map<String, Object> findmenber(int pageNum, int pageSize, String telphone,String email,String address) {
 		Map<String, Object> page = new HashMap<String, Object>();
+		Connection conn = DBHelper.getInstance().getConnection();
 		try {
 //			System.out.println(telphone);
 //			System.out.println(email);
@@ -66,6 +69,9 @@ public class MenberDaoImpl extends BaseDaoImpl implements MenberDao {
 		} catch (SQLException e) {
 			logger.error("查询会员列表失败", e.getCause());
 		}
+		finally{
+			DbUtils.closeQuietly(conn);
+		}
 		return page;
 	}
 
@@ -89,6 +95,7 @@ public class MenberDaoImpl extends BaseDaoImpl implements MenberDao {
 
 	@Override
 	public String regettab(int id) {
+		Connection conn = DBHelper.getInstance().getConnection();
 		try {
 			List<Menber>dacount=runner.query(conn, "select p.patientid from T_REGUSER tr left join T_REG_PATIENT rp on rp.userid=tr.userid left join T_PATIENT p on rp.patientid=p.patientid  where tr.userid=" + id,new BeanListHandler<Menber>(Menber.class));
 			String tab="";
@@ -102,9 +109,13 @@ public class MenberDaoImpl extends BaseDaoImpl implements MenberDao {
 			logger.error("查询人员信息失败", e.getCause());
 			return null;
 		}
+		finally{
+			DbUtils.closeQuietly(conn);
+		}
 	}
 	@Override
 	public Menber reget(int id) {
+		Connection conn = DBHelper.getInstance().getConnection();
 		try {
 		return runner.query(conn, "select tr.userid,tr.telphone as ltelphone,tr.email,tr.address,tr.describe,tr.registrationaddress,tr.regtime from T_REGUSER tr where userid=" + id, new BeanHandler<Menber>(Menber.class));
 		} 
@@ -112,33 +123,41 @@ public class MenberDaoImpl extends BaseDaoImpl implements MenberDao {
 			logger.error("查询人员信息失败", e.getCause());
 			return null;
 		}
+		finally{
+			DbUtils.closeQuietly(conn);
+		}
 	}
 	
 	
 	@Override
 	public Menber regetc(int fid,int sid) {
+		Connection conn = DBHelper.getInstance().getConnection();
 		try {
-//			System.out.println(fid);	
-//			System.out.println(sid);
-//			String s=" select * from T_REGUSER tr left join T_REG_PATIENT rp on rp.userid=tr.userid left join T_PATIENT p on rp.patientid=p.patientid  where tr.userid="+fid+"and p.patientid="+sid;
 		return runner.query(conn, "select tr.userid,tr.telphone as ltelphone,tr.email,tr.address,tr.describe,tr.registrationaddress,tr.regtime,p.* from T_REGUSER tr left join T_REG_PATIENT rp on rp.userid=tr.userid left join T_PATIENT p on rp.patientid=p.patientid  where tr.userid=" +fid+"and p.patientid="+sid, new BeanHandler<Menber>(Menber.class));
         } 
 		catch (SQLException e) {
 			logger.error("查询人员信息失败", e.getCause());
 			return null;
 		}
+		finally{
+			DbUtils.closeQuietly(conn);
+		}
 	}
 	@Override
 	public List<Menber> regetem(int fid,int sid) {
+		Connection conn = DBHelper.getInstance().getConnection();
 		try {
-			System.out.println(fid);	
-			System.out.println(sid);
+//			System.out.println(fid);	
+//			System.out.println(sid);
 //			String s=" select * from T_REGUSER tr left join T_REG_PATIENT rp on rp.userid=tr.userid left join T_PATIENT p on rp.patientid=p.patientid  where tr.userid="+fid+"and p.patientid="+sid;
 		return runner.query(conn, "select c.nickname as cnickname,c.telphone as ctelphone from T_REGUSER tr left join T_REG_PATIENT rp on rp.userid=tr.userid left join T_PATIENT p on rp.patientid=p.patientid left join T_CONTACT c on p.patientid=c.patientid where tr.userid=" +fid+"and p.patientid="+sid, new BeanListHandler<Menber>(Menber.class));
         } 
 		catch (SQLException e) {
 			logger.error("查询人员信息失败", e.getCause());
 			return null;
+		}
+		finally{
+			DbUtils.closeQuietly(conn);
 		}
 	}
 //	@Override

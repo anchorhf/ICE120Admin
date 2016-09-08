@@ -4,15 +4,23 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="ICE120WebService" version="3.0">
 	<display-name>ICE120WebService</display-name>
-	<!-- 登录状态过滤器
+	<!-- 登录状态过滤器-->
 	<filter>
 		<filter-name>AdminFilter</filter-name>
 		<filter-class>com.anke.ice.admin.LoginFilter</filter-class>
+		<init-param>
+			<param-name>failureUrl</param-name>
+			<param-value>/login.html?error=true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>NoFilter_Pages</param-name>
+			<param-value>/login.html,/index,/main/main.html,/css,/js,/api/loginfi/loginse,/api/serchleft/selectleft,/api</param-value>
+		</init-param>
 	</filter>
 	<filter-mapping>
 		<filter-name>AdminFilter</filter-name>
 		<url-pattern>/*</url-pattern>
-	</filter-mapping> -->
+	</filter-mapping> 
 	<!-- jersey WebService servlet配置 -->
 	<servlet>
 		<servlet-name>JerseyService</servlet-name>
@@ -27,4 +35,39 @@
 		<servlet-name>JerseyService</servlet-name>
 		<url-pattern>/api/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet> 
+        <servlet-name>ConnectorServlet</servlet-name> 
+        <servlet-class>com.ckfinder.connector.ConnectorServlet</servlet-class>
+        <init-param> 
+            <param-name>XMLConfig</param-name> 
+            <param-value>/WEB-INF/config.xml</param-value> 
+        </init-param> 
+        <init-param> 
+            <param-name>debug</param-name> 
+            <param-value>false</param-value> 
+        </init-param> 
+        <load-on-startup>1</load-on-startup> 
+    </servlet> 
+    <servlet-mapping>
+        <servlet-name>ConnectorServlet</servlet-name> 
+        <url-pattern>/firstahb/ckfinder/core/connector/java/connector.java</url-pattern> 
+    </servlet-mapping>
+	    <servlet-mapping>
+        <servlet-name>ConnectorServlet</servlet-name> 
+        <url-pattern>/msg/ckfinder/core/connector/java/connector.java</url-pattern> 
+    </servlet-mapping>
+	    <servlet-mapping>
+        <servlet-name>ConnectorServlet</servlet-name> 
+        <url-pattern>/volunteermanage/ckfinder/core/connector/java/connector.java</url-pattern> 
+    </servlet-mapping>
+    
+	<!-- session失效时间单位为：分钟   --> 
+	<session-config>
+      <session-timeout>60</session-timeout>
+    </session-config>
+    
+    <welcome-file-list>
+		<welcome-file>/login.html</welcome-file>
+	</welcome-file-list>
 </web-app>

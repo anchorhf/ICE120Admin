@@ -2,11 +2,30 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<script type="text/javascript" src="/js/jquery.min.js"></script>
-<script type="text/javascript" src="/js/app.js"></script>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/color.css">
+<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../css/app.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="../ckfinder/ckfinder.js"></script>
+
 <title>Insert title here</title>
 </head>
 <body>
-	1231444444!
+		<div class="easyui-panel" title="详细"
+				style="width: 100%; height: 313px; padding: 2px; border: 0px">
+
+				<textarea id="txtarea" name="txtarea" cols="20" rows="10" style="height: 100%"></textarea>
+				<script type="text/javascript"> var editor=CKEDITOR.replace("txtarea");
+				         CKFinder.setupCKEditor(editor,'/ckeditor/');
+				</script>
+<!-- 				<textarea name="urltxtarea" cols="20" rows="10" style="height: 100%;display: none"></textarea> -->
+<!-- 				<script type="text/javascript">CKEDITOR.replace("urltxtarea");</script> -->
+			</div>
 </body>
 </html>

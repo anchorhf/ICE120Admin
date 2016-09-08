@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>区域列表</title>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/color.css">
+<link rel="stylesheet" type="text/css" href="../css/app.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+</head>
+<body>
+<div id="TableForm" class="easyui-layout" title="区域管理" style="width:auto; height: auto; margin-left: auto; margin-right: auto">
+	
+	<ul id="treearealist"></ul>
+	<div id="menu" class="easyui-menu" style="width: 150px;">
+		<div data-options="iconCls:'icon-cStorage'"
+			onclick="AddDictionaryLevel();">添加平级字典</div>
+		<div data-options="iconCls:'icon-add'"
+			onclick="AddDictionaryLowerLevel();">添加下级字典</div>
+		<div class="menu-sep"></div>
+		<div data-options="iconCls:'icon-edit'"
+			onclick="EditDictionaryInfo();">修改信息</div>
+		<div class="menu-sep"></div>
+		<div data-options="iconCls:'icon-cJinYong'" onclick=" banInfo();">
+			<span style="color: red">禁用</span>该字典信息
+		</div>
+		<div class="menu-sep"></div>
+		<div data-options="iconCls:'icon-cQiYong'" onclick=" startInfo();">
+			<span style="color: darkgreen">启用</span>该字典信息
+		</div>
+	</div>
+	
+</div>
+	<div id="areaEdit" class="easyui-dialog" title="维护"
+		data-options="modal:true,collapsible:false,minimizable:false,maximizable:false,closed:true,resizable:false,iconCls:'icon-cWeiHu'"
+		style="width: 300px; height: 205px; padding: 0px;">
+		<div data-options="region:'center'" style="overflow: hidden">
+			<table style="width: 99%">
+				<tr style="height: 40px">
+					<td align="right">上级：</td>
+					<td><input id="ParentDictionaryName" class="easyui-textbox"
+						style="width: 160px" data-options="readonly:true" /> <input
+						id="ParentDictionaryID" type="hidden" /> <input id="LevelCode"
+						type="hidden" /><input
+							id="DictionaryISVALID" type="hidden" /></td>
+				</tr>
+				<tr style="height: 40px">
+					<td align="right">名称：</td>
+					<td><input id="DictionaryName" class="easyui-textbox"
+						style="width: 160px" data-options="required:true,validType:'length[0,16]'" /> <input
+						id="DictionaryNameForIsActive" type="hidden" /> <input
+						id="DictionaryID" type="hidden" /></td>
+				</tr>
+				<tr style="height: 40px">
+					<td align="right">顺序号：</td>
+					<td><input id="DictionarySN" class="easyui-numberbox"
+						style="width: 160px" /></td>
+				</tr>
+				<tr style="height: 30px">
+					<td colspan="2" align="center"><a href="javascript:void(0)"
+						id="btnedit" class="easyui-linkbutton"
+						data-options="iconCls:'icon-edit'" onclick="submitAddForm(1);">修改</a>
+						<a href="javascript:void(0)" id="btnadd" class="easyui-linkbutton"
+						data-options="iconCls:'icon-add'" onclick="submitAddForm(0);">新增</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		var ParentDictionaryCode;
+		var ParentLevelCode;
+		var ParentName;
+		var id;
+		var LowerLevelCode;
+		var name;
+		var orderno;
+		
+		//#region 禁用Backspace键
+	    window.onload = function () {
+	        document.getElementsByTagName("body")[0].onkeydown = function () {
+
+	            //获取事件对象
+	            var elem = event.relatedTarget || event.srcElement || event.target || event.currentTarget;
+
+	            if (event.keyCode == 8) {//判断按键为backSpace键
+
+	                //获取按键按下时光标做指向的element
+	                var elem = event.srcElement || event.currentTarget;
+
+	                //判断是否需要阻止按下键盘的事件默认传递
+	                var name = elem.nodeName;
+
+	                if (name != 'INPUT' && name != 'TEXTAREA') {
+	                    return StopBackspace(event);
+	                }
+	                var type_e = elem.type.toUpperCase();
+	                if (name == 'INPUT' && (type_e != 'TEXT' && type_e != 'TEXTAREA' && type_e != 'PASSWORD' && type_e != 'FILE')) {
+	                    return StopBackspace(event);
+	                }
+	                if (name == 'INPUT' && (elem.readOnly == true || elem.disabled == true)) {
+	                    return StopBackspace(event);
+	                }
+	            }
+	        }
+	    }
+	    function StopBackspace(e) {
+	        if (e.returnValue) {
+	            e.returnValue = false;
+	        }
+	        if (e.preventDefault) {
+	            e.preventDefault();
+	        }
+
+	        return false;
+	    }
+	    //#endregion
+	    
+		//绑定数据
+		$('#treearealist').tree({
+			url : '/api/area/list',
+			method : 'GET',
+			animate : true,
+			lines : true,
+			queryParams : {
+				table : 'T_AREA'
+			},
+			onContextMenu : function(e, node) {
+				e.preventDefault();
+				// 查找节点
+				$('#treearealist').tree('select', node.target);
+				var pnode = $('#treearealist').tree('getParent', node.target);
+				if (pnode != null) {
+					ParentDictionaryCode = pnode.id;
+					//ParentLevelCode = pnode.attributes.LevelID;
+					ParentName = pnode.text;
+				} else {
+					ParentDictionaryCode = "-1";
+					ParentName = "无";
+				}
+				
+				id = node.id;
+				//LowerLevelCode = node.attributes.LevelID;
+				name = node.text;
+				orderno=node.orderno;
+                $("#DictionaryISVALID").val(node.isvalid);
+
+				// 显示快捷菜单
+				$('#menu').menu('show', {
+					left : e.pageX,
+					top : e.pageY
+				});
+			},
+			onLoadSuccess :function(node) {
+				//alert(node);
+// 				 var node = $(this).tree('find', 12);//找到节点
+// 				alert(node.text);
+// 				if(node.text=="合肥市"){
+					
+// 					$(this).tree('check', node.target);//选中节点
+// 					$(this).tree('disable', true);//
+// 					//node.checkbox.disable(); 
+// 				} 
+			
+			},
+			formatter : function(node) {
+				//alert(node.attributes);
+				if (node.attributes == false) {
+					return '<span style="color:red">' + node.text + '</span>';
+				} else {
+					return node.text;
+				}
+			}
+
+		});
+
+		//新增平级字典
+		function AddDictionaryLevel() {
+
+			$('#btnadd').css("display", "");//显示新增按钮
+			$('#btnedit').css("display", "none");//隐藏保存按钮
+			$('#ParentDictionaryName').textbox('setText', ParentName);
+			$('#ParentDictionaryID').val(ParentDictionaryCode);
+			//$('#LevelCode').val(ParentLevelCode);
+			$('#DictionarySN').numberbox('clear');
+			$('#DictionaryName').textbox('clear');
+			$('#areaEdit').dialog('open');
+			$('#btnadd').linkbutton('enable');
+		}
+		//新增下级字典
+		function AddDictionaryLowerLevel() {
+
+			$('#btnadd').css("display", "");//显示新增按钮
+			$('#btnedit').css("display", "none");//隐藏保存按钮
+			$('#ParentDictionaryName').textbox('setText', name);
+			$('#ParentDictionaryID').val(id);
+			//$('#LevelCode').val(LowerLevelCode);
+			$('#DictionarySN').numberbox('clear');
+			$('#DictionaryName').textbox('clear');
+			$('#areaEdit').dialog('open');
+
+			$('#btnadd').linkbutton('enable');
+		}
+
+		//点击修改按钮
+		function EditDictionaryInfo() {
+
+		    $('#btnadd').css("display", "none");//隐藏新增按钮
+		    $('#btnedit').css("display", "");//显示保存按钮
+		   
+		    $('#ParentDictionaryID').val(ParentDictionaryCode);//父节点ID
+		    $('#ParentDictionaryName').textbox('setText', ParentName);//父节点名称
+		    $('#DictionaryID').val(id);
+		    $('#DictionaryName').textbox('setText', name);
+		    $('#DictionarySN').numberbox('setText',orderno);//顺序号
+		    $('#areaEdit').dialog('open');
+		    $('#btnedit').linkbutton('enable');
+		} 
+		
+		//新增/修改方法
+		function submitAddForm(value) {
+			var validate = $("#areaEdit").form("validate");
+			var id = 0;
+			var isvalid=1;
+			if (validate) {
+				if (value == 1) {
+					$('#btnedit').linkbutton('disable');
+					id = $('#DictionaryID').val();
+	                isvalid=$("#DictionaryISVALID").val();
+				} else {
+					$('#btnadd').linkbutton('disable');
+				}
+				$.ajax({
+					type : 'POST',
+					url : '/api/area/save',
+					data : {
+						id : id,
+						fatherid : $('#ParentDictionaryID').val(),
+						orderno : $('#DictionarySN').numberbox('getText'),
+						name : $('#DictionaryName').textbox('getText'),
+                        isvalid:isvalid
+					},
+					//dataType : "json",
+					success : function(jsData) {
+						//alert(jsData);
+						//$.handleJsonResult(jsData, function () {
+						$('#treearealist').tree("reload");
+						$('#areaEdit').dialog('close');
+						//},
+						//function () {
+						$('#btnadd').linkbutton('enable');
+						//});
+					},
+					error : function(ms) {
+						//alert(ms);
+						$.messager.alert("错误", "新增或修改失败！", "error");
+
+					}
+				});
+			}
+		}
+
+
+		//字典禁用
+		function banInfo() {
+			var isvalid = 0;
+
+			//$('#DictionaryNameForIsActive').val(name);
+			submitActiveForm(isvalid);
+		}
+		//字典启用
+		function startInfo() {
+			var isvalid = 1;
+			//$('#DictionaryNameForIsActive').val(name);
+			submitActiveForm(isvalid);
+		}
+
+		//字典禁用，启用提交方法
+		function submitActiveForm(isvalid) {
+
+			$('#DictionaryID').val(id);
+			$.ajax({
+				type : 'POST',
+				url : '/api/area/isvalid',
+				data : {
+					table : 'T_AREA',
+					id : $('#DictionaryID').val(),
+					isvalid : isvalid
+				},
+				dataType : "json",
+				success : function(jsData) {
+					if (jsData != 0) {
+						$('#treearealist').tree("reload");
+						$('#areaEdit').dialog('close');
+						$('#btnadd').linkbutton('enable');
+						/* $.messager.alert('提示', ''++'成功！', 'info', function () {
+						}); */
+					}
+				}
+			});
+		}
+	</script>
+</body>
+</html>

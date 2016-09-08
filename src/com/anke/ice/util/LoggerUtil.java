@@ -18,8 +18,8 @@ public class LoggerUtil {
 		try {
 			props.load(fis);
 			fis.close();
-			String logFile = this.getClass().getResource("/").getPath() + props.getProperty("log4j.appender.R.File");
-			props.setProperty("log4j.appender.R.File", logFile);
+			//String logFile = this.getClass().getResource("/").getPath() + props.getProperty("log4j.appender.R.File");
+			//props.setProperty("log4j.appender.R.File", logFile);
 			PropertyConfigurator.configure(props);
 		} catch (Exception e) {
 		}

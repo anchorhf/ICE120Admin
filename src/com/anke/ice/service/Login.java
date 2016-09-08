@@ -12,7 +12,7 @@ import com.anke.ice.model.CheckLogin;
 
 
 @Path("/loginfi")
-@Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+@Produces(MediaType.TEXT_HTML + ";charset=UTF-8")
 public class Login {
 	@POST
 	@Path("/loginse")

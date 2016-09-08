@@ -25,7 +25,7 @@
 				<th data-options="field:'volunteertype' ,width: '6%'">志愿者类型</th>
 				<th data-options="field:'skill' ,width: '9%'">技能</th>
 				<th data-options="field:'area' ,width: '7%'">申请地区</th>
-				<th data-options="field:'institution' ,width: '11%'">申请机构</th>
+				<th data-options="field:'institution' ,width: '13%'">申请机构</th>
 				<th data-options="field:'applystate' ,width:0,hidden: 'true'">申请状态</th>
 				<th data-options="field:'applystatename' ,width: '6%'">申请状态</th>
 				<th data-options="field:'auditresult' ,width: '11%'">审核描述</th>
@@ -52,21 +52,21 @@
 						type="text" style="width: 130px" id="area"></td>
 
 					<td align="right" style="width: 7%">申请机构：</td>
-					<td style="width: 12%"><select class="easyui-combobox" style="width: 140px"
-						id="institution" data-options="">
+					<td style="width: 12%"><select class="easyui-combobox"
+						style="width: 140px" id="institution" data-options="">
 					</select></td>
-					<td ><lable id="uName" style="visibility:hidden;" /></td>
+					<td><lable id="uName" style="visibility:hidden;" /></td>
 					<td><lable id="roleid" style="visibility:hidden;" /></td>
 				</tr>
 				<tr>
+					<td align="right">志愿者：</td>
+					<td><input class="easyui-textbox" type="text"
+						style="width: 142px" id="volunteer"></td>
 					<td align="right">志愿者类型：</td>
-					<td><select class="easyui-combobox" style="width: 140px"
+					<td><select class="easyui-combobox" style="width: 142px"
 						id="volunteertype"
 						data-options="editable: false,panelHeight: 'auto'">
 					</select></td>
-					<td align="right">志愿者：</td>
-					<td><input class="easyui-textbox" type="text"
-						style="width: 140px" id="volunteer"></td>
 					<td align="right">申请状态：</td>
 					<td><select class="easyui-combobox" style="width: 130px"
 						id="applystate" data-options="editable: false,panelHeight: 'auto'">
@@ -78,10 +78,22 @@
 					<td align="right">技能：</td>
 					<td><input class="easyui-textbox" type="text"
 						style="width: 140px" id="skill"></td>
-					<td>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" id="btnSearch" class="easyui-linkbutton" onclick="reSearch()"
+					<td>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)"
+						id="btnSearch" class="easyui-linkbutton" onclick="reSearch()"
 						data-options="iconCls:'icon-search'">查询</a></td>
 					<td><lable id="institutionid" style="visibility:hidden;" /></td>
-					
+
+				</tr>
+				<tr>
+					<td colspan="9">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注： <span
+						style="color: black;">待审核</span> &nbsp;&nbsp;|&nbsp;&nbsp; <span
+						style="color: darkgreen;">审核通过</span> &nbsp;&nbsp;|&nbsp;&nbsp; <span
+						style="color: gray;">审核不通过</span> &nbsp;&nbsp;|&nbsp;&nbsp; <span
+						style="color: red;">已经过期</span> &nbsp;&nbsp;|&nbsp;&nbsp; <span
+						style="color: blue;">30天内过期</span>
+					</td>
+					<td></td>
+				<tr>
 				</tr>
 			</table>
 		</div>
@@ -93,17 +105,16 @@
 				plain="true" onclick="colunteercheck(2)">审核不通过</a> |  -->
 			<a href="javascript:void(0)" class="easyui-linkbutton" id="btnLook"
 				iconCls="icon-search" plain="true" onclick="editVolunteer()">查看&审核</a>
-				<lable id="ifCheck" style="visibility:hidden;" />
+			<lable id="ifCheck" style="visibility:hidden;" />
 		</div>
 	</div>
 
 	<div id="edit" class="easyui-dialog" title="查看&审核志愿者信息"
 		data-options="modal:true,collapsible:false,minimizable:false,maximizable:false,closed:true,resizable:false,iconCls:'icon-search'"
-		style="width: 42%; height: 480px; padding: 10px;">
+		style="width: 45%; height: 480px; padding: 10px;">
 		<form id="edit-form" method="post">
 			<table id="edit-table" border="0" cellpadding="0" cellspacing="0"
 				style="width: 100%;">
-
 				<tr>
 					<td align="center" colspan="4"><span id="lblapplystate">申请状态：</span><input
 						class="easyui-textbox" type="text" id="txtapplystatename"
@@ -111,13 +122,19 @@
 					</td>
 				</tr>
 				<tr>
-					<td align="right" style="width: 15%">姓名：</td>
+					<td style="height: 2px; width: 15%"></td>
+					<td style="height: 2px; width: 25%"></td>
+					<td style="height: 2px; width: 13%"></td>
+					<td style="height: 2px; width: 35%"></td>
+				</tr>
+				<tr>
+					<td align="right">姓名：</td>
 					<td style="height: 25px;"><input class="easyui-textbox"
 						type="text" name="name"
 						data-options="width: '130px',disabled:true" /></td>
 					<td align="right">性 别：</td>
 					<td style="height: 25px;"><input class="easyui-textbox"
-						type="text" name="sex" style="width: 150px;"
+						type="text" name="sex" style="width: 82%;"
 						data-options="disabled:true" /></td>
 
 				</tr>
@@ -129,7 +146,7 @@
 					<td align="right">身份证：</td>
 					<td style="height: 25px;"><input class="easyui-textbox"
 						type="text" name="idcardno"
-						data-options="width: '150px',disabled:true" /></td>
+						data-options="width: '82%',disabled:true" /></td>
 				</tr>
 				<tr>
 					<td align="right">技能：</td>
@@ -139,7 +156,7 @@
 					<td align="right">特 长：</td>
 					<td style="height: 25px;"><input class="easyui-textbox"
 						type="text" name="speciality"
-						data-options="width: '150px',disabled:true" /></td>
+						data-options="width: '82%',disabled:true" /></td>
 
 				</tr>
 				<tr>
@@ -150,7 +167,7 @@
 					<td align="right">是否有效：</td>
 					<td style="height: 25px;"><input class="easyui-textbox"
 						type="text" name="isvalid"
-						data-options="width: '150px',disabled:true" /></td>
+						data-options="width: '82%',disabled:true" /></td>
 
 				</tr>
 				<tr>
@@ -161,7 +178,7 @@
 					<td align="right">申请机构：</td>
 					<td style="height: 25px;"><input class="easyui-textbox"
 						type="text" name="institution"
-						data-options="width: '150px',disabled:true" /></td>
+						data-options="width: '82%',disabled:true" /></td>
 				</tr>
 				<tr>
 					<td align="right">申请时刻：</td>
@@ -171,7 +188,7 @@
 					<td align="right">有效期限：</td>
 					<td style="height: 25px;"><input class="easyui-textbox"
 						type="text" name="validperiod"
-						data-options="width: '150px',disabled:true" /></td>
+						data-options="width: '82%',disabled:true" /></td>
 				</tr>
 				<tr>
 					<td align="right">审核时刻：</td>
@@ -181,13 +198,14 @@
 					<td align="right">审核人：</td>
 					<td style="height: 25px;"><input class="easyui-textbox"
 						type="text" name="checkperson"
-						data-options="width: '150px',disabled:true" /></td>
+						data-options="width: '82%',disabled:true" /></td>
 				</tr>
 				<tr>
 					<td align="right">审核描述：</td>
-					<td colspan="3" style="height: 25px;">
-					<input class="easyui-textbox" type="text" id="txtauditresult"
-						name="auditresult" data-options="width: '92%',validType:'length[0,200]'" /></td>
+					<td colspan="3" style="height: 25px;"><input
+						class="easyui-textbox" type="text" id="txtauditresult"
+						name="auditresult"
+						data-options="width: '91%',validType:'length[0,60]'" /></td>
 				</tr>
 				<tr>
 					<td align="right">相关材料：</td>
@@ -231,6 +249,47 @@
 	</div>
 
 	<script type="text/javascript">
+
+    //#region 禁用Backspace键
+    window.onload = function () {
+        document.getElementsByTagName("body")[0].onkeydown = function () {
+
+            //获取事件对象
+            var elem = event.relatedTarget || event.srcElement || event.target || event.currentTarget;
+
+            if (event.keyCode == 8) {//判断按键为backSpace键
+
+                //获取按键按下时光标做指向的element
+                var elem = event.srcElement || event.currentTarget;
+
+                //判断是否需要阻止按下键盘的事件默认传递
+                var name = elem.nodeName;
+
+                if (name != 'INPUT' && name != 'TEXTAREA') {
+                    return StopBackspace(event);
+                }
+                var type_e = elem.type.toUpperCase();
+                if (name == 'INPUT' && (type_e != 'TEXT' && type_e != 'TEXTAREA' && type_e != 'PASSWORD' && type_e != 'FILE')) {
+                    return StopBackspace(event);
+                }
+                if (name == 'INPUT' && (elem.readOnly == true || elem.disabled == true)) {
+                    return StopBackspace(event);
+                }
+            }
+        }
+    }
+    function StopBackspace(e) {
+        if (e.returnValue) {
+            e.returnValue = false;
+        }
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+
+        return false;
+    }
+    //#endregion
+    
 		//点击查询按钮
 		var reSearch = function() {
 			//alert("volunteertype"+$('#volunteertype').combobox('getValue'));
@@ -242,7 +301,7 @@
 					applybegintime : $("#startTime").datetimebox('getValue'),
 					applyendtime : $('#endTime').datetimebox('getValue'),
 					area : $('#area').val(),
-					institution :  $('#institution').combobox('getValue'),
+					institution : $('#institution').combobox('getValue'),
 					volunteertype : $('#volunteertype').combobox('getValue'),
 					volunteer : $('#volunteer').val(),
 					applystate : $('#applystate').combobox('getValue'),
@@ -254,17 +313,16 @@
 		};
 
 		//设置分页控件 
-		var setdatagridPager= function(){
+		var setdatagridPager = function() {
 
 			var p = $('#volunteerlist').datagrid('getPager');
-			$(p).pagination(
-					{
-						beforePageText : '第',//页数文本框前显示的汉字 
-						afterPageText : '页    共 {pages} 页',
-						displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
-					});
+			$(p).pagination({
+				beforePageText : '第',//页数文本框前显示的汉字 
+				afterPageText : '页    共 {pages} 页',
+				displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+			});
 		}
-		
+
 		//点击志愿者审核按钮
 		var editVolunteer = function() {
 			$("#edit-form").form("clear");
@@ -275,8 +333,7 @@
 				return;
 			}
 			// 获取信息
-			$("#edit-form")
-					.form("load", "/api/VolunteerApply/get?id=" + row.id);
+			$("#edit-form").form("load", "/api/VolunteerApply/get?id=" + row.id);
 
 			$("#edit").dialog("open");
 
@@ -316,6 +373,26 @@
 			img7.src = "";
 			img8.src = "";
 			img9.src = "";
+			img0.onclick = function() {
+			}
+			img1.onclick = function() {
+			}
+			img2.onclick = function() {
+			}
+			img3.onclick = function() {
+			}
+			img4.onclick = function() {
+			}
+			img5.onclick = function() {
+			}
+			img6.onclick = function() {
+			}
+			img7.onclick = function() {
+			}
+			img8.onclick = function() {
+			}
+			img9.onclick = function() {
+			}
 
 			$.ajax({
 						url : '/api/VolunteerApply/getAttachment?applyid=' + id,
@@ -323,8 +400,7 @@
 						success : function(imglist) {
 							if (imglist != null) {
 								for (var i = 0; i < imglist.length; i++) {
-									var img = document
-											.getElementById("img" + i);
+									var img = document.getElementById("img" + i);
 									/* var img0 = document.getElementById("img0");
 									var img1 = document.getElementById("img1");
 									var img2 = document.getElementById("img2");
@@ -367,35 +443,57 @@
 									}
 
 									img.src = link;
-									img0.onclick = function() {
-										openBigImg(link0);
+									if (link0 != undefined) {
+
+										img0.onclick = function() {
+											openBigImg(link0);
+										}
 									}
-									img1.onclick = function() {
-										openBigImg(link1);
+									if (link1 != undefined) {
+
+										img1.onclick = function() {
+											openBigImg(link1);
+										}
 									}
-									img2.onclick = function() {
-										openBigImg(link2);
+									if (link2 != undefined) {
+										img2.onclick = function() {
+											openBigImg(link2);
+										}
 									}
-									img3.onclick = function() {
-										openBigImg(link3);
+									if (link3 != undefined) {
+										img3.onclick = function() {
+											openBigImg(link3);
+										}
 									}
-									img4.onclick = function() {
-										openBigImg(link4);
+									if (link4 != undefined) {
+										img4.onclick = function() {
+											openBigImg(link4);
+										}
 									}
-									img5.onclick = function() {
-										openBigImg(link5);
+									if (link5 != undefined) {
+										img5.onclick = function() {
+											openBigImg(link5);
+										}
 									}
-									img6.onclick = function() {
-										openBigImg(link6);
+									if (link6 != undefined) {
+										img6.onclick = function() {
+											openBigImg(link6);
+										}
 									}
-									img7.onclick = function() {
-										openBigImg(link7);
+									if (link7 != undefined) {
+										img7.onclick = function() {
+											openBigImg(link7);
+										}
 									}
-									img8.onclick = function() {
-										openBigImg(link8);
+									if (link8 != undefined) {
+										img8.onclick = function() {
+											openBigImg(link8);
+										}
 									}
-									img9.onclick = function() {
-										openBigImg(link9);
+									if (link9 != undefined) {
+										img9.onclick = function() {
+											openBigImg(link9);
+										}
 									}
 
 								}
@@ -420,7 +518,7 @@
 		var openBigImg = function(value) {
 			window.open(value);
 		}
-		
+
 		//志愿者审核
 		var colunteercheck = function(state) {
 			// 判断是否选中一项
@@ -435,8 +533,8 @@
 			} else {
 				resultName = "审核不通过";
 			}
-			$.messager.confirm("提示", "您确定要对志愿者：" + row.volunteer + "(申请："+row.institution
-					+")"+ resultName + "？", function(data) {
+			$.messager.confirm("提示", "您确定要对志愿者：" + row.volunteer + "(申请："
+					+ row.institution + ")" + resultName + "？", function(data) {
 				if (data) {
 					$.ajax({
 						url : '/api/VolunteerApply/updateapplystate',
@@ -452,6 +550,7 @@
 						success : function(msg) {
 							if (msg != 0) {
 								$.messager.alert("成功", "志愿者审核成功！", "info");
+								setusertag(row.volunteerid);
 								$("#volunteerlist").datagrid("reload");
 								$('#btnCheckPass').linkbutton('disable');
 								$('#btnCheckNotPass').linkbutton('disable');
@@ -467,31 +566,53 @@
 				}
 			});
 		};
-		
-		//根据菜单ID获取登录人是否有对应权限（例如：menuid=68为审核志愿者）
-		var ifRole = function(menuid){
+
+		//更新用户TAG
+		var setusertag = function(userid) {
+			//alert(userid);
 			$.ajax({
-						url : '/api/Dictionary/getIFRole',
+						url : 'http://app.anke.net.cn:8890/ICE120WebService/api/pushmessage/setusertag',
 						type : "POST",
 						data : {
-							roleid : $('#roleid').html(),
-							menuid : menuid
+							userid : userid
 						},
+						dataType : 'json',
 						success : function(msg) {
-							if (msg == 1) {
-								$('#ifCheck').html(1);
-							} else {
-								$('#ifCheck').html(0);
-							}
+							//alert(msg.code);
+							/* if(msg.code==200){
+
+								$.messager.alert("消息", "更新用户TAG成功！","info");
+							} */
 						},
-						error : function() {
-							$.messager.alert("错误", "获取审核权限失败！","error");
+						error : function(ms) {
+							//alert(ms);
 
 						}
 					});
 		}
 
-		
+		//根据菜单ID获取登录人是否有对应权限（例如：menuid=68为审核志愿者）
+		var ifRole = function(menuid) {
+			$.ajax({
+				url : '/api/Dictionary/getIFRole',
+				type : "POST",
+				data : {
+					roleid : $('#roleid').html(),
+					menuid : menuid
+				},
+				success : function(msg) {
+					if (msg == 1) {
+						$('#ifCheck').html(1);
+					} else {
+						$('#ifCheck').html(0);
+					}
+				},
+				error : function() {
+					$.messager.alert("错误", "获取审核权限失败！", "error");
+
+				}
+			});
+		}
 
 		//获取cookie内的人员信息
 		var uName;
@@ -537,7 +658,7 @@
 							$('#roleid').html(roleid);//赋值角色编码给隐藏文本
 
 							ifRole(68);//判断是否可以审核志愿者
-							
+
 							var date = new Date();
 							var day = 30;
 							var hour = 1;
@@ -556,7 +677,7 @@
 							//alert(startTime);
 							$('#startTime').datetimebox('setValue', startTime);
 							$('#endTime').datetimebox('setValue', endTime);
-							
+
 							//#region 志愿者类型
 							$("#volunteertype").combobox(
 											{
@@ -574,10 +695,10 @@
 							//#endregion 
 							$('#volunteertype').combobox('setValue', '-1');//加载赋值
 							//$('#applystate').combobox('setValue','0');//审核状态--默认待审核
-                            
+
 							//#region 申请机构
 							$("#institution").combobox(
-											{
+									{
 												url : '/api/Dictionary/get?table=T_INSTITUTION&typeCode=volunteertype&isAddSelect=1',
 												valueField : 'name',
 												textField : 'name',
@@ -588,67 +709,111 @@
 													$('#institution').combobox('setValue','--请选择--');
 												}
 
-											});
+									});
 							//#endregion 
-							
 
 							//列表加载
-							$("#volunteerlist").datagrid(
-									{
-										url : '/api/VolunteerApply/list',
-										method : 'POST',
-										pageSize : 15,//每页显示的记录条数，默认为10 
-										pageList : [ 10, 15, 20, 30 ],//可以设置每页记录条数的列表 
-										pagination : true,
-										fit : true,//自动大小
-										rownumbers : true,//行号
-										singleSelect : true,
-										queryParams : {
-											applybegintime : $("#startTime").datetimebox('getValue'),
-											applyendtime : $('#endTime').datetimebox('getValue'),
-											area : $('#area').val(),
-											institution :  $('#institution').combobox('getValue'),
-											volunteertype : $('#volunteertype').combobox('getValue'),
-											volunteer : $('#volunteer').val(),
-											applystate : $('#applystate').combobox('getValue'),
-											skill : $('#skill').val(),
-											institutionid : $('#institutionid').html()
-										},
-										toolbar : "#toolbar",
-										rowStyler : function(index, row) {
-											if (row.applystate == "1") {
-												return 'color:darkgreen;';
-											} else if (row.applystate == "2") {
-												return 'color:red;';
-											}
-											/* else if (row.applystate == "2") {
-											    return 'color:gray;';
-											} */
-											return '';
-										},
-										onDblClickRow : function(rowIndex,rowData) {
+							$("#volunteerlist")
+									.datagrid(
+											{
+												url : '/api/VolunteerApply/list',
+												method : 'POST',
+												pageSize : 15,//每页显示的记录条数，默认为10 
+												pageList : [ 10, 15, 20, 30 ],//可以设置每页记录条数的列表 
+												pagination : true,
+												fit : true,//自动大小
+												rownumbers : true,//行号
+												singleSelect : true,
+												queryParams : {
+													applybegintime : $("#startTime").datetimebox('getValue'),
+													applyendtime : $('#endTime').datetimebox('getValue'),
+													area : $('#area').val(),
+													institution : $('#institution').combobox('getValue'),
+													volunteertype : $('#volunteertype').combobox('getValue'),
+													volunteer : $('#volunteer').val(),
+													applystate : $('#applystate').combobox('getValue'),
+													skill : $('#skill').val(),
+													institutionid : $('#institutionid').html()
+												},
+												toolbar : "#toolbar",
+												rowStyler : function(index, row) {
+													var date = new Date();
+													var day = 30;
+													var d2 = new Date(date
+															.getTime());//现在时间
+													var d3 = new Date(date
+															.getTime()
+															+ day
+															* 24
+															* 60
+															* 60 * 1000);//现在时间加30天
+													var nowTime = d2
+															.getFullYear()
+															+ "-"
+															+ (d2.getMonth() + 1)
+															+ "-"
+															+ d2.getDate()
+															+ " "
+															+ d2.getHours()
+															+ ":"
+															+ d2.getMinutes()
+															+ ":"
+															+ d2.getSeconds();
+													var step30Time = d3
+															.getFullYear()
+															+ "-"
+															+ (d3.getMonth() + 1)
+															+ "-"
+															+ d3.getDate()
+															+ " "
+															+ d3.getHours()
+															+ ":"
+															+ d3.getMinutes()
+															+ ":"
+															+ d3.getSeconds();
+													if (new Date(nowTime) >= new Date(row.validperiod)
+															&& row.validperiod != null) {
+														return 'color:red;';//已经过期
+													}
+													if (new Date(step30Time) >= new Date(row.validperiod)
+															&& row.validperiod != null) {
+														return 'color:blue;';//30天内过期
+													}
+													if (row.applystate == "1") {
+														return 'color:darkgreen;';//审核通过
+													} else if (row.applystate == "2") {
+														return 'color:gray';//审核不通过
+													}
 
-										},
-										onSelect : function(index, row) {
-											if (row.applystate == "0" && $('#ifCheck').html()==1) {
-												$('#btnCheckPass').linkbutton('enable');
-												$('#btnCheckNotPass').linkbutton('enable');
-											} else {
-												$('#btnCheckPass').linkbutton('disable');
-												$('#btnCheckNotPass').linkbutton('disable');
-											}
-										}
-									});
+													/* else if (row.applystate == "2") {
+													    return 'color:gray;';
+													} */
+													return '';
+												},
+												onDblClickRow : function(
+														rowIndex, rowData) {
+
+												},
+												onSelect : function(index, row) {
+													if (row.applystate == "0"&& $('#ifCheck').html() == 1) {
+														$('#btnCheckPass').linkbutton('enable');
+														$('#btnCheckNotPass').linkbutton('enable');
+													} else {
+														$('#btnCheckPass').linkbutton('disable');
+														$('#btnCheckNotPass').linkbutton('disable');
+													}
+												}
+											});
 
 							setdatagridPager();//设置分页控件
-							 /* //设置分页控件 
-							 var p = $('#volunteerlist').datagrid('getPager');
+							/* //设置分页控件 
+							var p = $('#volunteerlist').datagrid('getPager');
 							$(p).pagination(
-									{
-										beforePageText : '第',//页数文本框前显示的汉字 
-										afterPageText : '页    共 {pages} 页',
-										displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
-									});  */ 
+								{
+									beforePageText : '第',//页数文本框前显示的汉字 
+									afterPageText : '页    共 {pages} 页',
+									displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+								});  */
 						});
 	</script>
 </body>

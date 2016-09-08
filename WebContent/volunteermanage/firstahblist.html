@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" name="viewport"
+	content="initial-scale=1, user-scalable=0, minimal-ui">
+<title>急救手册管理</title>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/color.css">
+<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../css/app.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="../ckfinder/ckfinder.js"></script>
+<style type="text/css">
+#cke_1_contents {
+  	height: 217px !important; 
+}
+.file {
+    position: relative; 
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 1px 1px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    height:22px;
+    top:7px;
+}
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+} 
+ .file:hover { 
+     background: #AADFFD; 
+     border-color: #78C3F3; 
+     color: #004974; 
+     text-decoration: none; 
+}
+</style>
+
+</head>
+<body style="height: 100%">
+	<table id="firstahblist"  class="easyui-datagrid">
+		<thead>
+			<tr>
+				<th data-options="field:'tabid',width:0,hidden: 'true'">编码</th>
+				<th data-options="field:'taburl',formatter:showImg,width: '5%'" >图标</th>
+				<th data-options="field:'tabname' ,width: '15%'">名称</th>
+				
+				<th data-options="field:'tabprofile' ,width: '54%'">简介</th>
+				<th data-options="field:'tabisvolunteer' ,width: '12%'">志愿者界面显示</th>
+				<th data-options="field:'tabisvalid' ,width: '7%'">是否有效</th>
+				<th data-options="field:'taborderno',width:'6%'">顺序号</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar">
+		<div data-options="region:'north',split:true">
+			<table style="width: 100%; font-size: 12px;background: #ffffff" border="0" 
+				cellspacing="0" cellpadding="0">
+				<tr>
+					<td align="right" style="width:4%">名称：</td>
+					<td style="width:15%"><input class="easyui-textbox"
+						type="text" style="width: 90%" id="mname" name="mname"></td>
+						
+					<td align="right" style="width:4%">简介：</td>
+					<td style="width:15%"><input class="easyui-textbox" 
+						type="text" style="width: 90%" id="mprofile" name="mprofile"></td>
+						
+				
+<!-- 				    <td align="right">顺序号：</td> -->
+<!-- 					<td><input class="easyui-textbox" -->
+<!-- 						type="text" style="width:90%" id="morderno" name="morderno"></td> -->
+						
+					<td align="right" style="width:10%">志愿者界面显示：</td>
+					<td style="width:10%"><select class="easyui-combobox" 
+						style="width: 90%" id="misvolunteer" name="misvolunteer"
+						data-options="panelHeight: 'auto',editable:false">
+							<option value="-1">--请选择--</option>
+							<option value="0">不可见</option>
+							<option value="1">可见</option>
+					</select></td>
+					
+					<td align="right" style="width:8%">是否有效：</td>
+					<td style="width:10%"><select class="easyui-combobox" 
+						style="width:90%" id="misvalid" name="misvalid"
+						data-options="panelHeight: 'auto',editable:false">
+							<option value="-1">--请选择--</option>
+							<option value="0">无效</option>
+							<option value="1">有效</option>
+					</select></td>
+					
+					<td align="left"><a href="javascript:void(0)"
+						id="btnSearch" class="easyui-linkbutton" onclick="reSearch()"
+						data-options="iconCls:'icon-search'">查询</a></td>
+
+				</tr>
+			</table>
+		</div>
+		<div style="padding-left: 10px">
+			<a href="javascript:void(0)" class="easyui-linkbutton" id="addbutton"
+				iconCls="icon-add" plain="true" onclick="addFirstAidHB()">新增</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton" id="editbutton"
+				iconCls="icon-edit" plain="true" onclick="editFirstAidHB()">修改</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton" id="lookbutton"
+				iconCls="icon-search" plain="true" onclick="lookFirstAidHB()">查看</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" id="previewbutton"
+				iconCls="icon-previewbt" plain="true" onclick="previewFirstAidHB()">预览</a> 
+		</div>
+	</div>
+
+	<div id="edit" closed="true">
+		<form id="edit-form" method="post" >
+			<table id="tabfisrtahb"
+				style="width: 98%; margin: 0px 0px 0px 0px; border-collapse: separate; border-spacing: 4px;"
+				border="0" cellspacing="1" cellpadding="0">
+				
+				<tr>
+					<td style="width:9%" align="right">名称：</td>
+					<td style="width:25%"><input class="easyui-textbox" data-options="required:true,validType:'length[0,100]'" style="width:90%"
+						type="text"  id="name" name="name"></td>
+					<td style="width:7%" align="right">顺序号：</td>
+					<td style="width:8%"><input class="easyui-numberbox" data-options="required:true,min:0" style="width:90%" 
+						type="text" id="orderno" name="orderno"></td>
+			
+					<td align="right" style="width:15%">志愿者界面显示：</td>
+					<td style="width:12%"><select class="easyui-combobox" style="width:90%" 
+						 id="isvolunteer" name="isvolunteer"
+						data-options="panelHeight: 'auto',editable:false ">
+							<option value="0">不可见</option>
+							<option value="1">可见</option>
+					</select></td>
+					
+				    <td align="right" style="width:9%">是否有效：</td>
+					<td style="width:12%"><select class="easyui-combobox" style="width:90%" 
+						 id="isvalid" name="isvalid"
+						data-options="panelHeight: 'auto',editable:false">
+							<option value="1">有效</option>
+							<option value="0">无效</option>
+					</select></td>
+				</tr>
+				
+					<tr>
+				    <td align="right">上传图标：</td>
+					<td colspan="4">
+					<input class="easyui-textbox" type="text"  id="picname" name="picname" style="width:84%" data-options="editable:false">&nbsp;
+					<a href="javascript:;" class="file">选择文件
+                    <input type="file" data-options=""  id="url" name="url" onchange="imgload()">
+                    </a></td>
+					
+				
+					<td colspan="3"><span id="result" name="result"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="width:50%;color:red">*注：图片尺寸146×128<br>图片名称只能包含英文和数字（如：201605040124.png）</span></td>
+					
+				
+					
+					
+				</tr>
+				<tr>
+					<td align="right">简介：</td>
+					<td colspan="7"><textarea id="profile" name="profile" cols="20" style="width:97%;height:50px" onpropertychange="checkLength(this,600);" oninput="checkLength(this,600);"
+							rows="2" ></textarea></td>
+					</tr>	
+				<tr>
+					
+					<td><input class="text" id="id" name="id"
+						style="display: none" /></td>
+					<td><textarea id="strcontent" name="strcontent" cols="20"
+							rows="5" style="display: none"></textarea></td>
+					<td><textarea id="strurl" name="strurl" cols="20"
+							rows="5" style="display: none"></textarea></td>
+				</tr>
+			</table>
+			
+		</form>
+		<div class="easyui-panel" title="详细"
+				style="width: 100%; height: 282px; padding: 2px; border: 0px">
+
+				<textarea id="txtarea" name="txtarea" cols="20" rows="10" style="height: 100%"></textarea>
+				<script type="text/javascript"> var editor=CKEDITOR.replace("txtarea");
+// 				         CKFinder.setupCKEditor(editor,'/ckeditor/');
+				</script>
+<!-- 				<textarea name="urltxtarea" cols="20" rows="10" style="height: 100%;display: none"></textarea> -->
+<!-- 				<script type="text/javascript">CKEDITOR.replace("urltxtarea");</script> -->
+			</div>
+	</div>
+	<script type="text/javascript">
+	
+	//#region 禁用Backspace键
+    window.onload = function () {
+        document.getElementsByTagName("body")[0].onkeydown = function () {
+
+            //获取事件对象
+            var elem = event.relatedTarget || event.srcElement || event.target || event.currentTarget;
+
+            if (event.keyCode == 8) {//判断按键为backSpace键
+
+                //获取按键按下时光标做指向的element
+                var elem = event.srcElement || event.currentTarget;
+
+                //判断是否需要阻止按下键盘的事件默认传递
+                var name = elem.nodeName;
+
+                if (name != 'INPUT' && name != 'TEXTAREA') {
+                    return StopBackspace(event);
+                }
+                var type_e = elem.type.toUpperCase();
+                if (name == 'INPUT' && (type_e != 'TEXT' && type_e != 'TEXTAREA' && type_e != 'PASSWORD' && type_e != 'FILE')) {
+                    return StopBackspace(event);
+                }
+                if (name == 'INPUT' && (elem.readOnly == true || elem.disabled == true)) {
+                    return StopBackspace(event);
+                }
+            }
+        }
+    }
+    function StopBackspace(e) {
+        if (e.returnValue) {
+            e.returnValue = false;
+        }
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+
+        return false;
+    }
+    //#endregion
+   
+    function checkLength(obj,maxlength){
+    if(obj.value.length > maxlength){
+        obj.value = obj.value.substring(0,maxlength);
+        }
+     }
+    
+    
+    function showImg(val,row){
+    	 return '<img src="'+val+'" style="width:20px;height:20px;"/>';
+    	 } 
+    
+    
+    
+    var roleid;
+	//获取cookie值
+	function ReadCookie(){
+		var strCookie=document.cookie;
+		//将多cookie切割为多个名/值对
+		var arrCookie=strCookie.split(";");
+
+		//遍历cookie数组，处理每个cookie对
+		for(var i=0;i<arrCookie.length;i++){
+	 	var arr=arrCookie[i].split("=");
+	    //对arr[0]格式化
+	 	mes = arr[0].replace( /^\s+|\s+$/g, "" );
+	    //找到名称为uName、pWord、id的cookie，并返回它的值
+	 	if ("uName"==mes){
+	 		uName=arr[1];
+	 		continue;
+	 	}
+	  	if("pWord"==mes){
+	  		pWord=arr[1];
+	  		continue;
+	  	}
+	  	if("roleid"==mes){
+	  		roleid=arr[1];
+	  		continue;
+	  	}
+		if("instituid"==mes){
+			instituid=arr[1];
+	  		continue;
+	  	}
+	}
+		}
+
+    
+    
+		$(document).ready(function() {
+			
+			
+			ReadCookie();
+			
+ 			ifRole(71);
+ 			ifRole(72);
+ 			ifRole(73);
+			
+			$("#firstahblist").datagrid({
+				url : '/api/firstahb/list',
+				method : 'POST',
+				pageSize : 15,//每页显示的记录条数，默认为15
+				pageList : [ 10, 15, 20, 30 ],//可以设置每页记录条数的列表 
+				pagination : true,
+				fit : true,//自动大小
+				toolbar : "#toolbar",
+				rownumbers : true,//行号
+ 				singleSelect : true,
+				queryParams : {
+					morderno:-1,
+					mname : $('#mname').val(),
+					mprofile : $('#mprofile').val(),
+					misvolunteer :$('#misvolunteer').combobox('getValue'),
+					misvalid :$('#misvalid').combobox('getValue') 
+				},
+				rowStyler : function(index, row) {
+					if (row.tabisvalid == "无效")
+						return 'color:red;';
+					return '';	
+				},
+				onDblClickRow : function(rowIndex, rowData) {
+					
+				},
+				onSelect : function(index, row) {
+				  
+				}
+			});
+			//设置分页控件 
+			setdatagridPager();
+			
+		});
+		
+		var ifRole = function(menuid) {
+			$.ajax({
+				url : '/api/Dictionary/getIFRole',
+				type : "POST",
+				data : {
+					roleid :roleid,
+					menuid : menuid
+				},
+				success : function(msg) {
+					if (msg == 1&&menuid==71) {
+						$('#addbutton').linkbutton('enable');
+					}else if(msg ==0&&menuid==71){
+						$('#addbutton').linkbutton('disable');
+					}else if (msg == 1&&menuid==72) {
+						$('#editbutton').linkbutton('enable');
+					}else if(msg ==0&&menuid==72){
+						$('#editbutton').linkbutton('disable');
+					}else if (msg == 1&&menuid==73) {
+						$('#lookbutton').linkbutton('enable');
+					}else if(msg ==0&&menuid==73){
+						$('#lookbutton').linkbutton('disable');
+					}
+					
+				},
+				error : function() {
+					$.messager.alert("错误", "获取审核权限失败！", "error");
+
+				}
+			});
+		}		
+		
+		//查询
+	var reSearch = function() {
+			$("#firstahblist").datagrid({
+				 pageNumber: 1,
+                 queryParams: {
+                	morderno:-1,
+ 					mname : $('#mname').val(),
+ 					mprofile : $('#mprofile').val(),
+ 					misvolunteer :$('#misvolunteer').combobox('getValue'), 
+ 					misvalid :$('#misvalid').combobox('getValue') 
+                 }
+			});
+			setdatagridPager();
+	};
+	
+	//查看急救手册
+	var lookFirstAidHB = function() {
+		$("#edit").dialog({
+			title : "查看急救手册",
+			iconCls : "icon-search",
+			buttons : [{
+				text : "关闭",
+				handler : function() {
+					$("#edit").dialog("close");
+				}
+			}]
+			
+		});
+		// 判断是否选中一项
+		$("#edit-form").form("clear");
+		document.getElementById('result').innerHTML = "";
+		var row = $("#firstahblist").datagrid("getSelected");
+		if (row == null) {
+			$.messager.alert("警告", "请先选中一条记录查看！", "warning");
+			return;
+		}
+		$('#edit-form').form('clear');
+		$("#edit-form").form("load", "/api/firstahb/get?id=" + row.tabid)
+		setTimeout('firstahbtimeout()',500);
+	};
+	//延迟加载
+	function firstahbtimeout()
+	{ 
+		ckeditordata=$('#strcontent').val();
+		CKEDITOR.instances.txtarea.setData(ckeditordata);
+		 var result=document.getElementById("result"); 
+		 var getimgpath=$('#picname').val()
+         //显示文件  
+           result.innerHTML='<img src="' +getimgpath +'" alt="" style="width:20px;height:20px;"/>';  
+	 	$("#edit").dialog("open");
+	};
+	
+	function urltimeout()
+	{ 
+	  var getckeditordata=CKEDITOR.instances.txtarea.getData();
+      $('#strcontent').val(getckeditordata);
+      $('#addid').linkbutton('disable');
+      $('#editid').linkbutton('disable');	
+      $("#edit-form").submit();
+	};
+	 
+	function imgload()
+	{   var file = document.getElementById("url").files[0]; 
+        if(!/image\/\w+/.test(file.type)){  
+    	$.messager.alert("警告", "文件类型必须是图片！", "warning");
+        return false;  
+        }
+      
+    	$('#picname').textbox('setValue',file.name);
+//     document.getElementById("picname").value=file.name; 
+    var reader = new FileReader();  
+    //将文件以Data URL形式读入页面  
+    reader.readAsDataURL(file);  
+    reader.onload=function(e){ 
+    var result=document.getElementById("result"); 
+	         //显示文件  
+	result.innerHTML='<img src="' + this.result +'" alt="" style="width:20px;height:20px;"/>';  
+       }
+	};
+	//新增急救手册
+	var addFirstAidHB = function() {
+		$("#edit-form").form("clear");
+		document.getElementById('result').innerHTML = "";
+		CKEDITOR.instances.txtarea.setData("");
+		$("#isvalid").combobox('setValue',1);
+		$("#isvolunteer").combobox('setValue',0);
+		$("#edit").dialog({
+			title : "新增急救手册",
+			buttons : [ {
+				text : "保存",
+				id:'addid',
+				handler : function() {
+					
+                    var file = document.getElementById("url").files[0];  
+                    if(typeof(file) != "undefined"&&file!=null){
+//                     	 if(!/image\/\w+/.test(file.type)){  
+//      			        	$.messager.alert("错误", "文件类型必须是图片！", "error");
+//      			            return false;  
+//      			        }  
+     			        var reader = new FileReader();  
+     			        //将文件以Data URL形式读入页面  
+     			        reader.readAsDataURL(file);  
+     			        reader.onload=function(e){  
+     			         $('#strurl').val(this.result);
+     			        }
+                    }
+			        setTimeout('urltimeout()',500);  	
+			  
+         }
+			}, {
+				text : "关闭",
+				handler : function() {
+					$("#edit").dialog("close");
+				}
+			} ]
+		});
+	
+		$("#edit").dialog("open");
+	};
+	
+	//编辑急救手册
+	var editFirstAidHB = function() {
+		 $("#edit").dialog({
+				title : "修改急救手册",
+				iconCls : "icon-edit",
+				
+				buttons : [ {
+					text : "保存",
+					id:'editid',
+					handler : function() {
+					
+				    var file = document.getElementById("url").files[0];
+				   
+				   if(typeof(file) != "undefined"&&file!=null){
+					   var reader = new FileReader();  
+				        //将文件以Data URL形式读入页面  
+				        reader.readAsDataURL(file);  
+				        reader.onload=function(e){  
+// 				        	alert(this.result);
+				         $('#strurl').val(this.result);
+				        } 
+				   }
+				 
+// 				    if(!/image\/\w+/.test(file.type)){  
+// 			        	$.messager.alert("错误", "文件类型必须是图片！", "error");
+// 			            return;  
+// 			        }  
+			       
+
+			        setTimeout('urltimeout()',500);  
+	                }
+				}, {
+					text : "关闭",
+					handler : function() {
+						$("#edit").dialog("close");
+					}
+				} ]
+			});
+		// 判断是否选中一项
+		$("#edit-form").form("clear");
+		document.getElementById('result').innerHTML = "";
+		var row = $("#firstahblist").datagrid("getSelected");
+		if (row == null) {
+			$.messager.alert("警告", "请先选中一条记录！", "warning");
+			return;
+		}
+		$('#edit-form').form('clear');
+		$("#edit-form").form("load", "/api/firstahb/get?id=" + row.tabid)
+		setTimeout('firstahbtimeout()',500);
+	};
+	
+	
+	var previewFirstAidHB= function(){
+		var row = $("#firstahblist").datagrid("getSelected");
+		if (row == null) {
+			$.messager.alert("警告", "请先选中一条记录进行预览！", "warning");
+			return;
+		}
+		
+		var value="http://app.anke.net.cn:8890/ICE120WebService/manual.jsp?id="+row.tabid+"";
+		window.open(value);
+	}	
+	
+	
+	
+	//侦听表单
+	$("#edit-form").form({
+		url : "/api/firstahb/modify",
+		onSubmit : function() {
+			return $("#edit-form").form("validate");
+		},
+		success : function(data) {
+			if (data == "true") {
+				$('#firstahblist').datagrid('reload');
+				$("#edit").dialog("close");
+			} else
+				$.messager.alert("错误", "急救手册信息保存失败！", "error");
+		}
+	});
+	
+    $("#edit").dialog({
+			width : "85%",
+			height : "490px",
+			modal : true
+		}); 
+//     function readAsDataURL(file){
+//     	var model;
+//         //检验是否为图像文件  
+//         if(!/image\/\w+/.test(file.type)){  
+//         	$.messager.alert("错误", "文件类型必须是图片！", "error");
+//             return false;  
+//         }  
+//         var reader = new FileReader();  
+//         //将文件以Data URL形式读入页面  
+//         reader.readAsDataURL(file);  
+//         reader.onload=function(e){  
+//         model=this.result;
+//         }
+//         return model;
+//     }  
+
+	//设置分页控件 
+	var setdatagridPager= function(){
+
+		var p = $('#firsthblist').datagrid('getPager');
+		$(p).pagination(
+				{
+					beforePageText : '第',//页数文本框前显示的汉字 
+					afterPageText : '页    共 {pages} 页',
+					displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+				});
+	}	
+	</script>
+</body>
+</html>

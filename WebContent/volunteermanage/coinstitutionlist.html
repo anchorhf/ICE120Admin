@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" name="viewport"
+	content="initial-scale=1, user-scalable=0, minimal-ui">
+<title>合作机构管理</title>
+<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+<link rel="stylesheet" type="text/css" href="../css/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/color.css">
+<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../css/app.css">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<style type="text/css">
+
+</style>
+
+</head>
+<body style="height: 100%">
+	<table id="coinstitutionlist"  class="easyui-datagrid">
+		<thead>
+			<tr>
+				<th data-options="field:'institutionid',width:0,hidden: 'true'">机构编码</th>
+				<th data-options="field:'centerid' ,width:0,hidden:'true'">中心编码</th>
+				<th data-options="field:'institutioname' ,width: '19%'">机构名称</th>
+				<th data-options="field:'centername' ,width: '19%'">急救中心</th>
+				<th data-options="field:'applyorcheck' ,width: '7%'">申请&处理</th>
+				<th data-options="field:'applystate' ,width: '7%'">处理结果</th>
+				<th data-options="field:'applytime' ,width: '12%'">申请时间</th>
+				<th data-options="field:'applyperson' ,width: '7%'">申请人</th>
+				<th data-options="field:'checktime',width:'12%'">处理时间</th>
+				<th data-options="field:'checkperson' ,width: '7%'">处理人</th>
+				<th data-options="field:'auditresult' ,width: '9%'">处理建议</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar">
+		<div data-options="region:'north',split:true">
+			<table style="width: 100%; font-size: 12px;background: #ffffff;border-collapse: separate; 
+			border-spacing: 2px;" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+				    <td align="right" style="width:8%">申请起始时刻：</td>
+					<td style="width: 14%"><input class="easyui-datetimebox"
+						style="width: 90%" id="applystartTime" name="applystartTime"
+						data-options="editable: false"></td>
+
+					<td align="right" style="width: 8%">申请终止时刻：</td>
+					<td style="width: 14%"><input class="easyui-datetimebox"
+						style="width: 90%" id="applyendTime" name="applyendTime"
+						data-options="editable: false"></td>
+						
+					<td align="right" style="width:6%">申请人：</td>
+					<td style="width: 14%"><input class="easyui-textbox"
+						type="text" style="width:90%" id="mapplyperson" name="mapplyperson"></td>
+					
+					<td align="right" style="width:6%">处理人：</td>
+					<td style="width: 14%"><input class="easyui-textbox"
+						type="text" style="width: 90%" id="mcheckperson" name="mcheckperson"></td>		
+						
+					<td rowspan="2" align="left"><a href="javascript:void(0)" id="btnSearch" class="easyui-linkbutton" onclick="reSearch()"
+						data-options="iconCls:'icon-search'">查询</a></td>	
+					</tr>
+					<tr>
+					
+					<td align="right">申请&处理：</td>
+					<td><select class="easyui-combobox" 
+						style="width: 90%" id="mapplyorcheck" name="mapplyorcheck"
+						data-options="panelHeight: 'auto',editable:false">
+							<option value="-1">--请选择--</option>
+							<option value="1">申请同意</option>
+							<option value="0">待处理</option>
+					</select></td>
+					
+					<td align="right">处理结果：</td>
+					<td><select class="easyui-combobox" 
+						style="width: 90%" id="mapplystate" name="mapplystate"
+						data-options="panelHeight: 'auto',editable:false">
+							<option value="-1">--请选择--</option>
+							<option value="0">待同意</option>
+							<option value="1">同意</option>
+							<option value="2">不同意</option>
+					</select></td>
+						
+					<td align="right">机构名称：</td>
+					<td><select class="easyui-combobox"
+						style="width: 90%" id="minstitution" name="minstitution"
+						data-options="editable: false">
+					</select></td>	
+					
+					<td align="right">急救中心：</td>
+					<td><select class="easyui-combobox"
+						style="width: 90%" id="mcenter" name="mcenter"
+						data-options="editable: false">
+					</select></td>	
+						
+						
+                    </tr>
+			</table>
+		</div>
+		<div style="padding-left: 10px">
+				
+				<a href="javascript:void(0)" class="easyui-linkbutton" id="lsbutton"
+				iconCls="icon-search" plain="true" onclick="lookcoinstitution()">查看&处理</a> 
+				
+		</div>
+	</div>
+
+	<div id="edit" closed="true">
+		<form id="edit-form" method="post" >
+			<table style="width: 96%; margin: 5px 0px 0px 5px; border-collapse: separate; 
+			border-spacing: 5px;" border="0" cellspacing="1" cellpadding="0">
+			        <tr>
+			        <td align="right" style="width: 10%">申请&处理：</td>
+					<td><input class="easyui-textbox"  type="text" style="width: 90%" id="applyorcheck"  data-options="disabled:true"></td>
+			        
+                    <td align="right" style="width: 10%">处理结果：</td>
+					<td><input class="easyui-textbox"  type="text" style="width: 90%" id="applystate" name="applystate" data-options="disabled:true"></td>
+						
+					</tr>
+					
+					<tr>
+                    <td align="right" style="width: 15%">机构名称：</td>
+					<td style="width: 30%"><input class="easyui-textbox"  type="text" style="width: 90%" id="institutioname" name="institutioname" data-options="disabled:true"></td>
+						
+					<td align="right" style="width: 20%">急救中心：</td>	
+					<td style="width: 30%"><input class="easyui-textbox" type="text" style="width: 90%" id="centername" name="centername" data-options="disabled:true"></td>
+						
+					</tr>
+					
+                    <tr>
+                    <td align="right" style="width: 15%">申请人：</td>
+					<td style="width: 30%"><input class="easyui-textbox"  type="text" style="width: 90%" id="applyperson" name="applyperson" data-options="disabled:true"></td>
+						
+					<td align="right" style="width: 20%">申请时间：</td>	
+					<td style="width: 30%"><input class="easyui-textbox" type="text" style="width: 90%" id="applytime" name="applytime" data-options="disabled:true"></td>
+						
+					</tr>
+				    <tr>
+                    <td align="right" >处理人：</td>
+					<td><input class="easyui-textbox"  type="text" style="width: 90%" id="checkperson" name="checkperson" data-options="disabled:true"></td>
+						
+					<td align="right">处理时间：</td>	
+					<td><input class="easyui-textbox" type="text" style="width: 90%" id="checktime" name="checktime" data-options="disabled:true"></td>
+						
+					</tr>
+					<tr>
+					<td align="right">处理建议：</td>
+					<td colspan="3"><textarea id="auditresult" name="auditresult" cols="20" style="width:95%;height:80px" rows="2" 
+					onpropertychange="checkLength(this,60);" oninput="checkLength(this,60);"></textarea></td>
+					</tr>
+				
+					
+					<tr>
+					<td colspan="4" align="center"><a href="javascript:void(0)"
+						id="btnCheckPass" class="easyui-linkbutton"
+						data-options="iconCls:'icon-ok'" onclick="checkcoinstitution(1)">同意</a>
+						&nbsp;<a href="javascript:void(0)" id="btnCheckNotPass"
+						class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"
+						onclick="checkcoinstitution(2)">不同意</a></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<script type="text/javascript">
+	
+	//#region 禁用Backspace键
+    window.onload = function () {
+        document.getElementsByTagName("body")[0].onkeydown = function () {
+
+            //获取事件对象
+            var elem = event.relatedTarget || event.srcElement || event.target || event.currentTarget;
+
+            if (event.keyCode == 8) {//判断按键为backSpace键
+
+                //获取按键按下时光标做指向的element
+                var elem = event.srcElement || event.currentTarget;
+
+                //判断是否需要阻止按下键盘的事件默认传递
+                var name = elem.nodeName;
+
+                if (name != 'INPUT' && name != 'TEXTAREA') {
+                    return StopBackspace(event);
+                }
+                var type_e = elem.type.toUpperCase();
+                if (name == 'INPUT' && (type_e != 'TEXT' && type_e != 'TEXTAREA' && type_e != 'PASSWORD' && type_e != 'FILE')) {
+                    return StopBackspace(event);
+                }
+                if (name == 'INPUT' && (elem.readOnly == true || elem.disabled == true)) {
+                    return StopBackspace(event);
+                }
+            }
+        }
+    }
+    function StopBackspace(e) {
+        if (e.returnValue) {
+            e.returnValue = false;
+        }
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+
+        return false;
+    }
+    //#endregion
+    
+     function checkLength(obj,maxlength){
+    if(obj.value.length > maxlength){
+        obj.value = obj.value.substring(0,maxlength);
+        }
+     }
+    
+    
+    
+    	var instituid;
+    	var uName;
+    	var roleid;
+    	//获取cookie值
+	function ReadCookie(){
+		var strCookie=document.cookie;
+		//将多cookie切割为多个名/值对
+		var arrCookie=strCookie.split(";");
+
+		//遍历cookie数组，处理每个cookie对
+		for(var i=0;i<arrCookie.length;i++){
+	 	var arr=arrCookie[i].split("=");
+	    //对arr[0]格式化
+	 	mes = arr[0].replace( /^\s+|\s+$/g, "" );
+	    //找到名称为uName、pWord、id的cookie，并返回它的值
+	 	if ("uName"==mes){
+	 		uName=arr[1];
+	 		continue;
+	 	}
+	  	if("pWord"==mes){
+	  		pWord=arr[1];
+	  		continue;
+	  	}
+	  	if("roleid"==mes){
+	  		roleid=arr[1];
+	  		continue;
+	  	}
+		if("instituid"==mes){
+			instituid=arr[1];
+	  		continue;
+	  	}
+	}
+		}
+    
+    
+		$(document).ready(function() {
+			ReadCookie();
+			ifRole(81);
+			var date = new Date();
+			var day = 30;
+			var hour = 1;
+			var d2 = new Date(date.getTime() - day * 24 * 60
+					* 60 * 1000);
+			var d3 = new Date(date.getTime() + hour * 60 * 60
+					* 1000);
+			var startTime = d2.getFullYear() + "-"
+					+ (d2.getMonth() + 1) + "-" + d2.getDate()
+					+ " " + d2.getHours() + ":"
+					+ d2.getMinutes() + ":" + d2.getSeconds();
+			var endTime = d3.getFullYear() + "-"
+					+ (d3.getMonth() + 1) + "-" + d3.getDate()
+					+ " " + d3.getHours() + ":"
+					+ d3.getMinutes() + ":" + d3.getSeconds();
+			//alert(startTime);
+			$('#applystartTime').datetimebox('setValue', startTime);
+			$('#applyendTime').datetimebox('setValue', endTime);
+			$('#mcenter').combobox('setValue','-1');
+			$('#minstitution').combobox('setValue','-1');
+	
+			$("#coinstitutionlist").datagrid({
+				url : '/api/coinstitution/list',
+				method : 'POST',
+				pageSize : 15,//每页显示的记录条数，默认为15
+				pageList : [ 10, 15, 20, 30 ],//可以设置每页记录条数的列表 
+				pagination : true,
+				fit : true,//自动大小
+				toolbar : "#toolbar",
+				rownumbers : true,//行号
+ 				singleSelect : true,
+				queryParams : {
+ 					institutionid:instituid,
+					applystartTime : $("#applystartTime").datetimebox('getValue'),
+					applyendTime : $('#applyendTime').datetimebox('getValue'),
+					mapplyperson : $('#mapplyperson').val(),
+					mcheckperson : $('#mcheckperson').val(),
+					mapplystate :$('#mapplystate').combobox('getValue'), 
+					mapplyorcheck :$('#mapplyorcheck').combobox('getValue'),
+					mcenter :$('#mcenter').combobox('getValue'),
+					minstitution :$('#minstitution').combobox('getValue')
+				},
+				rowStyler : function(index, row) {
+					if (row.applystate == "不同意")
+						{return 'color:red;';}
+				    else if (row.applystate == "同意") {
+							return 'color:green;';
+						}
+					return '';	
+				},
+				onDblClickRow : function(rowIndex, rowData) {
+					
+				},
+				
+				onSelect : function(index, row) {
+					if(instituid==-2){
+						if(row.institutioname==row.centername){
+							$('#btnCheckPass').linkbutton('disable');
+							$('#btnCheckNotPass').linkbutton('disable');
+						}else{
+							$('#btnCheckPass').linkbutton('enable');
+							$('#btnCheckNotPass').linkbutton('enable');
+						}
+					}else{
+						if(row.institutionid!=instituid||row.institutioname==row.centername){
+							$('#btnCheckPass').linkbutton('disable');
+							$('#btnCheckNotPass').linkbutton('disable');
+						}else{
+							$('#btnCheckPass').linkbutton('enable');
+							$('#btnCheckNotPass').linkbutton('enable');
+						}
+					}
+				}
+			});
+			//设置分页控件 
+			setdatagridPager();
+			
+		});
+		
+		var ifRole = function(menuid) {
+			$.ajax({
+				url : '/api/Dictionary/getIFRole',
+				type : "POST",
+				data : {
+					roleid :roleid,
+					menuid : menuid
+				},
+				success : function(msg) {
+					if (msg == 1&&menuid==81) {
+						$('#lsbutton').linkbutton('enable');
+					} else if(msg ==0&&menuid==81){
+						$('#lsbutton').linkbutton('disable');
+					}
+				},
+				error : function() {
+					$.messager.alert("错误", "获取审核权限失败！", "error");
+
+				}
+			});
+		}	
+		
+		//查询
+	var reSearch = function() {
+			$("#coinstitutionlist").datagrid({
+				 pageNumber: 1,
+                 queryParams: {
+                	institutionid:instituid,
+                	applystartTime : $("#applystartTime").datetimebox('getValue'),
+ 					applyendTime : $('#applyendTime').datetimebox('getValue'),
+ 					mapplyperson : $('#mapplyperson').val(),
+ 					mcheckperson : $('#mcheckperson').val(),
+ 					mapplystate :$('#mapplystate').combobox('getValue'),
+ 					mapplyorcheck :$('#mapplyorcheck').combobox('getValue'),
+					mcenter :$('#mcenter').combobox('getValue'),
+					minstitution :$('#minstitution').combobox('getValue')
+                 }
+			});
+			setdatagridPager();
+	};
+	
+	//查看
+	var lookcoinstitution = function() {
+		// 判断是否选中一项
+		$("#edit-form").form("clear");
+		var row = $("#coinstitutionlist").datagrid("getSelected");
+		if (row == null) {
+			$.messager.alert("警告", "请先选中一条记录查看！", "warning");
+			return;
+		}
+// 		var applyorcheckstate;
+// 		if(row.applyorcheck=="申请同意"){
+// 			applyorcheckstate=0;
+// 		}else{
+// 			applyorcheckstate=1;
+// 		}
+		$('#edit-form').form('clear');
+		$("#edit-form").form("load", "/api/coinstitution/get?institutionid=" + row.institutionid+"&centerid="+row.centerid);
+	
+		$("#applyorcheck").textbox("setText", row.applyorcheck);
+		
+		$("#edit").dialog("open");
+	};
+	
+	//志愿者审核
+	var checkcoinstitution = function(state) {
+		// 判断是否选中一项
+		var row = $("#coinstitutionlist").datagrid("getSelected");
+		var resultName;
+		if (state == 1) {
+			resultName = "同意";
+		} else {
+			resultName = "不同意";
+		}
+		$.messager.confirm("提示", "您确定要对：" + row.applyperson + "的申请（"+ resultName + "）吗？", function(data) {
+			if (data) {
+				$.ajax({
+					url : '/api/coinstitution/modify',
+					type : "POST",
+					data : {
+						institutionid : row.institutionid,
+						centerid:row.centerid,
+						applystate : state,
+						uname : uName,
+						auditresult : $('#auditresult').val()
+					},
+					success : function(msg) {
+						if (msg != 0) {
+							$.messager.alert("成功", "已"+resultName+"！", "info");
+							$("#coinstitutionlist").datagrid("reload");
+// 							$('#btnCheckPass').linkbutton('disable');
+// 							$('#btnCheckNotPass').linkbutton('disable');
+							$("#edit").dialog("close");
+						} else {
+							$.messager.alert("错误", "志愿者审核失败！", "error");
+
+						}
+					},
+					error : function() {
+
+					}
+				});
+			}
+		});
+	};
+	
+	
+	
+    $("#edit").dialog({
+    	    title : "查看信息",
+		    iconCls : "icon-search",
+			width : "45%",
+			height : "280px",
+			modal : true
+		}); 
+
+	//设置分页控件 
+	var setdatagridPager= function(){
+
+		var p = $('#coinstitutionlist').datagrid('getPager');
+		$(p).pagination(
+				{
+					beforePageText : '第',//页数文本框前显示的汉字 
+					afterPageText : '页    共 {pages} 页',
+					displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+				});
+	}
+	
+	$("#mcenter").combobox(
+			{
+				url : '/api/Dictionary/get?table=T_CENTER&typeCode=anyvalue&isAddSelect=1',
+				valueField : 'id',
+				textField : 'name',
+				method : "GET",
+				editable : false,
+				panelHeight : '170px',
+				onLoadSuccess : function() {
+					$('#mcenter').combobox('setValue','-1');
+				},
+                onSelect:function(){
+                       
+                }
+			});
+	
+	
+	$("#minstitution").combobox(
+			{
+				url : '/api/Dictionary/get?table=T_INSTITUTION&typeCode=anyvalue&isAddSelect=1',
+				valueField : 'id',
+				textField : 'name',
+				method : "GET",
+				editable : false,
+				panelHeight : '170px',
+				onLoadSuccess : function() {
+					$('#minstitution').combobox('setValue','-1');
+				}
+
+			});
+	
+	</script>
+</body>
+</html>
